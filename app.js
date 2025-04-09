@@ -1,13 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const pool = require('./public/index');
+const pool = require('./public/javascript/index');
 
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Serve your index.html for form submission
-app.use(express.static('public'));
+app.use(express.static('public/views'));
 
 // POST route to handle form submission
 app.post('/submit', async (req, res) => {
@@ -30,4 +30,4 @@ const server = app.listen(3000, () => {
     console.log(`Express running → PORT ${server.address().port}`);
   });
 
-  // Test 2
+  
