@@ -1,13 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const pool = require('./public/javascript/index');
 
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Serve your index.html for form submission
-app.use(express.static('public/views'));
+app.use(express.static('public'));
 
 // POST route to handle form submission
 app.post('/submit', async (req, res) => {

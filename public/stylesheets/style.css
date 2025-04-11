@@ -1,0 +1,163 @@
+/* ===========================
+    Global Styles (All Pages)
+    =========================== */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    html, body {
+        height: 100%;
+        font-family: Arial, sans-serif;
+    }
+    
+    body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #f4f4f9;
+    }
+    
+    header, footer {
+        width: 100%;
+        padding: 1rem;
+        text-align: center;
+        background-color: #333;
+        color: white;
+    }
+    
+    header .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        width: 100%;
+        margin: 0 auto;
+    }
+    
+    main {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        max-width: 1200px;
+        width: 100%;
+        padding: 2rem;
+    }
+
+/* ===========================
+    Home Page Styles (index.html)
+    =========================== */
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+    }
+
+    .profile-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .dashboard {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-gap: 20px;
+        padding: 20px;
+        height: 100vh;
+      }
+
+    #calender-widget {
+        grid-column: span 3;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem; /* Space between the calendar items */
+    }
+    
+    li.day {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 120px; /* Set a fixed width for each day */
+        height: 150px; /* Set a fixed height for each day */
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        position: relative;
+        padding: 1rem;
+        box-sizing: border-box;
+    }
+    
+    li.day .day-number {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+    
+    li.day .calories-eaten,
+    li.day .calories-burnt {
+        font-size: 1rem;
+        margin: 0.5rem 0;
+    }
+    
+    li.day .weekday {
+        position: absolute;
+        bottom: 5px;
+        font-size: 0.9rem;
+        font-weight: normal;
+    }
+
+    .circular-progress {
+        --size: 250px;
+        --half-size: calc(var(--size) / 2);
+        --stroke-width: 20px;
+        --radius: calc((var(--size) - var(--stroke-width)) / 2);
+        --circumference: calc(var(--radius) * pi * 2);
+        --dash: calc((var(--progress) * var(--circumference)) / 100);
+      }
+      
+      .circular-progress circle {
+        cx: var(--half-size);
+        cy: var(--half-size);
+        r: var(--radius);
+        stroke-width: var(--stroke-width);
+        fill: none;
+        stroke-linecap: round;
+      }
+      
+      .circular-progress circle.bg {
+        stroke: #ddd;
+      }
+      
+      .circular-progress circle.fg {
+        transform: rotate(-90deg);
+        transform-origin: var(--half-size) var(--half-size);
+        stroke-dasharray: var(--dash) calc(var(--circumference) - var(--dash));
+        transition: stroke-dasharray 0.3s linear 0s;
+        stroke: #5394fd;
+      }
+    
+    @media (max-width: 768px) {
+        .dashboard {
+          grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        }
+      }
+
+/* ===========================
+    Sign Up Page Styles (signUp.html)
+    =========================== */
+
+
+/* ===========================
+    Sign In Page Styles (signIn.html)
+    =========================== */
