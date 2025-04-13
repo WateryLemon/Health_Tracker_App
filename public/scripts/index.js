@@ -75,5 +75,4 @@ document.addEventListener("DOMContentLoaded", () => {
     updateGreeting();
     updateGoalMessage();
     updateCalendar();
-    u
 });
