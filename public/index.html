@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Health Tracker Dashboard</title>
-    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/index.css">
     <script src="https://kit.fontawesome.com/2fe1601858.js" crossorigin="anonymous"></script>
 </head>
 
@@ -20,8 +20,8 @@
     </header>
 
     <main>
-        <div class="dashboard">
-            <section id="calender-widget">
+        <div id="dashboard">
+            <section id="calenderWidget" class="widget">
                 <li class="day" id="today">
                     <span class="day-number"></span>
                     <div id="goalMessage"></div>
@@ -29,22 +29,29 @@
                 </li>
             </section>
 
-            <section id="calorie-widget">
+            <section id="calorieWidget" class="widget">
                 <h2>Calorie Goal</h2>
-                <svg
-                width="250" height="250" viewBox="0 0 250 250"
-                class="circular-progress" id="calorieProgress">
-                <circle class="bg"></circle>
-                <circle class="fg"></circle>
-                <text x="125" y="115" text-anchor="middle" font-size="22px" fill="#333" id="currentCaloriesText"></text>
-                <line x1="90" y1="125" x2="160" y2="125" stroke="#ccc" stroke-width="2" />
-                <text x="125" y="145" text-anchor="middle" font-size="16px" fill="#666" id="dailyGoalText"></text>
-                </svg>
+                <div class ="circular-progress">
+                    <svg
+                    width="250" height="250" viewBox="0 0 250 250"
+                    id="circularProgress">
+                    <circle class="bg-circle"></circle>
+                    <circle class="calorie-circle"></circle>
+                    <text x="125" y="115" text-anchor="middle" font-size="22px" fill="#333" id="currentCaloriesText"></text>
+                    <line x1="90" y1="125" x2="160" y2="125" stroke="#ccc" stroke-width="2" />
+                    <text x="125" y="145" text-anchor="middle" font-size="16px" fill="#666" id="dailyGoalText"></text>
+                    </svg>
+                </div>
             </section>
 
-            <section id="weight-widget"></section>
-            <section id="leaderboard-widget"></section>
-            <section id="activity-widget"></section>
+            <section id="weightWidget"></section>
+            <section id="leaderboardWidget"></section>
+            <section id="waterWidget"></section>
+            <section id="addButton">
+                <button id="addButton">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </section>
         </div>
     </main>
 

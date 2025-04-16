@@ -5,20 +5,8 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-    }
-    
-    html, body {
-        height: 100%;
-        font-family: Arial, sans-serif;
-    }
-    
-    body {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: center;
-        min-height: 100vh;
-        background-color: #f4f4f9;
+        font-family: "Lucida Console", sans-serif;
+
     }
     
     header, footer {
@@ -36,16 +24,6 @@
         max-width: 1200px;
         width: 100%;
         margin: 0 auto;
-    }
-    
-    main {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        max-width: 1200px;
-        width: 100%;
-        padding: 2rem;
     }
 
 /* ===========================
@@ -65,16 +43,32 @@
         cursor: pointer;
     }
 
-    .dashboard {
+    main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 20vh;
+    }
+
+    #dashboard {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
         grid-gap: 20px;
         padding: 20px;
-        height: 100vh;
-      }
+        margin: 0 auto;
+    }
 
-    #calender-widget {
-        grid-column: span 3;
+    .widget {
+        /* border: 2px solid rgba(112, 48, 161, 1); */
+        border-radius: 10px;
+        background-color: rgba(243, 207, 238, 1);
+        padding: 20px;
+    }
+
+    #calenderWidget {
+        grid-column: span 2;
+        grid-row: span 1;
         display: flex;
         justify-content: space-between;
         flex-wrap: wrap;
@@ -89,11 +83,16 @@
         width: 120px; /* Set a fixed width for each day */
         height: 150px; /* Set a fixed height for each day */
         background-color: #fff;
-        border: 1px solid #ddd;
+        border: 1px solid #7030A1;
         border-radius: 10px;
         position: relative;
         padding: 1rem;
         box-sizing: border-box;
+    }
+
+    li#today {
+        color: #fff;
+        background-color: #7030A1;
     }
     
     li.day .day-number {
@@ -117,41 +116,65 @@
         font-weight: normal;
     }
 
+    #calorieWidget h2 {
+        margin-bottom: 1rem;
+    }
+    
+
     .circular-progress {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #circularProgress {
         --size: 250px;
         --half-size: calc(var(--size) / 2);
         --stroke-width: 20px;
         --radius: calc((var(--size) - var(--stroke-width)) / 2);
         --circumference: calc(var(--radius) * pi * 2);
         --dash: calc((var(--progress) * var(--circumference)) / 100);
-      }
+    }
       
-      .circular-progress circle {
+    #circularProgress circle {
         cx: var(--half-size);
         cy: var(--half-size);
         r: var(--radius);
         stroke-width: var(--stroke-width);
         fill: none;
         stroke-linecap: round;
-      }
+    }
       
-      .circular-progress circle.bg {
-        stroke: #ddd;
-      }
+    #circularProgress circle.bg-circle {
+        stroke: #ffffff;
+    }
       
-      .circular-progress circle.fg {
+    #circularProgress circle.calorie-circle {
         transform: rotate(-90deg);
         transform-origin: var(--half-size) var(--half-size);
         stroke-dasharray: var(--dash) calc(var(--circumference) - var(--dash));
         transition: stroke-dasharray 0.3s linear 0s;
-        stroke: #5394fd;
-      }
+        stroke: #7030A1;
+    }
+
+    #addButton {
+        grid-column: span 2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
     
-    @media (max-width: 768px) {
-        .dashboard {
-          grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        }
-      }
+    #addButton button {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1.5rem;
+        background-color: #7030A1;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+    
 
 /* ===========================
     Sign Up Page Styles (signUp.html)

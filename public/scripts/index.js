@@ -17,7 +17,7 @@ function updateGoalMessage() {
     const remainingCalories = dailyGoal - currentCalories;
 
     const messageElement = document.getElementById("goalMessage");
-    const circle = document.querySelector(".circular-progress");
+    const circle = document.querySelector("#circularProgress");
 
     // Update progress
     const progressPercent = Math.min((currentCalories / dailyGoal) * 100, 100).toFixed(1);
@@ -36,7 +36,7 @@ function updateGoalMessage() {
 }
 
 function updateCalendar() {
-    const calendarWidget = document.getElementById("calender-widget");
+    const calendarWidget = document.getElementById("calenderWidget");
     const todayEl = document.getElementById("today");
 
     const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
