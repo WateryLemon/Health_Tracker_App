@@ -12,19 +12,23 @@ function updateGreeting() {
 }
 
 function updateGoalMessage() {
-    const currentCalories = 1320; // Replace with dynamic value
+    const currentCalories = 1000; // Replace with dynamic value
     const dailyGoal = 2000;       // Replace with dynamic value
-    const remainingCalories = dailyGoal - currentCalories;
+    const burntCalories = 250;    // Replace with dynamic value
+    const remainingCalories = dailyGoal - (currentCalories - burntCalories);
+    const currentTotalCalories = currentCalories - burntCalories;
 
     const messageElement = document.getElementById("goalMessage");
     const circle = document.querySelector("#circularProgress");
 
     // Update progress
     const progressPercent = Math.min((currentCalories / dailyGoal) * 100, 100).toFixed(1);
+    const progressPercentBurnt = Math.min(((burntCalories) / dailyGoal) * 100, 100).toFixed(1);
     circle.style.setProperty('--progress', progressPercent);
+    circle.style.setProperty('--progress-burnt', progressPercentBurnt);
 
     // Update SVG text
-    document.getElementById("currentCaloriesText").textContent = `${currentCalories} kcal`;
+    document.getElementById("currentCaloriesText").textContent = `${currentTotalCalories} kcal`;
     document.getElementById("dailyGoalText").textContent = `${dailyGoal} kcal goal`;
 
     // Update goal message
