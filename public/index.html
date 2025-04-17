@@ -48,10 +48,22 @@
             <section id="weightWidget"></section>
             <section id="leaderboardWidget"></section>
             <section id="waterWidget"></section>
-            <section id="addButton">
-                <button id="addButton">
+            
+            <section id="addMenuButton">
+                <button id="addButton" onclick ="openAddMenu()">
                     <i class="fas fa-plus"></i>
                 </button>
+                <div class="form-wrapper" id="formMenu">
+                    <form action="add_menu.php" id="addMenu">
+                        <h1>Add new data!</h1>
+                        <div class="button-grid">
+                            <button class="log-button food-button"><i class="fa-solid fa-burger"></i> Log food</button>
+                            <button class="log-button exercise-button"><i class="fa-solid fa-dumbbell"></i> Log exercise</button>
+                            <button class="log-button water-button"><i class="fa-solid fa-glass-water-droplet"></i> Log water</button>
+                            <button class="log-button weight-button"><i class="fa-solid fa-weight-scale"></i> Log weight</button>
+                        </div>
+                    </form>
+                </div>
             </section>
         </div>
     </main>
@@ -60,5 +72,5 @@
         <p>&copy; 2023 Health Tracker App</p>
     </footer>
         <script src="/scripts/index.js" defer></script>
-</body>
+        </body>
 </html>

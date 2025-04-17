@@ -12,20 +12,27 @@ function updateGreeting() {
 }
 
 function updateGoalMessage() {
-    const currentCalories = 1000; // Replace with dynamic value
+    const currentCalories = 1500; // Replace with dynamic value
     const dailyGoal = 2000;       // Replace with dynamic value
-    const burntCalories = 250;    // Replace with dynamic value
+    const burntCalories = 100;    // Replace with dynamic value
     const remainingCalories = dailyGoal - (currentCalories - burntCalories);
     const currentTotalCalories = currentCalories - burntCalories;
 
     const messageElement = document.getElementById("goalMessage");
     const circle = document.querySelector("#circularProgress");
+    const burntCircle = document.querySelector(".burnt-circle");
 
     // Update progress
     const progressPercent = Math.min((currentCalories / dailyGoal) * 100, 100).toFixed(1);
     const progressPercentBurnt = Math.min(((burntCalories) / dailyGoal) * 100, 100).toFixed(1);
     circle.style.setProperty('--progress', progressPercent);
     circle.style.setProperty('--progress-burnt', progressPercentBurnt);
+
+    if (burntCalories === 0) {
+        burntCircle.style.display = "none";
+    } else {
+        burntCircle.style.display = "block";
+    }
 
     // Update SVG text
     document.getElementById("currentCaloriesText").textContent = `${currentTotalCalories} kcal`;
@@ -53,12 +60,11 @@ function updateCalendar() {
         const li = document.createElement("li");
         li.classList.add("day");
 
-        li.innerHTML = `
-            <span class="day-number">${date.getDate()}</span>
+        li.innerHTML = 
+            `<span class="day-number">${date.getDate()}</span>
             <i class="fas fa-hotdog"></i><span>: </span><span class="calories-eaten"></span>
             <i class='fas fa-burn'></i><span>: </span><span class="calories-burnt"></span>
-            <span class="weekday">${weekdays[date.getDay()]}</span>
-        `;
+            <span class="weekday">${weekdays[date.getDay()]}</span>`;
         return li;
     }
 
@@ -73,6 +79,28 @@ function updateCalendar() {
 
     todayEl.querySelector(".day-number").textContent = currentDate.getDate();
     todayEl.querySelector(".weekday").textContent = weekdays[currentDate.getDay()];
+}
+
+function openAddMenu() {
+    const addButton = document.getElementById("addButton");
+    const formMenu = document.getElementById("formMenu");
+    const icon = addButton.querySelector("i");
+
+    if (formMenu.style.display === "block") {
+        // Close the menu
+        formMenu.style.display = "none";
+        addButton.style.backgroundColor = "#7030A1"; // Original button color
+        icon.className = "fas fa-plus"; // Switch back to the plus icon
+    } else {
+        // Open the menu
+        formMenu.style.display = "block";
+        addButton.style.backgroundColor = "#FF2431"; // Change button color to red
+        icon.className = "fa-solid fa-xmark"; // Switch to the x-mark icon
+    }
+}
+  
+function closeAddMenu() {
+    document.getElementById("formMenu").style.display = "none";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
