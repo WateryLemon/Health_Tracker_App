@@ -10,11 +10,19 @@
     justify-content: space-between;
     margin: 0 auto;
     margin-top: 20px;
+    margin-bottom: 20px;
     width: 800px;
     background-color: rgba(243, 207, 238, 1);
     font-size: 25px;
     padding: 20px;
     border-radius: 10px;
+}
+
+.profile-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    background-color: white;
 }
 
 #streak,
@@ -27,10 +35,54 @@
     justify-content: center;
 }
 
-.profile-icon {
-    width: 80px;
-    height: 80px;
+#profileBody {
+    margin: 0 auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 800px;
+    background-color: rgba(243, 207, 238, 1);
+    font-size: 25px;
+    padding: 20px;
     border-radius: 10px;
-    background-color: white;
-    margin-bottom: 10px;
+}
+
+.profileInfo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.profileInfo:last-child {
+    margin-bottom: 0;
+}
+
+#username,
+#height,
+#sex,
+#dob,
+#location,
+#email {
+    padding: 8px;
+    border: none;
+    width: 400px;
+    font-size: 20px;
+    border-radius: 8px;
+}
+
+#radioContainer {
+    display: flex;
+    justify-content: space-between;
+    width: 400px;
+}
+
+footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 1rem;
+    text-align: center;
+    background-color: #333;
+    color: white;
 }

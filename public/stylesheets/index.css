@@ -16,6 +16,12 @@ header, footer {
     color: white;
 }
 
+footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+}
+
 header .header-content {
     display: flex;
     justify-content: space-between;
