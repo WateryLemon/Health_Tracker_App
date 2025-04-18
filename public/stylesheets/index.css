@@ -6,7 +6,6 @@
     padding: 0;
     box-sizing: border-box;
     font-family: "Lucida Console", sans-serif;
-
 }
 
 header, footer {
@@ -37,10 +36,11 @@ header .header-content {
 }
 
 .profile-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
     cursor: pointer;
+    background-color: white;
 }
 
 main {
