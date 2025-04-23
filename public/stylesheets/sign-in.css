@@ -1,0 +1,69 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f3cfee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .login-container {
+    font-family: "Lucida Console", sans-serif;
+    background: #fff;
+    padding: 32px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    width: 500px;
+  }
+
+  .login-container h2 {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+
+  .submit-btn {
+    font-family: "Lucida Console", sans-serif;
+    width: 100%;
+    padding: 12px;
+    background-color: #7030A1;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .submit-btn:hover {
+    background-color: #4a1b6e;
+  }
+
+  .signup-link {
+    margin-top: 16px;
+    text-align: center;
+  }
+
+  .signup-link a {
+    color: #7030A1;
+    text-decoration: none;
+  }
+
+  .signup-link a:hover {
+    text-decoration: underline;
+  }
