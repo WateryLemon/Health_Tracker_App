@@ -55,15 +55,16 @@
                 <button id="addButton" onclick ="openAddMenu()">
                     <i class="fas fa-plus"></i>
                 </button>
-                <div class="form-wrapper" id="formMenu">
+                <div class="menu-container" id="formMenu">
                     <form action="add_menu.php" id="addMenu">
                         <h1>Add new data!</h1>
                         <div class="button-grid">
-                            <button class="log-button food-button"><i class="fa-solid fa-burger"></i> Log food</button>
-                            <button class="log-button exercise-button"><i class="fa-solid fa-dumbbell"></i> Log exercise</button>
-                            <button class="log-button water-button"><i class="fa-solid fa-glass-water-droplet"></i> Log water</button>
-                            <button class="log-button weight-button"><i class="fa-solid fa-weight-scale"></i> Log weight</button>
+                            <button class="log-button" id="foodButton" type="button"><i class="fa-solid fa-burger"></i> Log food</button>
+                            <button class="log-button" id="exerciseButton" type="button"><i class="fa-solid fa-dumbbell"></i> Log exercise</button>
+                            <button class="log-button" id="waterButton" type="button"><i class="fa-solid fa-glass-water-droplet"></i> Log water</button>
+                            <button class="log-button" id="weightButton" type="button"><i class="fa-solid fa-weight-scale"></i> Log weight</button>
                         </div>
+                        <div class="form-container"></div>
                     </form>
                 </div>
             </section>
@@ -73,6 +74,48 @@
     <footer>
         <p>&copy; 2025 Health Tracker App</p>
     </footer>
+
+    <template id="foodForm">
+        <div class="food-form">
+            <h3>Log Food</h3>
+            <form>
+                <input type="text" placeholder="Food name" required>
+                <input type="number" placeholder="Calories" required>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </template>
+    
+    <template id="exerciseForm">
+        <div class="exercise-form">
+            <h3>Log Exercise</h3>
+            <form>
+                <input type="text" placeholder="Exercise name" required>
+                <input type="number" placeholder="Calories burned" required>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </template>
+    
+    <template id="waterForm">
+        <div class="water-form">
+            <h3>Log Water</h3>
+            <form>
+                <input type="number" placeholder="Amount (ml)" required>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </template>
+    
+    <template id="weightForm">
+        <div class="weight-form">
+            <h3>Log Weight</h3>
+            <form>
+                <input type="number" placeholder="Weight (kg)" required>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </template>
 
     <script src="/scripts/index.js" defer></script>
 </body>

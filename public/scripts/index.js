@@ -11,7 +11,7 @@ function updateGreeting() {
     }
 }
 
-function updateGoalMessage() {
+function updateGoalElements() {
     const currentCalories = 1500; // Replace with dynamic value
     const dailyGoal = 2000;       // Replace with dynamic value
     const burntCalories = 100;    // Replace with dynamic value
@@ -22,7 +22,7 @@ function updateGoalMessage() {
     const circle = document.querySelector("#circularProgress");
     const burntCircle = document.querySelector(".burnt-circle");
 
-    // Update progress
+    // Update progress circle
     const progressPercent = Math.min((currentCalories / dailyGoal) * 100, 100).toFixed(1);
     const progressPercentBurnt = Math.min(((burntCalories) / dailyGoal) * 100, 100).toFixed(1);
     circle.style.setProperty('--progress', progressPercent);
@@ -84,18 +84,32 @@ function updateCalendar() {
 function openAddMenu() {
     const addButton = document.getElementById("addButton");
     const formMenu = document.getElementById("formMenu");
+    const formContainer = document.querySelector(".form-container");
+    const buttonGrid = document.querySelector(".button-grid");
     const icon = addButton.querySelector("i");
 
     if (formMenu.style.display === "block") {
         // Close the menu
         formMenu.style.display = "none";
-        addButton.style.backgroundColor = "#7030A1"; // Original button color
-        icon.className = "fas fa-plus"; // Switch back to the plus icon
+        addButton.style.backgroundColor = "#7030A1";
+        icon.className = "fas fa-plus";
+        
+        // Reset the form container to show the button grid again
+        formContainer.innerHTML = "";
+        if (buttonGrid) {
+            buttonGrid.style.display = "grid";
+        }
     } else {
         // Open the menu
         formMenu.style.display = "block";
-        addButton.style.backgroundColor = "#FF2431"; // Change button color to red
-        icon.className = "fa-solid fa-xmark"; // Switch to the x-mark icon
+        addButton.style.backgroundColor = "#FF2431";
+        icon.className = "fa-solid fa-xmark";
+        
+        // Ensure the button grid is visible when opening
+        if (buttonGrid) {
+            buttonGrid.style.display = "grid";
+        }
+        formContainer.innerHTML = "";
     }
 }
   
@@ -104,7 +118,49 @@ function closeAddMenu() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    const menu = document.getElementById("formMenu");
+    menu.style.display = "none";
     updateGreeting();
-    updateGoalMessage();
+    updateGoalElements();
     updateCalendar();
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    const logButtons = document.querySelectorAll(".log-button");
+    const formContainer = document.querySelector(".form-container");
+    const buttonGrid = document.querySelector(".button-grid");
+
+    const templateMap = {
+        foodButton: "foodForm",
+        exerciseButton: "exerciseForm",
+        waterButton: "waterForm",
+        weightButton: "weightForm",
+    };
+
+    logButtons.forEach(button => {
+        button.addEventListener("click", function() {
+            if (buttonGrid) {
+                buttonGrid.style.display = "none";
+            }
+
+            const formId = templateMap[this.id];
+            const formTemplate = document.getElementById(formId);
+
+            if (formTemplate) {
+                const clone = formTemplate.content.cloneNode(true);
+                formContainer.innerHTML = "";
+                formContainer.appendChild(clone);
+                
+                const backButton = document.createElement("button");
+                backButton.textContent = "Back";
+                backButton.addEventListener("click", function() {
+                    formContainer.innerHTML = "";
+                    if (buttonGrid) {
+                        buttonGrid.style.display = "grid";
+                    }
+                });
+                formContainer.appendChild(backButton);
+            }
+        });
+    });
 });

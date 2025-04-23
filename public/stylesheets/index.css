@@ -71,6 +71,10 @@ main {
     padding: 20px;
 }
 
+/* ===========================
+    Calendar Widget
+    =========================== */
+
 #calenderWidget {
     grid-column: span 2;
     grid-row: span 1;
@@ -121,6 +125,10 @@ li.day .weekday {
     font-weight: normal;
 }
 
+/* ===========================
+    Calorie Widget
+    =========================== */
+
 #calorieWidget h2 {
     margin-bottom: 1rem;
 }
@@ -170,6 +178,10 @@ li.day .weekday {
     stroke: #e75a3a;
 }
 
+/* ===========================
+    Add Button
+    =========================== */
+
 #addMenuButton {
     position: relative;
     grid-column: span 2;
@@ -190,15 +202,19 @@ li.day .weekday {
     cursor: pointer;
 }
 
-.form-wrapper {
+/* ===========================
+    Add Menu
+    =========================== */
+
+.menu-container {
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     position: absolute;
     bottom: 90%;
-    border: 3px solid #f1f1f1;
-    border-radius: 13px 13px 0 0;
+    border: 3px solid #FF2431;
+    border-radius: 10px 10px 0 0;
     border-bottom: none;
     z-index: 9;
 }
@@ -214,7 +230,6 @@ form h1 {
     padding: 10px;
     height: 325px;
     background-color: white;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 10px 10px 0 0;
 }
 
@@ -250,22 +265,26 @@ form h1 {
     background-color: RoyalBlue;
 }
 
-.food-button {
+#foodButton {
     background-color: #FFB74D;
 }
 
-.exercise-button {
+#exerciseButton {
     background-color: #4CAF50;
 }
 
-.water-button {
+#waterButton {
     background-color: #42A5F5;
 }
 
-.weight-button {
+#weightButton {
     background-color: #AB47BC;
 }
 
 .log-button:hover {
     opacity: 0.9;
 }
+
+/* ===========================
+    Form Submissions
+    =========================== */
