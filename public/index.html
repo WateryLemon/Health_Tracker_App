@@ -52,7 +52,21 @@
                 <h2>Weight Tracker</h2>
                 <div class="weight-graph">
                     <canvas id="weightChart" style="width:100%;max-width:700px"></canvas>
-                    <p id="weightGoal"></p>
+                </div>
+                <div class="dropdown">
+                    <div class="dropdown-wrapper">
+                        <button class="dropbtn">Time Scale</button>
+                        <div class="dropdown-content">
+                            <a href="#">Days</a>
+                            <a href="#">Weeks</a>
+                            <a href="#">Months</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="weight-info">
+                    <p class="start-weight"><i class="fas fa-calendar-day"></i> Your Starting Weight: <span id="startingWeight">70kg</span></p>
+                    <p class="current-weight"><i class="fas fa-weight"></i> Current Weight: <span id="currentWeight">68kg</span></p>
+                    <p class="change-weight"><i class="fas fa-chart-line"></i> Change: <span id="weightChange">-2kg</span></p>
                 </div>
             </section>
 

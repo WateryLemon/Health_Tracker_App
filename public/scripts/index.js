@@ -93,7 +93,7 @@ function weightGraphLogic() {
     const ctx = document.getElementById('weightChart').getContext('2d');
 
     // Replace with dynamic data
-    const labels = ['27th', '28th', '29th', '30th', '1st of May', '2nd', '3rd'];
+    const labels = ['27th', '28th', '29th', '30th', '1st', '2nd', '3rd'];
     const weightData = [70, 69.5, 69.5, 69.1, 68.8, 68.9, 68.8];
 
     // Create the line chart
@@ -104,36 +104,42 @@ function weightGraphLogic() {
             datasets: [{
                 label: 'Weight (kg)',
                 data: weightData,
-                borderColor: '#4CAF50', // Line color
+                borderColor: '#7030A1', // Line color
                 borderWidth: 2,
                 tension: 0.4, // Smoothness
-                pointBackgroundColor: '#4CAF50', // Point color
-                pointRadius: 4, //  Size of points
+                pointBackgroundColor: '#7030A1', // Point color
+                pointRadius: 2, //  Size of points
             }]
         },
         options: {
             responsive: true,
             plugins: {
-                legend: { display: false },
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Days',
-                    }
+                    legend: { display: false },
                 },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Weight (kg)',
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Weeks',
+                        },
+                        grid: {
+                            color: 'rgba(243, 207, 238, 1)'
+                        }
                     },
-                    beginAtZero: false
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Weight (kg)',
+                        },
+                        grid: {
+                            color: 'rgba(243, 207, 238, 1)'
+                        },
+                        beginAtZero: false
+                    }
                 }
             }
-        }
+        });
     }
-    });
-}
 
 
 function closeAddMenu() {
