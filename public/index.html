@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/stylesheets/global.css">
     <link rel="stylesheet" href="/stylesheets/index.css">
     <script src="https://kit.fontawesome.com/2fe1601858.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 
 <body>
@@ -47,23 +48,23 @@
                 </div>
             </section>
 
-            <section id="weightWidget"></section>
+            <section id="weightWidget" class="widget">
+                <h2>Weight Tracker</h2>
+                <div class="weight-graph">
+                    <canvas id="weightChart" style="width:100%;max-width:700px"></canvas>
+                    <p id="weightGoal"></p>
+                </div>
+            </section>
+
             <section id="leaderboardWidget"></section>
             <section id="waterWidget"></section>
             
             <section id="addMenuButton">
-                <button id="addButton" onclick ="openAddMenu()">
+                <button id="addButton" onclick ="addMenuLogic()">
                     <i class="fas fa-plus"></i>
                 </button>
                 <div class="menu-container" id="formMenu">
                     <form action="add_menu.php" id="addMenu">
-                        <h1>Add new data!</h1>
-                        <div class="button-grid">
-                            <button class="log-button" id="foodButton" type="button"><i class="fa-solid fa-burger"></i> Log food</button>
-                            <button class="log-button" id="exerciseButton" type="button"><i class="fa-solid fa-dumbbell"></i> Log exercise</button>
-                            <button class="log-button" id="waterButton" type="button"><i class="fa-solid fa-glass-water-droplet"></i> Log water</button>
-                            <button class="log-button" id="weightButton" type="button"><i class="fa-solid fa-weight-scale"></i> Log weight</button>
-                        </div>
                         <div class="form-container"></div>
                     </form>
                 </div>
@@ -75,9 +76,20 @@
         <p>&copy; 2025 Health Tracker App</p>
     </footer>
 
+    <template id="menuForm">
+        <div class="menu-form">
+            <h1>Add new data!</h1>
+            <div class="button-grid">
+                <button class="log-button" id="foodButton" type="button"><i class="fa-solid fa-burger"></i> Log food</button>
+                <button class="log-button" id="exerciseButton" type="button"><i class="fa-solid fa-dumbbell"></i> Log exercise</button>
+                <button class="log-button" id="waterButton" type="button"><i class="fa-solid fa-glass-water-droplet"></i> Log water</button>
+                <button class="log-button" id="weightButton" type="button"><i class="fa-solid fa-weight-scale"></i> Log weight</button>
+            </div>
+    </template>
+
     <template id="foodForm">
-        <div class="food-form">
-            <h3>Log Food</h3>
+        <div class="menu-form">
+            <h1>Log Food</h1>
             <form>
                 <input type="text" placeholder="Food name" required>
                 <input type="number" placeholder="Calories" required>
@@ -87,8 +99,8 @@
     </template>
     
     <template id="exerciseForm">
-        <div class="exercise-form">
-            <h3>Log Exercise</h3>
+        <div class="menu-form">
+            <h1>Log Exercise</h1>
             <form>
                 <input type="text" placeholder="Exercise name" required>
                 <input type="number" placeholder="Calories burned" required>
@@ -98,8 +110,8 @@
     </template>
     
     <template id="waterForm">
-        <div class="water-form">
-            <h3>Log Water</h3>
+        <div class="menu-form">
+            <h1>Log Water</h1>
             <form>
                 <input type="number" placeholder="Amount (ml)" required>
                 <button type="submit">Submit</button>
@@ -108,8 +120,8 @@
     </template>
     
     <template id="weightForm">
-        <div class="weight-form">
-            <h3>Log Weight</h3>
+        <div class="menu-form">
+            <h1>Log Weight</h1>
             <form>
                 <input type="number" placeholder="Weight (kg)" required>
                 <button type="submit">Submit</button>
