@@ -70,8 +70,43 @@
                 </div>
             </section>
 
-            <section id="leaderboardWidget"></section>
-            <section id="waterWidget"></section>
+            <section id="leaderboardWidget" class="widget">
+                <div class="leaderboard-header">
+                    <h2>Leaderboard</h2>
+                    <div class="dropdown-wrapper" id="leaderboardDropdown">
+                        <button class="dropbtn" id="dropbtnLeaderboard">Sort by</button>
+                        <div class="dropdown-content" id="dropdownContentLeaderboard">
+                            <a href="#">Calories Burnt</a>
+                            <a href="#">Weight Change</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="leaderboard">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Name</th>
+                                <th>Calories Burnt</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>Jules Tournier</td>
+                                <td>230</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="waterWidget" class="widget">
+                <h2>Water Intake</h2>
+                <div class="water-stats">
+                    <span class="intake-text"><i class="fa-solid fa-glass-water"></i><span id="currentIntake"> 500</span> <span style="color: #7030A1;">/</span> <span id="dailyGoal">2000</span> <span style="color: #7030A1;">ml</span></span>
+                </div>
+            </section>
             
             <section id="addMenuButton">
                 <button id="addButton" onclick ="addMenuLogic()">
@@ -83,6 +118,7 @@
                     </form>
                 </div>
             </section>
+
         </div>
     </main>
 
@@ -99,6 +135,7 @@
                 <button class="log-button" id="waterButton" type="button"><i class="fa-solid fa-glass-water-droplet"></i> Log water</button>
                 <button class="log-button" id="weightButton" type="button"><i class="fa-solid fa-weight-scale"></i> Log weight</button>
             </div>
+        </div>
     </template>
 
     <template id="foodForm">
