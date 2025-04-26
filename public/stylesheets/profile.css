@@ -5,22 +5,33 @@
     font-family: "Lucida Console", sans-serif;
 }
 
-#profileHeader {
+header {
+    width: 100%;
+    padding: 1rem;
+    text-align: center;
+    background-color: #333;
+    color: white;
+}
+
+header .header-content {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    max-width: 750px;
+    width: 100%;
     margin: 0 auto;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    width: 800px;
-    background-color: rgba(243, 207, 238, 1);
-    font-size: 25px;
-    padding: 20px;
-    border-radius: 10px;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
 }
 
 .profile-icon {
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     border-radius: 10px;
     background-color: white;
 }
@@ -28,6 +39,7 @@
 #streak,
 #profile,
 #progress {
+    font-size: 21px;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -39,7 +51,7 @@
     margin: 0 auto;
     margin-top: 20px;
     margin-bottom: 20px;
-    width: 800px;
+    width: 750px;
     background-color: rgba(243, 207, 238, 1);
     font-size: 25px;
     padding: 20px;
@@ -50,7 +62,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    /* border: 1px solid red; */
 }
 
 .profileInfo:last-child {
@@ -74,6 +87,17 @@
     display: flex;
     justify-content: space-between;
     width: 400px;
+}
+
+#saveButton {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.5rem;
+    background-color: #7030A1;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
 }
 
 footer {
