@@ -7,11 +7,7 @@ const {
   setDoc,
   serverTimestamp,
 } = require("firebase/firestore");
-const {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} = require("firebase/auth");
+const { getAuth, signInWithEmailAndPassword } = require("firebase/auth");
 
 const app = express();
 
@@ -39,7 +35,6 @@ app.post("/submit", async (req, res) => {
   const {
     username,
     email,
-    password,
     current_height,
     current_weight,
     sex,
@@ -47,16 +42,13 @@ app.post("/submit", async (req, res) => {
   } = req.body;
 
   try {
-    // Create user with email and password
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    const user = userCredential.user;
+    // Create the user document in Firestore using the uid from the request
+    const uid = req.body.uid;
+    if (!uid) {
+      throw new Error("No user ID provided");
+    }
 
-    // Store additional user data in Firestore using the new modular SDK
-    await setDoc(doc(db, "users", user.uid), {
+    await setDoc(doc(db, "users", uid), {
       username,
       email,
       current_height,
