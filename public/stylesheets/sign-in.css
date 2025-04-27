@@ -1,3 +1,14 @@
+header {
+  width: 100%;
+  padding: 1rem;
+  position: fixed;
+  top: 0;
+  text-align: center;
+  background-color: #333;
+  color: white;
+}
+
+
 body {
     font-family: Arial, sans-serif;
     background: #f3cfee;
