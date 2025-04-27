@@ -1,78 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile</title>
-    <link rel="icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/512/4434/4434478.png">
-    <link rel="stylesheet" href="/stylesheets/profile.css">
-</head>
-<body>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="https://cdn-icons-png.flaticon.com/512/4434/4434478.png"
+    />
+    <link rel="stylesheet" href="/stylesheets/profile.css" />
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+      import { getAuth } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCQiV6-wvqLWa9NHatHsu9AE3zcb4FqmOI",
+        authDomain: "health-tracker-fa572.firebaseapp.com",
+        projectId: "health-tracker-fa572",
+        storageBucket: "health-tracker-fa572.firebasestorage.app",
+        messagingSenderId: "277390438554",
+        appId: "1:277390438554:web:8ce3ec3a1ef13b20aaef23",
+        measurementId: "G-SRHMFGLNN2",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      window.auth = auth;
+    </script>
+  </head>
+  <body>
     <header>
-        <div class="header-content">
-            <div id="streak">
-                Streak: <br>
-                17 <br> days
-            </div>
-
-            <a href="profile.html">
-                <img src="https://static.thenounproject.com/png/4216248-200.png" alt="Profile Icon" class="profile-icon">
-            </a>
-
-            <div id="progress">
-                Progress: <br>
-                3 kg <br> lost
-            </div>
+      <div class="header-content">
+        <div id="streak">
+          Streak: <br />
+          17 <br />
+          days
         </div>
+
+        <div class="profile-controls">
+          <a href="profile.html">
+            <img
+              src="https://static.thenounproject.com/png/4216248-200.png"
+              alt="Profile Icon"
+              class="profile-icon"
+            />
+          </a>
+          <button id="signOutButton" class="sign-out-btn">Sign Out</button>
+        </div>
+
+        <div id="progress">
+          Progress: <br />
+          3 kg <br />
+          lost
+        </div>
+      </div>
     </header>
 
     <div id="profileBody">
-        Personal details <br><br><br>
+      Personal details <br /><br /><br />
 
-        <div class="profileInfo">
-            User Name <input type="text" id="username">
+      <div class="profileInfo">
+        User Name <input type="text" id="username" />
+      </div>
+
+      <div class="profileInfo">Height <input type="text" id="height" /></div>
+
+      <div class="profileInfo">Sex <input type="text" id="sex" /></div>
+
+      <div class="profileInfo">
+        Date of Birth <input type="date" id="dob" />
+      </div>
+
+      <div class="profileInfo">
+        Location <input type="text" id="location" />
+      </div>
+
+      <div class="profileInfo">
+        Email address <input type="email" id="email" />
+      </div>
+
+      <div class="profileInfo">
+        Units
+        <div id="radioContainer">
+          <div class="radioBtns">
+            <input type="radio" id="metricUnits" name="units" value="Metric" />
+            <label for="metricUnits">Metric</label>
+          </div>
+
+          <div class="radioBtns">
+            <input
+              type="radio"
+              id="imperialUnits"
+              name="units"
+              value="Imperial"
+            />
+            <label for="imperialUnits">Imperial</label>
+          </div>
         </div>
-        
-        <div class="profileInfo">
-            Height <input type="text" id="height">
-        </div>
-        
-        <div class="profileInfo">
-            Sex <input type="text" id="sex">
-        </div>
+      </div>
 
-        <div class="profileInfo">
-            Date of Birth <input type="date" id="dob">
-        </div>
+      <br />
 
-        <div class="profileInfo">
-            Location <input type="text" id="location">
-        </div>
-
-        <div class="profileInfo">
-            Email address <input type="email" id="email">
-        </div>
-
-        <div class="profileInfo">
-            Units
-            <div id="radioContainer">
-                <div class="radioBtns">
-                    <input type="radio" id="metric" value="Metric"> <label>Metric</label>
-                </div>
-
-                <div class="radioBtns">
-                    <input type="radio" id="metric" value="Imperial"> <label>Imperial</label>
-                </div>
-            </div>
-        </div>
-
-        <br>
-
-        <button id="saveButton">Save</button>
+      <button id="saveButton">Save</button>
     </div>
 
     <footer>
-        <p>&copy; 2025 Health Tracker App</p>
+      <p>&copy; 2025 Health Tracker App</p>
     </footer>
-</body>
+    <script src="scripts/profile.js" type="module" defer></script>
+  </body>
 </html>

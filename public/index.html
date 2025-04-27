@@ -1,220 +1,297 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Health Tracker Dashboard</title>
-    <link rel="icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/512/4434/4434478.png">
-    <link rel="stylesheet" href="/stylesheets/global.css">
-    <link rel="stylesheet" href="/stylesheets/index.css">
-    <script src="https://kit.fontawesome.com/2fe1601858.js" crossorigin="anonymous"></script>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="https://cdn-icons-png.flaticon.com/512/4434/4434478.png"
+    />
+    <link rel="stylesheet" href="/stylesheets/global.css" />
+    <link rel="stylesheet" href="/stylesheets/index.css" />
+    <script
+      src="https://kit.fontawesome.com/2fe1601858.js"
+      crossorigin="anonymous"
+    ></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-</head>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+      import { getAuth } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 
-<body>
+      const firebaseConfig = {
+        apiKey: "AIzaSyCQiV6-wvqLWa9NHatHsu9AE3zcb4FqmOI",
+        authDomain: "health-tracker-fa572.firebaseapp.com",
+        projectId: "health-tracker-fa572",
+        storageBucket: "health-tracker-fa572.firebasestorage.app",
+        messagingSenderId: "277390438554",
+        appId: "1:277390438554:web:8ce3ec3a1ef13b20aaef23",
+        measurementId: "G-SRHMFGLNN2",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      window.auth = auth;
+    </script>
+  </head>
+
+  <body>
     <header>
-        <div class="header-content">
-            <h1 id="greeting"></h1>
-            <a href="profile.html">
-                <img src="https://static.thenounproject.com/png/4216248-200.png" alt="Profile Icon" class="profile-icon">
-            </a>
-        </div>
+      <div class="header-content">
+        <h1 id="greeting"></h1>
+        <a href="profile.html">
+          <img
+            src="https://static.thenounproject.com/png/4216248-200.png"
+            alt="Profile Icon"
+            class="profile-icon"
+          />
+        </a>
+      </div>
     </header>
 
     <main>
-        <div id="dashboard">
-            <section id="calenderWidget" class="widget">
-                <li class="day" id="today">
-                    <span class="day-number"></span>
-                    <div id="goalMessage"></div>
-                    <span class="weekday"></span>
-                </li>
-            </section>
+      <div id="dashboard">
+        <section id="calenderWidget" class="widget">
+          <li class="day" id="today">
+            <span class="day-number"></span>
+            <div id="goalMessage"></div>
+            <span class="weekday"></span>
+          </li>
+        </section>
 
-            <section id="calorieWidget" class="widget">
-                <h2>Calorie Goal</h2>
-                <div class ="circular-progress">
-                    <svg
-                    width="250" height="250" viewBox="0 0 250 250"
-                    id="circularProgress">
-                    <circle class="bg-circle"></circle>
-                    <circle class="calorie-circle"></circle>
-                    <circle class="burnt-circle"></circle>
-                    <text x="125" y="115" text-anchor="middle" font-size="22px" fill="#333" id="currentCaloriesText"></text>
-                    <line x1="90" y1="125" x2="160" y2="125" stroke="#ccc" stroke-width="2" />
-                    <text x="125" y="145" text-anchor="middle" font-size="16px" fill="#666" id="dailyGoalText"></text>
-                    </svg>
-                </div>
-            </section>
+        <section id="calorieWidget" class="widget">
+          <h2>Calorie Goal</h2>
+          <div class="circular-progress">
+            <svg
+              width="250"
+              height="250"
+              viewBox="0 0 250 250"
+              id="circularProgress"
+            >
+              <circle class="bg-circle"></circle>
+              <circle class="calorie-circle"></circle>
+              <circle class="burnt-circle"></circle>
+              <text
+                x="125"
+                y="115"
+                text-anchor="middle"
+                font-size="22px"
+                fill="#333"
+                id="currentCaloriesText"
+              ></text>
+              <line
+                x1="90"
+                y1="125"
+                x2="160"
+                y2="125"
+                stroke="#ccc"
+                stroke-width="2"
+              />
+              <text
+                x="125"
+                y="145"
+                text-anchor="middle"
+                font-size="16px"
+                fill="#666"
+                id="dailyGoalText"
+              ></text>
+            </svg>
+          </div>
+        </section>
 
-            <section id="weightWidget" class="widget">
-                <h2>Weight Tracker</h2>
-                <div class="weight-graph">
-                    <canvas id="weightChart" style="width:100%;max-width:700px"></canvas>
-                </div>
-                <div class="dropdown">
-                    <div class="dropdown-wrapper">
-                        <button class="dropbtn">Time Scale</button>
-                        <div class="dropdown-content">
-                            <a href="#">Days</a>
-                            <a href="#">Weeks</a>
-                            <a href="#">Months</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="weight-info">
-                    <p class="start-weight"><i class="fas fa-calendar-day"></i> Your Starting Weight: <span id="startingWeight">70kg</span></p>
-                    <p class="current-weight"><i class="fas fa-weight"></i> Current Weight: <span id="currentWeight">68kg</span></p>
-                    <p class="change-weight"><i class="fas fa-chart-line"></i> Change: <span id="weightChange">-2kg</span></p>
-                </div>
-            </section>
+        <section id="weightWidget" class="widget">
+          <h2>Weight Tracker</h2>
+          <div class="weight-graph">
+            <canvas
+              id="weightChart"
+              style="width: 100%; max-width: 700px"
+            ></canvas>
+          </div>
+          <div class="dropdown">
+            <div class="dropdown-wrapper">
+              <button class="dropbtn">Time Scale</button>
+              <div class="dropdown-content">
+                <a href="#">Days</a>
+                <a href="#">Weeks</a>
+                <a href="#">Months</a>
+              </div>
+            </div>
+          </div>
+          <div class="weight-info">
+            <p class="start-weight">
+              <i class="fas fa-calendar-day"></i> Your Starting Weight:
+              <span id="startingWeight">70kg</span>
+            </p>
+            <p class="current-weight">
+              <i class="fas fa-weight"></i> Current Weight:
+              <span id="currentWeight">68kg</span>
+            </p>
+            <p class="change-weight">
+              <i class="fas fa-chart-line"></i> Change:
+              <span id="weightChange">-2kg</span>
+            </p>
+          </div>
+        </section>
 
-            <section id="leaderboardWidget" class="widget">
-                <div class="leaderboard-header">
-                    <h2>Leaderboard</h2>
-                    <div class="dropdown-wrapper" id="leaderboardDropdown">
-                        <button class="dropbtn" id="dropbtnLeaderboard">Sort by</button>
-                        <div class="dropdown-content" id="dropdownContentLeaderboard">
-                            <a href="#">Calories Burnt</a>
-                            <a href="#">Weight Change</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="leaderboard">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Name</th>
-                                <th>Calories Burnt</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>Jules Tournier</td>
-                                <td>230</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">2</th>
-                                <td>Alex Smith</td>
-                                <td>210</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">3</th>
-                                <td>Maria Garcia</td>
-                                <td>200</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">4</th>
-                                <td>John Doe</td>
-                                <td>190</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">5</th>
-                                <td>Emma Brown</td>
-                                <td>180</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">6</th>
-                                <td>Lucas Johnson</td>
-                                <td>170</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">7</th>
-                                <td>Sophia Martinez</td>
-                                <td>160</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">8</th>
-                                <td>Michael Lee</td>
-                                <td>150</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+        <section id="leaderboardWidget" class="widget">
+          <div class="leaderboard-header">
+            <h2>Leaderboard</h2>
+            <div class="dropdown-wrapper" id="leaderboardDropdown">
+              <button class="dropbtn" id="dropbtnLeaderboard">Sort by</button>
+              <div class="dropdown-content" id="dropdownContentLeaderboard">
+                <a href="#">Calories Burnt</a>
+                <a href="#">Weight Change</a>
+              </div>
+            </div>
+          </div>
+          <div class="leaderboard">
+            <table>
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Name</th>
+                  <th>Calories Burnt</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">1</th>
+                  <td>Jules Tournier</td>
+                  <td>230</td>
+                </tr>
+                <tr>
+                  <th scope="row">2</th>
+                  <td>Alex Smith</td>
+                  <td>210</td>
+                </tr>
+                <tr>
+                  <th scope="row">3</th>
+                  <td>Maria Garcia</td>
+                  <td>200</td>
+                </tr>
+                <tr>
+                  <th scope="row">4</th>
+                  <td>John Doe</td>
+                  <td>190</td>
+                </tr>
+                <tr>
+                  <th scope="row">5</th>
+                  <td>Emma Brown</td>
+                  <td>180</td>
+                </tr>
+                <tr>
+                  <th scope="row">6</th>
+                  <td>Lucas Johnson</td>
+                  <td>170</td>
+                </tr>
+                <tr>
+                  <th scope="row">7</th>
+                  <td>Sophia Martinez</td>
+                  <td>160</td>
+                </tr>
+                <tr>
+                  <th scope="row">8</th>
+                  <td>Michael Lee</td>
+                  <td>150</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
 
-            <section id="waterWidget" class="widget">
-                <h2>Water Intake</h2>
-                <div class="water-stats">
-                    <span class="intake-text"><i class="fa-solid fa-glass-water"></i><span id="currentIntake"> 500</span> <span style="color: #7030A1;">/</span> <span id="dailyGoal">2000</span> <span style="color: #7030A1;">ml</span></span>
-                </div>
-            </section>
-            
-            <section id="addMenuButton">
-                <button id="addButton" onclick ="addMenuLogic()">
-                    <i class="fas fa-plus"></i>
-                </button>
-                <div class="menu-container" id="formMenu">
-                    <form action="add_menu.php" id="addMenu">
-                        <div class="form-container"></div>
-                    </form>
-                </div>
-            </section>
+        <section id="waterWidget" class="widget">
+          <h2>Water Intake</h2>
+          <div class="water-stats">
+            <span class="intake-text"
+              ><i class="fa-solid fa-glass-water"></i
+              ><span id="currentIntake"> 500</span>
+              <span style="color: #7030a1">/</span>
+              <span id="dailyGoal">2000</span>
+              <span style="color: #7030a1">ml</span></span
+            >
+          </div>
+        </section>
 
-        </div>
+        <section id="addMenuButton">
+          <button id="addButton" onclick="addMenuLogic()">
+            <i class="fas fa-plus"></i>
+          </button>
+          <div class="menu-container" id="formMenu">
+            <form action="add_menu.php" id="addMenu">
+              <div class="form-container"></div>
+            </form>
+          </div>
+        </section>
+      </div>
     </main>
 
     <footer>
-        <p>&copy; 2025 Health Tracker App</p>
+      <p>&copy; 2025 Health Tracker App</p>
     </footer>
 
     <template id="menuForm">
-        <div class="menu-form">
-            <h1>Add new data!</h1>
-            <div class="button-grid">
-                <button class="log-button" id="foodButton" type="button"><i class="fa-solid fa-burger"></i> Log food</button>
-                <button class="log-button" id="exerciseButton" type="button"><i class="fa-solid fa-dumbbell"></i> Log exercise</button>
-                <button class="log-button" id="waterButton" type="button"><i class="fa-solid fa-glass-water-droplet"></i> Log water</button>
-                <button class="log-button" id="weightButton" type="button"><i class="fa-solid fa-weight-scale"></i> Log weight</button>
-            </div>
+      <div class="menu-form">
+        <h1>Add new data!</h1>
+        <div class="button-grid">
+          <button class="log-button" id="foodButton" type="button">
+            <i class="fa-solid fa-burger"></i> Log food
+          </button>
+          <button class="log-button" id="exerciseButton" type="button">
+            <i class="fa-solid fa-dumbbell"></i> Log exercise
+          </button>
+          <button class="log-button" id="waterButton" type="button">
+            <i class="fa-solid fa-glass-water-droplet"></i> Log water
+          </button>
+          <button class="log-button" id="weightButton" type="button">
+            <i class="fa-solid fa-weight-scale"></i> Log weight
+          </button>
         </div>
+      </div>
     </template>
 
     <template id="foodForm">
-        <div class="menu-form">
-            <h1>Log Food</h1>
-            <form>
-                <input type="text" placeholder="Food name" required>
-                <input type="number" placeholder="Calories" required>
-                <button type="submit">Submit</button>
-            </form>
-        </div>
+      <div class="menu-form">
+        <h1>Log Food</h1>
+        <form>
+          <input type="text" placeholder="Food name" required />
+          <input type="number" placeholder="Calories" required />
+          <button type="submit">Submit</button>
+        </form>
+      </div>
     </template>
-    
+
     <template id="exerciseForm">
-        <div class="menu-form">
-            <h1>Log Exercise</h1>
-            <form>
-                <input type="text" placeholder="Exercise name" required>
-                <input type="number" placeholder="Calories burned" required>
-                <button type="submit">Submit</button>
-            </form>
-        </div>
+      <div class="menu-form">
+        <h1>Log Exercise</h1>
+        <form>
+          <input type="text" placeholder="Exercise name" required />
+          <input type="number" placeholder="Calories burned" required />
+          <button type="submit">Submit</button>
+        </form>
+      </div>
     </template>
-    
+
     <template id="waterForm">
-        <div class="menu-form">
-            <h1>Log Water</h1>
-            <form>
-                <input type="number" placeholder="Amount (ml)" required>
-                <button type="submit">Submit</button>
-            </form>
-        </div>
+      <div class="menu-form">
+        <h1>Log Water</h1>
+        <form>
+          <input type="number" placeholder="Amount (ml)" required />
+          <button type="submit">Submit</button>
+        </form>
+      </div>
     </template>
-    
+
     <template id="weightForm">
-        <div class="menu-form">
-            <h1>Log Weight</h1>
-            <form>
-                <input type="number" placeholder="Weight (kg)" required>
-                <button type="submit">Submit</button>
-            </form>
-        </div>
+      <div class="menu-form">
+        <h1>Log Weight</h1>
+        <form>
+          <input type="number" placeholder="Weight (kg)" required />
+          <button type="submit">Submit</button>
+        </form>
+      </div>
     </template>
 
     <script src="/scripts/index.js" defer></script>
-</body>
+  </body>
 </html>
