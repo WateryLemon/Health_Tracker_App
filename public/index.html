@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/stylesheets/index.css">
     <script src="https://kit.fontawesome.com/2fe1601858.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script type="module">
+    <!-- <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
       import { getAuth } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 
@@ -25,7 +25,7 @@
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
       window.auth = auth;
-    </script>
+    </script> -->
   </head>
 
   <body>
@@ -244,7 +244,7 @@
 
     <template id="foodForm">
         <div class="menu-form-wrapper">
-            <h1>Log Food</h1>
+            <h1>Log Meal</h1>
             <form id="foodForm" class="log-form">
                 <div class="search-wrapper">
                     <form name="search">
@@ -256,7 +256,10 @@
                 <input type="number" class="number-input" id="calorie-input" placeholder="Enter calories" required>
                 <label for="serving" class="number-input-label">Number of servings:</label>
                 <input type="number" class="number-input" id="serving-input" placeholder="Enter servings" required>
-                <button class="nav-buttons" id="submitButton" type="submit"><i class="fa-solid fa-check"></i></button>
+                <div class="nav-wrapper">
+                    <button class="nav-buttons" id="backButton" type="button" onclick="loadMenuForm()"><i class="fa-solid fa-backward"></i></button>
+                    <button class="nav-buttons" id="submitButton" type="submit"><i class="fa-solid fa-check"></i></button>
+                </div>
             </form>
         </div>
     </template>
@@ -264,10 +267,37 @@
     <template id="exerciseForm">
         <div class="menu-form-wrapper">
             <h1>Log Exercise</h1>
-            <form class="log-form">
-                <input type="text" placeholder="Exercise name" required>
-                <input type="number" placeholder="Calories burned" required>
-                <button type="submit">Submit</button>
+            <label class="exercise-switch">
+                <input id="exerciseCheckbox" type="checkbox">
+                <span class="toggle-slider"></span>
+            </label>
+            <form id="exerciseFormCardio" class="log-form">
+                <div class="search-wrapper">
+                    <form name="search">
+                        <input type="text" class="search-bar" name="txt" onmouseout="this.value = ''; this.blur();">
+                    </form>
+                    <i class="fas fa-search"></i>
+                </div>
+                <label for="cburnt" class="number-input-label">Calories burnt cardio (kcal):</label>
+                <input type="number" class="number-input" id="burnt-input" placeholder="Enter calories" required>
+                <div class="nav-wrapper">
+                    <button class="nav-buttons" id="backButton" type="button" onclick="loadMenuForm()"><i class="fa-solid fa-backward"></i></button>
+                    <button class="nav-buttons" id="submitButton" type="submit"><i class="fa-solid fa-check"></i></button>
+                </div>
+            </form>
+            <form id="exerciseFormStrength" class="log-form">
+                <div class="search-wrapper">
+                    <form name="search">
+                        <input type="text" class="search-bar" name="txt" onmouseout="this.value = ''; this.blur();">
+                    </form>
+                    <i class="fas fa-search"></i>
+                </div>
+                <label for="cburnt" class="number-input-label">Calories burnt strength (kcal):</label>
+                <input type="number" class="number-input" id="burnt-input" placeholder="Enter calories" required>
+                <div class="nav-wrapper">
+                    <button class="nav-buttons" id="backButton" type="button" onclick="loadMenuForm()"><i class="fa-solid fa-backward"></i></button>
+                    <button class="nav-buttons" id="submitButton" type="submit"><i class="fa-solid fa-check"></i></button>
+                </div>
             </form>
         </div>
     </template>

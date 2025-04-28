@@ -212,42 +212,46 @@ function loadMenuForm() {
           const clone = formTemplate.content.cloneNode(true);
           formContainer.innerHTML = "";
           formContainer.appendChild(clone);
-
-          // Add a back button to return to the menu form
-          const backButton = document.createElement("button");
-          backButton.innerHTML = '<i class="fa-solid fa-backward"></i>';
-          backButton.classList.add("nav-buttons");
-          backButton.id = "backButton";
-          backButton.addEventListener("click", function () {
-              loadMenuForm();
-          });
-
-          // Append the back button as the last element in the log-form
-          const logForm = formContainer.querySelector(".log-form");
-          if (logForm) {
-              logForm.appendChild(backButton);
-          }
         }
       });
     });
   }
 }
 
+// Event listener for the exercise checkbox
+document.addEventListener("change", function (e) {
+  if (e.target.id === "exerciseCheckbox") {
+    const isChecked = e.target.checked;
+    document.getElementById("exerciseFormCardio").style.display = isChecked ? "none" : "flex";
+    document.getElementById("exerciseFormStrength").style.display = isChecked ? "flex" : "none";
+  }
+});
+
+// document.addEventListener("DOMContentLoaded", () => {
+//   // Check authentication state first
+//   const auth = window.auth;
+//   auth.onAuthStateChanged((user) => {
+//     if (user) {
+//       // User is signed in, initialize the dashboard
+//       const menu = document.getElementById("formMenu");
+//       menu.style.display = "none";
+//       updateGreeting();
+//       goalLogic();
+//       calendearLogic();
+//       weightGraphLogic();
+//     } else {
+//       // No user is signed in, redirect to login
+//       window.location.href = "/sign-in.html";
+//     }
+//   });
+// });
+
 document.addEventListener("DOMContentLoaded", () => {
-  // Check authentication state first
-  const auth = window.auth;
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      // User is signed in, initialize the dashboard
-      const menu = document.getElementById("formMenu");
-      menu.style.display = "none";
-      updateGreeting();
-      goalLogic();
-      calendearLogic();
-      weightGraphLogic();
-    } else {
-      // No user is signed in, redirect to login
-      window.location.href = "/sign-in.html";
-    }
-  });
+  const menu = document.getElementById("formMenu");
+  menu.style.display = "none";
+  
+  updateGreeting();
+  goalLogic();
+  calendearLogic();
+  weightGraphLogic();
 });
