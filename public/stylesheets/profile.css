@@ -1,73 +1,73 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Lucida Console", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Lucida Console", sans-serif;
 }
 
 header {
-    width: 100%;
-    padding: 1rem;
-    text-align: center;
-    background-color: #333;
-    color: white;
+  width: 100%;
+  padding: 1rem;
+  text-align: center;
+  background-color: #333;
+  color: white;
 }
 
 header .header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 750px;
-    width: 100%;
-    margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 750px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
 }
 
 .profile-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 10px;
-    background-color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  background-color: white;
 }
 
 #streak,
 #profile,
 #progress {
-    font-size: 21px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  font-size: 21px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 #profileBody {
-    margin: 0 auto;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    width: 750px;
-    background-color: rgba(243, 207, 238, 1);
-    font-size: 25px;
-    padding: 20px;
-    border-radius: 10px;
+  margin: 0 auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 750px;
+  background-color: rgba(243, 207, 238, 1);
+  font-size: 25px;
+  padding: 20px;
+  border-radius: 10px;
 }
 
 .profileInfo {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    /* border: 1px solid red; */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  /* border: 1px solid red; */
 }
 
 .profileInfo:last-child {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 #username,
@@ -76,37 +76,97 @@ header .header-content {
 #dob,
 #location,
 #email {
-    padding: 8px;
-    border: none;
-    width: 400px;
-    font-size: 20px;
-    border-radius: 8px;
+  padding: 8px;
+  border: none;
+  width: 400px;
+  font-size: 20px;
+  border-radius: 8px;
 }
 
 #radioContainer {
-    display: flex;
-    justify-content: space-between;
-    width: 400px;
+  display: flex;
+  justify-content: space-between;
+  width: 400px;
 }
 
 #saveButton {
-    width: 100%;
-    padding: 1rem;
-    font-size: 1.5rem;
-    background-color: #7030A1;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.5rem;
+  background-color: #7030a1;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+#message {
+  padding: 10px;
+  border-radius: 5px;
+  margin: 10px 0;
+  font-size: 16px;
+  transition: opacity 0.3s ease;
+}
+
+input:invalid {
+  border: 2px solid #ff0000;
+}
+
+input:focus {
+  outline: none;
+  border-color: #7030a1;
+}
+
+.profileInfo input[type="text"],
+.profileInfo input[type="email"],
+.profileInfo input[type="date"] {
+  transition: border-color 0.3s ease;
+}
+
+.radioBtns label {
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.radioBtns input[type="radio"] {
+  cursor: pointer;
+}
+
+#saveButton:hover {
+  background-color: #4a1b6e;
+  transition: background-color 0.3s ease;
+}
+
+.profile-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.sign-out-btn {
+  font-family: "Lucida Console", sans-serif;
+  padding: 8px 16px;
+  background-color: #ff2431;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.sign-out-btn:hover {
+  background-color: #d41e29;
 }
 
 footer {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    padding: 1rem;
-    text-align: center;
-    background-color: #333;
-    color: white;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 1rem;
+  text-align: center;
+  background-color: #333;
+  color: white;
 }

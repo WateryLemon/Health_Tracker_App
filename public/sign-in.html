@@ -1,49 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="/stylesheets/sign-in.css">
-  <title>Sign In</title>
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/stylesheets/sign-in.css" />
+    <title>Sign In</title>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+      import {
+        getAuth,
+        signInWithEmailAndPassword,
+      } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 
-<header>
-  <div class="header-content">
+      const firebaseConfig = {
+        apiKey: "AIzaSyCQiV6-wvqLWa9NHatHsu9AE3zcb4FqmOI",
+        authDomain: "health-tracker-fa572.firebaseapp.com",
+        projectId: "health-tracker-fa572",
+        storageBucket: "health-tracker-fa572.firebasestorage.app",
+        messagingSenderId: "277390438554",
+        appId: "1:277390438554:web:8ce3ec3a1ef13b20aaef23",
+        measurementId: "G-SRHMFGLNN2",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      window.auth = auth; // Make auth available globally
+      window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+    </script>
+  </head>
+
+  <header>
+    <div class="header-content">
       <h1 id="greeting">Welcome!</h1>
-  </div>
-</header>
-
-<body>
-  <div class="login-container">
-
-    <h2>Sign In</h2>
-
-    <form action="/signin" method="POST">
-
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required />
-      </div>
-
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required />
-      </div>
-
-      <button class="submit-btn" type="submit">Sign In</button>
-
-    </form>
-    <div class="signup-link">
-
-      <p>Don't have an account? <a href="signUp.html">Sign up</a></p>
-
     </div>
-  </div>
-</body>
+  </header>
 
-<footer>
-  <p>&copy; 2025 Health Tracker App</p>
-</footer>
+  <body>
+    <div class="login-container">
+      <h2>Sign In</h2>
 
+      <form id="signinForm" onsubmit="handleSignIn(event)">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required />
+        </div>
 
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required />
+        </div>
+
+        <button class="submit-btn" type="submit">Sign In</button>
+      </form>
+      <div class="signup-link">
+        <p>Don't have an account? <a href="signUp.html">Sign up</a></p>
+      </div>
+    </div>
+
+    <script>
+      async function handleSignIn(event) {
+        event.preventDefault();
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        try {
+          // First authenticate with Firebase directly
+          const userCredential = await signInWithEmailAndPassword(
+            window.auth,
+            email,
+            password
+          );
+          const user = userCredential.user;
+
+          // Then call the backend to complete the sign-in process
+          const response = await fetch("/signin", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+          });
+
+          const data = await response.json();
+          if (data.success) {
+            window.location.href = "/index.html";
+          } else {
+            alert(data.message);
+          }
+        } catch (error) {
+          console.error("Error signing in:", error);
+          alert("Error signing in: " + error.message);
+        }
+      }
+    </script>
+  </body>
+
+  <footer>
+    <p>&copy; 2025 Health Tracker App</p>
+  </footer>
 </html>
