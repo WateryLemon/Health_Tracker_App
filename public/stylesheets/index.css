@@ -8,6 +8,10 @@
   font-family: "Lucida Console", sans-serif;
 }
 
+body {
+  background-color: rgba(243, 207, 238, 1);
+}
+
 header,
 footer {
   width: 100%;
@@ -92,7 +96,7 @@ main {
 
 .widget {
   border-radius: 10px;
-  background-color: rgba(243, 207, 238, 1);
+  background-color: white;
   padding: 20px;
 }
 
@@ -117,7 +121,7 @@ li.day {
   width: 120px;
   height: 150px;
   background-color: #fff;
-  border: 1px solid #7030a1;
+  border: 3px solid #7030a1;
   border-radius: 10px;
   position: relative;
   padding: 1rem;
@@ -188,7 +192,7 @@ li.day .weekday {
 }
 
 #circularProgress circle.bg-circle {
-  stroke: #ffffff;
+  stroke: #dddddd;
 }
 
 #circularProgress circle.calorie-circle {
@@ -226,7 +230,7 @@ li.day .weekday {
   padding: 10px;
   margin-top: 20px;
   background-color: #ffffff;
-  border: #7030a1 solid 2px;
+  border: 3px solid #7030a1;
   border-radius: 10px;
 }
 
@@ -243,7 +247,7 @@ li.day .weekday {
   color: black;
   padding: 10px 20px;
   font-size: 16px;
-  border: 2px solid #7030a1;
+  border: 3px solid #7030a1;
   border-radius: 10px;
   cursor: pointer;
   text-align: center;
@@ -313,11 +317,11 @@ li.day .weekday {
 }
 
 .current-weight {
-  background-color: #935dbd !important;
+  background-color: #7030a1 !important;
 }
 
 .change-weight {
-  background-color: #b07cd8 !important;
+  background-color: #7030a1 !important;
 }
 
 .weight-graph p {
@@ -424,7 +428,7 @@ tbody > tr:nth-of-type(even) {
   align-items: center;
   justify-content: center;
   background-color: #ffffff;
-  border: #7030a1 solid 2px;
+  border: 3px solid #7030a1;
   border-radius: 10px;
   padding: 20px;
   margin: 20px;

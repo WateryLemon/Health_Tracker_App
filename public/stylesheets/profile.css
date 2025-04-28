@@ -5,6 +5,10 @@
   font-family: "Lucida Console", sans-serif;
 }
 
+body {
+  background-color: rgba(243, 207, 238, 1);
+}
+
 header {
   width: 100%;
   padding: 1rem;
@@ -38,11 +42,12 @@ header .header-content {
   font-weight: bold;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s ease;
 }
 
 .home-button:hover {
   background-color: #4a1b6e;
+  transition: background-color 0.3s ease;
 }
 
 .profile-icon {
@@ -68,7 +73,7 @@ header .header-content {
   margin-top: 20px;
   margin-bottom: 20px;
   width: 750px;
-  background-color: rgba(243, 207, 238, 1);
+  background-color: white;
   font-size: 25px;
   padding: 20px;
   border-radius: 10px;
@@ -79,11 +84,15 @@ header .header-content {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
-  /* border: 1px solid red; */
 }
 
 .profileInfo:last-child {
   margin-bottom: 0;
+}
+
+input {
+  background-color: #dddddd;
+  border: none;
 }
 
 #username,
@@ -93,7 +102,6 @@ header .header-content {
 #location,
 #email {
   padding: 8px;
-  border: none;
   width: 400px;
   font-size: 20px;
   border-radius: 8px;
@@ -114,6 +122,7 @@ header .header-content {
   border: none;
   border-radius: 10px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 #message {
@@ -161,7 +170,6 @@ input:focus {
 }
 
 .sign-out-btn {
-  font-family: "Lucida Console", sans-serif;
   padding: 8px 16px;
   background-color: #ff2431;
   color: white;
@@ -173,7 +181,8 @@ input:focus {
 }
 
 .sign-out-btn:hover {
-  background-color: #d41e29;
+  background-color: #a31720;
+  transition: background-color 0.3s ease;
 }
 
 footer {
