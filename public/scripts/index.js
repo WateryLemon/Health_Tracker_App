@@ -202,12 +202,18 @@ function loadMenuForm() {
 
                     // Add a back button to return to the menu form
                     const backButton = document.createElement("button");
-                    backButton.textContent = "Back";
-                    backButton.style.marginTop = "10px";
+                    backButton.innerHTML = '<i class="fa-solid fa-backward"></i>';
+                    backButton.classList.add("nav-buttons");
+                    backButton.id = "backButton";
                     backButton.addEventListener("click", function () {
                         loadMenuForm();
                     });
-                    formContainer.appendChild(backButton);
+
+                    // Append the back button as the last element in the log-form
+                    const logForm = formContainer.querySelector(".log-form");
+                    if (logForm) {
+                        logForm.appendChild(backButton);
+                    }
                 }
             });
         });

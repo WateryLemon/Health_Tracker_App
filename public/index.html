@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Health Tracker Dashboard</title>
     <link rel="icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/512/4434/4434478.png">
-    <link rel="stylesheet" href="/stylesheets/global.css">
     <link rel="stylesheet" href="/stylesheets/index.css">
     <script src="https://kit.fontawesome.com/2fe1601858.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -162,8 +161,8 @@
     </footer>
 
     <template id="menuForm">
-        <div class="menu-form">
-            <h1>Add new data!</h1>
+        <div class="menu-form-wrapper">
+            <h1>Log Your Progress!</h1>
             <div class="button-grid">
                 <button class="log-button" id="foodButton" type="button"><i class="fa-solid fa-burger"></i> Log food</button>
                 <button class="log-button" id="exerciseButton" type="button"><i class="fa-solid fa-dumbbell"></i> Log exercise</button>
@@ -174,20 +173,28 @@
     </template>
 
     <template id="foodForm">
-        <div class="menu-form">
+        <div class="menu-form-wrapper">
             <h1>Log Food</h1>
-            <form>
-                <input type="text" placeholder="Food name" required>
-                <input type="number" placeholder="Calories" required>
-                <button type="submit">Submit</button>
+            <form id="foodForm" class="log-form">
+                <div class="search-wrapper">
+                    <form name="search">
+                        <input type="text" class="search-bar" name="txt" onmouseout="this.value = ''; this.blur();">
+                    </form>
+                    <i class="fas fa-search"></i>
+                </div>
+                <label for="calorie" class="number-input-label">Calorie per serving (kcal):</label>
+                <input type="number" class="number-input" id="calorie-input" placeholder="Enter calories" required>
+                <label for="serving" class="number-input-label">Number of servings:</label>
+                <input type="number" class="number-input" id="serving-input" placeholder="Enter servings" required>
+                <button class="nav-buttons" id="submitButton" type="submit"><i class="fa-solid fa-check"></i></button>
             </form>
         </div>
     </template>
     
     <template id="exerciseForm">
-        <div class="menu-form">
+        <div class="menu-form-wrapper">
             <h1>Log Exercise</h1>
-            <form>
+            <form class="log-form">
                 <input type="text" placeholder="Exercise name" required>
                 <input type="number" placeholder="Calories burned" required>
                 <button type="submit">Submit</button>
@@ -196,9 +203,9 @@
     </template>
     
     <template id="waterForm">
-        <div class="menu-form">
+        <div class="menu-form-wrapper">
             <h1>Log Water</h1>
-            <form>
+            <form class="log-form">
                 <input type="number" placeholder="Amount (ml)" required>
                 <button type="submit">Submit</button>
             </form>
@@ -206,11 +213,11 @@
     </template>
     
     <template id="weightForm">
-        <div class="menu-form">
+        <div class="menu-form-wrapper">
             <h1>Log Weight</h1>
-            <form>
+            <form class="log-form">
                 <input type="number" placeholder="Weight (kg)" required>
-                <button type="submit">Submit</button>
+                <button class="circular-button"  type="submit">Submit</button>
             </form>
         </div>
     </template>

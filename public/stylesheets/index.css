@@ -223,7 +223,7 @@ li.day .weekday {
 
 .dropdown-wrapper {
     position: relative;
-    z-index: 5;
+    z-index: 0;
 }
 
 .dropdown-wrapper:hover .dropdown-content {
@@ -335,39 +335,50 @@ li.day .weekday {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: #ffffff;
-    border: #7030A1 solid 2px;
+    background-color: #7030A1;
     border-radius: 10px;
     margin-top: 20px;
     height: 171.5px;
-    overflow: scroll;
+    overflow: auto;
     padding-top: 119px
 }
 
 table {
+    background-color: #ffffff;
     border-collapse: collapse;
     width: 100%;
     height: 100%;
     font-family: sans-serif;
     font-size: 0.8rem;
     letter-spacing: 1px;
+    border: 1px solid #7030A1;
+    border-radius: 14px;
 }
 
 thead {
-    background-color: (243, 207, 238, 1);
+    background-color: #7030A1;
+    color: white;
+}
+
+
+th,td {
+    border: 1px solid #7030A1;
+    padding: 8px 10px;
 }
 
 th,td {
-    border: 1px solid #f1f1f1;
+    border: 1px solid #7030A1;
     padding: 8px 10px;
 }
+
+
 
 td:last-of-type {
     text-align: center;
   }
 
 tbody > tr:nth-of-type(even) {
-    background-color: #f1f1f1;
+    background-color: #b07cd87f;
   }
 
 /* ===========================
@@ -430,8 +441,13 @@ tbody > tr:nth-of-type(even) {
     z-index: 10;
 }
 
-.menu-form {
+.menu-form-wrapper {
     z-index: 9;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+    align-content: center;
 }
 
 .menu-container {
@@ -441,7 +457,7 @@ tbody > tr:nth-of-type(even) {
     align-items: center;
     position: absolute;
     bottom: 90%;
-    border: 3px solid #FF2431;
+    border: 3px solid #ff24335a;
     border-radius: 10px 10px 0 0;
     border-bottom: none;
     z-index: 9;
@@ -450,14 +466,14 @@ tbody > tr:nth-of-type(even) {
 form h1 {
     margin: 0;
     padding: 12px;
-    font-size: 1.5rem;
+    font-size: 2rem;
     text-align: center;
 }
 
 #addMenu {
     padding: 10px;
-    height: 325px;
-    background-color: white;
+    height: 430px;
+    background-color: #fffffff9;
     border-radius: 10px 10px 0 0;
 }
 
@@ -467,8 +483,15 @@ form h1 {
     place-items: center;
     gap: 10px;
     width: 100%;
-    height: 250px;
-    margin-top: -12px;
+    height: 310px;
+    margin-top: 10px;
+}
+
+.log-form {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
 }
 
 .log-button {
@@ -514,5 +537,136 @@ form h1 {
 }
 
 /* ===========================
-    Form Submissions
+    Form Styles
     =========================== */
+
+.search-wrapper{
+    margin-top: 10px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.search-bar {
+    padding: 2px;
+    width: 60px;
+    height: 60px;
+    background: none;
+    border: 4px solid rgba(243, 207, 238, 1);
+    border-radius: 50px;
+    box-sizing: border-box;
+    font-family: Comic Sans MS;
+    font-size: 26px;
+    outline: none;
+    transition: .5s;
+}
+.search-wrapper:hover input{
+    width: 350px;
+    background: rgba(243, 207, 238, 1);
+    border-radius: 10px;
+}
+
+.search-bar:hover {
+    border: #7030A1 solid 2.5px;}
+
+.search-wrapper i {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 26px;
+    color: rgba(243, 207, 238, 1);
+    transition: .2s;
+}
+
+.search-wrapper:hover i {
+    display: none;
+}
+
+.search-wrapper i{
+    opacity: 1;
+    z-index: 1;
+}
+
+.number-input-label {
+    margin-top: 20px;
+    margin-bottom: 10px; 
+    font-size: 0.875rem;
+    font-weight: 500; 
+    color: #000000;
+    display: block;
+    text-align: left;
+    width: 235px; /* Match the width of the input */
+}
+
+.number-input {
+    background-color: #f9fafb;
+    border: 2px solid #7030A1;
+    color: #111827; 
+    font-size: 0.875rem;
+    border-radius: 0.5rem;
+    display: block;
+    width: 235px;
+    padding: 0.625rem;
+}
+
+.number-input:hover {
+    background-color: rgba(243, 207, 238, 1)
+}
+
+/* Food Form */
+#foodForm {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-buttons {
+    padding: 10px 20px; /* Add padding for better appearance */
+    font-size: 10px;
+    display: flex;
+    height: 25px;
+    width: 35px;
+    align-items: center;
+    justify-content: center;
+    background-color: #eeeeee4b;
+    border-radius: 7px;
+    letter-spacing: 1px;
+    transition: all 0.2s linear;
+    cursor: pointer;
+    border: none;
+    background: #fff;
+    color: white;
+}
+
+.nav-buttons > i {
+    font-size: 1.5em;
+    transition: all 0.4s ease-in;
+}
+
+.nav-buttons > svg {
+    margin-right: 5px;
+    margin-left: 5px;
+    font-size: 20px;
+    transition: all 0.4s ease-in;
+}
+   
+.nav-buttons:hover > svg {
+    font-size: 1.2em;
+    transform: translateX(-5px);
+}
+
+.nav-buttons:hover {
+    box-shadow: 9px 9px 33px #d1d1d1, -9px -9px 33px #ffffff;
+    transform: translateY(-2px);
+}
+
+#submitButton {
+    background: rgb(55, 157, 55);
+}
+
+#backButton {
+    background: rgb(72, 59, 215);
+}
