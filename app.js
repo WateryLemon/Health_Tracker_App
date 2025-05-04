@@ -35,6 +35,8 @@ app.post("/submit", async (req, res) => {
   const {
     username,
     email,
+    forename,
+    surname,
     current_height,
     current_weight,
     sex,
@@ -51,6 +53,8 @@ app.post("/submit", async (req, res) => {
     await setDoc(doc(db, "users", uid), {
       username,
       email,
+      forename,
+      surname,
       current_height,
       current_weight,
       sex,
