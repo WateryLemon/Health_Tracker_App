@@ -12,6 +12,7 @@ function updateGreeting() {
   } else {
     greetingElement.textContent = "Good Evening!";
   }
+  
 }
 
 function goalLogic() {
