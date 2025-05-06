@@ -39,6 +39,8 @@ async function loadUserData() {
 
       // Populate form fields
       document.getElementById("username").value = data.username || "";
+      document.getElementById("forename").value = data.forename || "";
+      document.getElementById("surname").value = data.surname || "";
       document.getElementById("height").value = data.current_height || "";
       document.getElementById("sex").value = data.sex || "";
       document.getElementById("dob").value = data.date_of_birth || "";
@@ -60,6 +62,8 @@ document.getElementById("saveButton").addEventListener("click", async () => {
   try {
     const userData = {
       username: document.getElementById("username").value,
+      forename: document.getElementById("forename").value,
+      surname: document.getElementById("surname").value,
       current_height: document.getElementById("height").value,
       sex: document.getElementById("sex").value,
       date_of_birth: document.getElementById("dob").value,
