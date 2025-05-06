@@ -1,19 +1,39 @@
 // import Chart from 'chart.js/auto';
 
+// Firebase config (copy it from your HTML)
+const firebaseConfig = {
+  apiKey: "AIzaSyCQiV6-wvqLWa9NHatHsu9AE3zcb4FqmOI",
+  authDomain: "health-tracker-fa572.firebaseapp.com",
+  projectId: "health-tracker-fa572",
+  storageBucket: "health-tracker-fa572.firebasestorage.app",
+  messagingSenderId: "277390438554",
+  appId: "1:277390438554:web:8ce3ec3a1ef13b20aaef23",
+  measurementId: "G-SRHMFGLNN2",
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Make auth and db globally accessible
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+window.auth = auth;
+window.db = db;
 
 
-async function loadUserData() {
+async function loadUserData(user) {
   try {
-    const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-    if (userDoc.exists()) {
-      const data = userDoc.data();
+    const userDoc = await db.collection("users").doc(user.uid).get();
 
+    if (userDoc.exists) {
+      const data = userDoc.data();
       const name = data?.forename || data?.username || "there";
       updateGreeting(name);
     }
   } catch (error) {
     console.error("Error loading user data:", error);
-    showMessage("Error loading profile data", true);
+    alert("Error loading profile data");
   }
 }
 
@@ -265,7 +285,7 @@ document.addEventListener("change", function (e) {
    });
  });*/
 
-document.addEventListener("DOMContentLoaded", () => {
+/*document.addEventListener("DOMContentLoaded", () => {
   const menu = document.getElementById("formMenu");
   menu.style.display = "none";
   
@@ -273,4 +293,20 @@ document.addEventListener("DOMContentLoaded", () => {
   goalLogic();
   calendearLogic();
   weightGraphLogic();
+});*/
+
+document.addEventListener("DOMContentLoaded", () => {
+  const menu = document.getElementById("formMenu");
+  menu.style.display = "none";
+
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      loadUserData(user);  // 🔁 pass the user object to loadUserData()
+      goalLogic();
+      calendearLogic();
+      weightGraphLogic();
+    } else {
+      window.location.href = "/sign-in.html"; // not signed in
+    }
+  });
 });

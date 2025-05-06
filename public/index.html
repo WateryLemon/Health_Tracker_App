@@ -8,23 +8,9 @@
     <link rel="stylesheet" href="/stylesheets/index.css">
     <script src="https://kit.fontawesome.com/2fe1601858.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-      import { getAuth } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
-
-      const firebaseConfig = {
-        apiKey: "AIzaSyCQiV6-wvqLWa9NHatHsu9AE3zcb4FqmOI",
-        authDomain: "health-tracker-fa572.firebaseapp.com",
-        projectId: "health-tracker-fa572",
-        storageBucket: "health-tracker-fa572.firebasestorage.app",
-        messagingSenderId: "277390438554",
-        appId: "1:277390438554:web:8ce3ec3a1ef13b20aaef23",
-        measurementId: "G-SRHMFGLNN2",
-      };
-
-      const app = initializeApp(firebaseConfig);
-      const auth = getAuth(app);
-      window.auth = auth;
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     </script>
   </head>
 
