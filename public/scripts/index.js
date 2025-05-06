@@ -1,18 +1,36 @@
 // import Chart from 'chart.js/auto';
 
-function updateGreeting() {
+
+
+async function loadUserData() {
+  try {
+    const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+    if (userDoc.exists()) {
+      const data = userDoc.data();
+
+      const name = data?.forename || data?.username || "there";
+      updateGreeting(name);
+    }
+  } catch (error) {
+    console.error("Error loading user data:", error);
+    showMessage("Error loading profile data", true);
+  }
+}
+
+function updateGreeting(name = "there") {
   const greetingElement = document.getElementById("greeting");
   const currentHour = new Date().getHours();
+  let greeting;
 
-  // Determine the appropriate greeting based on the current Time
   if (currentHour < 12) {
-    greetingElement.textContent = "Good Morning!";
+    greeting = "Good Morning";
   } else if (currentHour < 18) {
-    greetingElement.textContent = "Good Afternoon!";
+    greeting = "Good Afternoon";
   } else {
-    greetingElement.textContent = "Good Evening!";
+    greeting = "Good Evening";
   }
-  
+
+  greetingElement.textContent = `${greeting}, ${name}!`;
 }
 
 function goalLogic() {
@@ -228,30 +246,30 @@ document.addEventListener("change", function (e) {
   }
 });
 
-// document.addEventListener("DOMContentLoaded", () => {
-//   // Check authentication state first
-//   const auth = window.auth;
-//   auth.onAuthStateChanged((user) => {
-//     if (user) {
-//       // User is signed in, initialize the dashboard
-//       const menu = document.getElementById("formMenu");
-//       menu.style.display = "none";
-//       updateGreeting();
-//       goalLogic();
-//       calendearLogic();
-//       weightGraphLogic();
-//     } else {
-//       // No user is signed in, redirect to login
-//       window.location.href = "/sign-in.html";
-//     }
-//   });
-// });
+ /*document.addEventListener("DOMContentLoaded", () => {
+   // Check authentication state first
+   const auth = window.auth;
+   auth.onAuthStateChanged((user) => {
+     if (user) {
+       // User is signed in, initialize the dashboard
+       const menu = document.getElementById("formMenu");
+       menu.style.display = "none";
+       updateGreeting();
+       goalLogic();
+       calendearLogic();
+       weightGraphLogic();
+     } else {
+       // No user is signed in, redirect to login
+       window.location.href = "/sign-in.html";
+     }
+   });
+ });*/
 
 document.addEventListener("DOMContentLoaded", () => {
   const menu = document.getElementById("formMenu");
   menu.style.display = "none";
   
-  updateGreeting();
+  loadUserData();
   goalLogic();
   calendearLogic();
   weightGraphLogic();
