@@ -108,6 +108,24 @@
         </div>
       </div>
 
+      <div class="profileInfo">
+        Current Weight <input type="number" step="0.01" id="currentWeight" />
+      </div>
+
+      <div class="profileInfo">
+        Fitness Goal
+        <select id="fitness_goal">
+          <option value="">Select your goal</option>
+          <option value="lose_weight">Lose Weight</option>
+          <option value="maintain_weight">Maintain Weight</option>
+          <option value="build_muscle">Build Muscle</option>
+        </select>
+      </div>
+
+      <div class="profileInfo" id="target_weight_group">
+        Target Weight <input type="number" step="0.01" id="target_weight" />
+      </div>
+
       <br />
 
       <button id="saveButton">Save</button>

@@ -30,7 +30,7 @@ body {
   }
 
   .login-container {
-    font-family: "Lucida Console", sans-serif;
+    font-family: Arial, sans-serif;
     background: #fff;
     padding: 32px;
     border-radius: 10px;
@@ -60,7 +60,7 @@ body {
   }
 
   .submit-btn {
-    font-family: "Lucida Console", sans-serif;
+    font-family: Arial, sans-serif;
     width: 100%;
     padding: 12px;
     background-color: #7030A1;

@@ -3,12 +3,14 @@ import {
   doc,
   getDoc,
   updateDoc,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
 import { signOut } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 
 const db = getFirestore();
 let currentUser = null;
+let userWeight = null;
 
 // Load user data when the page loads
 document.addEventListener("DOMContentLoaded", async () => {
@@ -28,7 +30,27 @@ document.addEventListener("DOMContentLoaded", async () => {
   document
     .getElementById("signOutButton")
     ?.addEventListener("click", handleSignOut);
+
+  // Add goal selection change handler
+  document.getElementById("fitness_goal")
+    ?.addEventListener("change", handleGoalChange);
 });
+
+// Handle fitness goal selection change
+function handleGoalChange() {
+  const fitnessGoal = document.getElementById("fitness_goal").value;
+  const targetWeightGroup = document.getElementById("target_weight_group");
+  const targetWeightInput = document.getElementById("target_weight");
+  
+  if (fitnessGoal === "maintain_weight") {
+    targetWeightInput.value = userWeight;
+    targetWeightGroup.style.display = "none";
+  } else if (fitnessGoal === "lose_weight" || fitnessGoal === "build_muscle") {
+    targetWeightGroup.style.display = "flex";
+  } else {
+    targetWeightGroup.style.display = "none";
+  }
+}
 
 // Load user data from Firestore
 async function loadUserData() {
@@ -41,11 +63,27 @@ async function loadUserData() {
       document.getElementById("username").value = data.username || "";
       document.getElementById("forename").value = data.forename || "";
       document.getElementById("surname").value = data.surname || "";
-      document.getElementById("height").value = data.current_height || "";
+      document.getElementById("height").value = data.current_height || data.height || "";
       document.getElementById("sex").value = data.sex || "";
       document.getElementById("dob").value = data.date_of_birth || "";
       document.getElementById("location").value = data.location || "";
       document.getElementById("email").value = data.email || "";
+      
+      // Set weight value and store it for reference
+      userWeight = data.weight || "";
+      document.getElementById("currentWeight").value = userWeight;
+
+      // Set fitness goal and target weight
+      const fitnessGoal = data.fitness_goal || "";
+      document.getElementById("fitness_goal").value = fitnessGoal;
+      
+      // Handle target weight
+      const goalData = data.goal_data || {};
+      const targetWeight = goalData.target_weight || "";
+      document.getElementById("target_weight").value = targetWeight;
+      
+      // Show/hide target weight field based on goal
+      handleGoalChange();
 
       // Set units radio button
       const unitValue = data.units || "Metric";
@@ -60,15 +98,38 @@ async function loadUserData() {
 // Save profile changes
 document.getElementById("saveButton").addEventListener("click", async () => {
   try {
+    // Get fitness goal and target weight
+    const fitnessGoal = document.getElementById("fitness_goal").value;
+    let targetWeight = document.getElementById("target_weight").value;
+    const currentWeight = document.getElementById("currentWeight").value;
+    
+    // If maintaining weight, use current weight as target
+    if (fitnessGoal === "maintain_weight") {
+      targetWeight = currentWeight;
+    }
+
+    // Validate target weight if provided
+    if (targetWeight && parseFloat(targetWeight) <= 0) {
+      showMessage("Target weight must be greater than 0", true);
+      return;
+    }
+
     const userData = {
       username: document.getElementById("username").value,
       forename: document.getElementById("forename").value,
       surname: document.getElementById("surname").value,
-      current_height: document.getElementById("height").value,
+      height: document.getElementById("height").value,
       sex: document.getElementById("sex").value,
       date_of_birth: document.getElementById("dob").value,
       location: document.getElementById("location").value,
       email: document.getElementById("email").value,
+      weight: currentWeight,
+      fitness_goal: fitnessGoal,
+      goal_data: {
+        start_date: serverTimestamp(),
+        goal_type: fitnessGoal,
+        target_weight: targetWeight || null
+      },
       units:
         document.querySelector('input[name="units"]:checked')?.value ||
         "Metric",
@@ -95,10 +156,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const metricRadio = document.querySelector('input[value="Metric"]');
   const imperialRadio = document.querySelector('input[value="Imperial"]');
 
-  metricRadio.id = "metricUnits";
-  imperialRadio.id = "imperialUnits";
-  metricRadio.name = "units";
-  imperialRadio.name = "units";
+  if (metricRadio && imperialRadio) {
+    metricRadio.id = "metricUnits";
+    imperialRadio.id = "imperialUnits";
+    metricRadio.name = "units";
+    imperialRadio.name = "units";
+  }
 });
 
 // Add sign out functionality

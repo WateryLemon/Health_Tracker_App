@@ -1,0 +1,119 @@
+header {
+    width: 100%;
+    padding: 1rem;
+    position: fixed;
+    top: 0;
+    text-align: center;
+    background-color: #333;
+    color: white;
+}
+
+footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    text-align: center;
+    background-color: #333;
+    color: white;
+    width: 100%;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f3cfee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-container {
+    font-family: Arial, sans-serif;
+    background: #fff;
+    padding: 32px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    width: 500px;
+    text-align: center;
+}
+
+.login-container h2 {
+    margin-bottom: 32px;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 24px;
+    transition: all 0.3s ease;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 12px;
+    font-weight: bold;
+    color: #555;
+}
+
+#fitness_goal {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid #7030a1;
+    font-size: 16px;
+    appearance: none;
+    background: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%237030a1%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E") no-repeat right 12px top 50%;
+    background-size: 12px auto;
+    background-color: white;
+    cursor: pointer;
+}
+
+#fitness_goal:focus {
+    outline: none;
+    border-color: #4a1b6e;
+}
+
+#target_weight {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid #7030a1;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+#target_weight:focus {
+    outline: none;
+    border-color: #4a1b6e;
+}
+
+#target_weight_group {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+#target_weight_group.visible {
+    max-height: 100px;
+    opacity: 1;
+    margin-bottom: 24px;
+}
+
+.submit-btn {
+    font-family: Arial, sans-serif;
+    width: 100%;
+    padding: 14px;
+    background-color: #7030a1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: #4a1b6e;
+}

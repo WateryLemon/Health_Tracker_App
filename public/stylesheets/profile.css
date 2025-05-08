@@ -2,11 +2,12 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Lucida Console", sans-serif;
+  font-family: Arial, sans-serif;
 }
 
 body {
   background-color: rgba(243, 207, 238, 1);
+  padding-bottom: 70px; /* Add padding to prevent footer overlap */
 }
 
 header {
@@ -71,7 +72,7 @@ header .header-content {
 #profileBody {
   margin: 0 auto;
   margin-top: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 80px; /* Increase bottom margin to ensure no overlap with footer */
   width: 750px;
   background-color: white;
   font-size: 25px;
@@ -102,11 +103,30 @@ input {
 #sex,
 #dob,
 #location,
-#email {
+#email,
+#currentWeight,
+#target_weight {
   padding: 8px;
   width: 400px;
   font-size: 20px;
   border-radius: 8px;
+}
+
+#fitness_goal {
+  padding: 8px;
+  width: 400px;
+  font-size: 20px;
+  border-radius: 8px;
+  background-color: #dddddd;
+  border: none;
+  cursor: pointer;
+}
+
+#fitness_goal:focus,
+#currentWeight:focus,
+#target_weight:focus {
+  outline: none;
+  border-color: #7030a1;
 }
 
 #radioContainer {
@@ -196,4 +216,5 @@ footer {
   text-align: center;
   background-color: #333;
   color: white;
+  height: 60px; /* Set a fixed height for the footer */
 }

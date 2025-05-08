@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/stylesheets/goals.css" />
+    <title>Set Your Goals</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="https://cdn-icons-png.flaticon.com/512/4434/4434478.png"
+    />
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+      import { getAuth } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        updateDoc,
+        serverTimestamp,
+      } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCQiV6-wvqLWa9NHatHsu9AE3zcb4FqmOI",
+        authDomain: "health-tracker-fa572.firebaseapp.com",
+        projectId: "health-tracker-fa572",
+        storageBucket: "health-tracker-fa572.firebasestorage.app",
+        messagingSenderId: "277390438554",
+        appId: "1:277390438554:web:8ce3ec3a1ef13b20aaef23",
+        measurementId: "G-SRHMFGLNN2",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      window.auth = auth;
+      window.db = db;
+      window.serverTimestamp = serverTimestamp;
+    </script>
+  </head>
+
+  <header>
+    <div class="header-content">
+      <h1>Set Your Goals</h1>
+    </div>
+  </header>
+
+  <body>
+    <div class="login-container">
+      <h2>What are your fitness goals?</h2>
+      <form id="goalsForm">
+        <div class="form-group">
+          <label for="fitness_goal">Select your primary goal</label>
+          <select id="fitness_goal" name="fitness_goal" required>
+            <option value="">Select your goal</option>
+            <option value="lose_weight">Lose Weight</option>
+            <option value="maintain_weight">Maintain Weight</option>
+            <option value="build_muscle">Build Muscle</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="target_weight_group" style="display: none">
+          <label for="target_weight">Target Weight (kg)</label>
+          <input
+            type="number"
+            step="1.00"
+            min="0.01"
+            id="target_weight"
+            name="target_weight"
+          />
+        </div>
+
+        <button class="submit-btn" type="submit">Set Goals</button>
+      </form>
+    </div>
+
+    <footer>
+      <p>&copy; 2025 Health Tracker App</p>
+    </footer>
+    <script src="/scripts/goals.js" type="module"></script>
+  </body>
+</html>

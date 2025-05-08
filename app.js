@@ -41,11 +41,10 @@ app.post("/submit", async (req, res) => {
     current_weight,
     sex,
     date_of_birth,
+    uid
   } = req.body;
 
   try {
-    // Create the user document in Firestore using the uid from the request
-    const uid = req.body.uid;
     if (!uid) {
       throw new Error("No user ID provided");
     }
@@ -56,10 +55,11 @@ app.post("/submit", async (req, res) => {
       forename,
       surname,
       current_height,
-      current_weight,
+      weight: current_weight, // Store weight once
       sex,
       date_of_birth,
       created_at: serverTimestamp(),
+      units: "Metric"
     });
 
     res.json({ success: true, message: "User successfully created" });

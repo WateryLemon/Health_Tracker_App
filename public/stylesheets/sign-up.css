@@ -30,7 +30,7 @@ body {
 }
 
 .login-container {
-  font-family: "Lucida Console", sans-serif;
+  font-family: Arial, sans-serif;
   background: #fff;
   padding: 32px;
   border-radius: 10px;
@@ -60,7 +60,7 @@ body {
 }
 
 .submit-btn {
-  font-family: "Lucida Console", sans-serif;
+  font-family: Arial, sans-serif;
   width: 100%;
   padding: 12px;
   background-color: #7030a1;
@@ -87,4 +87,26 @@ body {
 
 .signup-link a:hover {
   text-decoration: underline;
+}
+
+#fitness_goal, #target_weight {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: inherit;
+}
+
+#fitness_goal:focus, #target_weight:focus {
+  outline: none;
+  border-color: #7030a1;
+}
+
+#target_weight_group {
+  transition: all 0.3s ease;
+  opacity: 1;
+}
+
+#target_weight_group[style*="display: none"] {
+  opacity: 0;
 }
