@@ -29,6 +29,28 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
+const { collection, query, where, getDocs } = require("firebase/firestore");
+
+// Route to check if a username is already in use
+app.get("/check-username", async (req, res) => {
+  const username = req.query.username;
+
+  try {
+    // Query Firestore to check if the username exists
+    const usersRef = collection(db, "users"); // Correctly reference the "users" collection
+    const q = query(usersRef, where("username", "==", username)); // Create a query
+    const querySnapshot = await getDocs(q); // Execute the query
+
+    if (!querySnapshot.empty) {
+      res.json({ available: false }); // Username is already in use
+    } else {
+      res.json({ available: true }); // Username is available
+    }
+  } catch (error) {
+    console.error("Error checking username:", error);
+    res.status(500).json({ available: false, message: "Internal server error" });
+  }
+});
 
 // POST route to handle sign up
 app.post("/submit", async (req, res) => {

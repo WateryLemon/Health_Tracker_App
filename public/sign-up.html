@@ -131,10 +131,20 @@
 
                 const email = document.getElementById("email").value;
                 const password = document.getElementById("password").value;
+                const username = document.getElementById("username").value;
                 const formData = new FormData(event.target);
                 const userData = Object.fromEntries(formData);
 
                 try {
+                    // Check if the username is already in use
+                    const usernameCheckResponse = await fetch(`/check-username?username=${encodeURIComponent(username)}`);
+                    const usernameCheckData = await usernameCheckResponse.json();
+
+                    if (!usernameCheckData.available) {
+                        alert("This username is already in use. Please choose a different one.");
+                        return;
+                    }
+
                     // First create the user in Firebase Auth
                     const userCredential = await createUserWithEmailAndPassword(
                         window.auth,
