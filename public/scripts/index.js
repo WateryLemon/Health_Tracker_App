@@ -31,13 +31,7 @@ async function loadUserData(user) {
       const name = data?.forename || data?.username || "there";
       const startWeight = data?.weight;
       const currentWeight = data?.current_weight;
-      const weightChange = (startWeight - currentWeight)
-      const formattedChange = weightChange > 0 
-        ? `-${Math.abs(weightChange)}`  // weight went down
-        : `+${Math.abs(weightChange)}`; // weight went up or stayed the same
-      document.getElementById("currentWeight").innerText = currentWeight;
-      document.getElementById("startingWeight").innerText = startWeight;
-      document.getElementById("weightChange").innerText = formattedChange;
+      displayWeight(startWeight, currentWeight)
       updateGreeting(name);
     }
   } catch (error) {
@@ -45,6 +39,24 @@ async function loadUserData(user) {
     alert("Error loading profile data");
   }
 }
+
+function displayWeight(startWeight, currentWeight){
+
+    if (typeof startWeight === "null" || typeof currentWeight === "null"){
+      formattedChange = "unknown";
+    }
+    else{
+        const weightChange = (startWeight - currentWeight)
+        formattedChange = weightChange > 0
+        ? `-${Math.abs(weightChange)}`  // weight went down
+        : `+${Math.abs(weightChange)}`; // weight went up or stayed the same
+    }
+
+      document.getElementById("currentWeight").innerText = currentWeight;
+      document.getElementById("startingWeight").innerText = startWeight;
+      document.getElementById("weightChange").innerText = formattedChange;
+}
+
 
 function updateGreeting(name = "there") {
   const greetingElement = document.getElementById("greeting");
