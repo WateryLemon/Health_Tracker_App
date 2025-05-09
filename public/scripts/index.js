@@ -29,6 +29,15 @@ async function loadUserData(user) {
     if (userDoc.exists) {
       const data = userDoc.data();
       const name = data?.forename || data?.username || "there";
+      const startWeight = data?.weight;
+      const currentWeight = data?.current_weight;
+      const weightChange = (startWeight - currentWeight)
+      const formattedChange = weightChange > 0 
+        ? `-${Math.abs(weightChange)}`  // weight went down
+        : `+${Math.abs(weightChange)}`; // weight went up or stayed the same
+      document.getElementById("currentWeight").innerText = currentWeight;
+      document.getElementById("startingWeight").innerText = startWeight;
+      document.getElementById("weightChange").innerText = formattedChange;
       updateGreeting(name);
     }
   } catch (error) {
@@ -142,9 +151,11 @@ function calendearLogic() {
     weekdays[currentDate.getDay()];
 }
 
+
 function weightGraphLogic() {
   const ctx = document.getElementById("weightChart").getContext("2d");
-
+  
+  
   // Replace with dynamic data
   const labels = ["27th", "28th", "29th", "30th", "1st", "2nd", "3rd"];
   const weightData = [70, 69.5, 69.5, 69.1, 68.8, 68.9, 68.8];
