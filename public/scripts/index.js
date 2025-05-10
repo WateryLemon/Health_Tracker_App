@@ -29,8 +29,8 @@ async function loadUserData(user) {
     if (userDoc.exists) {
       const data = userDoc.data();
       const name = data?.forename || data?.username || "there";
-      const startWeight = data?.weight;
-      const currentWeight = data?.current_weight;
+      const currentWeight = data?.weight;
+      const startWeight = data?.current_weight;
       displayWeight(startWeight, currentWeight)
       updateGreeting(name);
     }
@@ -43,7 +43,7 @@ async function loadUserData(user) {
 function displayWeight(startWeight, currentWeight){
 
     if (typeof startWeight === "null" || typeof currentWeight === "null"){
-      formattedChange = "unknown";
+      formattedChange = "N/A";
     }
     else{
         const weightChange = (startWeight - currentWeight)
@@ -52,6 +52,9 @@ function displayWeight(startWeight, currentWeight){
         : `+${Math.abs(weightChange)}`; // weight went up or stayed the same
     }
 
+  if (formattedChange == 0) {
+  formattedChange = "0";
+}
       document.getElementById("currentWeight").innerText = currentWeight;
       document.getElementById("startingWeight").innerText = startWeight;
       document.getElementById("weightChange").innerText = formattedChange;
