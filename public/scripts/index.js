@@ -31,7 +31,8 @@ async function loadUserData(user) {
       const name = data?.forename || data?.username || "there";
       const currentWeight = data?.weight;
       const startWeight = data?.current_weight;
-      displayWeight(startWeight, currentWeight)
+      const unitPreference = data?.units;
+      displayWeight(startWeight, currentWeight, unitPreference)
       updateGreeting(name);
     }
   } catch (error) {
@@ -40,25 +41,54 @@ async function loadUserData(user) {
   }
 }
 
-function displayWeight(startWeight, currentWeight){
+function formatSignedChange(startWeight, currentWeight) {
+  if (currentWeight == null || startWeight == null) {
+    return "N/A";
+  }
 
-    if (typeof startWeight === "null" || typeof currentWeight === "null"){
-      formattedChange = "N/A";
-    }
-    else{
-        const weightChange = (startWeight - currentWeight)
-        formattedChange = weightChange > 0
-        ? `-${Math.abs(weightChange)}`  // weight went down
-        : `+${Math.abs(weightChange)}`; // weight went up or stayed the same
-    }
+  const weightChange = startWeight - currentWeight;
+  if (weightChange === 0) return "0";
 
-  if (formattedChange == 0) {
-  formattedChange = "0";
+  const sign = weightChange > 0 ? "-" : "+";
+  return `${sign}${Math.abs(weightChange)}`;
 }
-      document.getElementById("currentWeight").innerText = currentWeight;
-      document.getElementById("startingWeight").innerText = startWeight;
-      document.getElementById("weightChange").innerText = formattedChange;
+
+function displayWeight(startWeight, currentWeight, unitPreference){
+
+const weightChangeKg = Number(startWeight) - Number(currentWeight);
+
+  const getChangeSign = (change) => {
+    if (change === 0) return "";
+    return change > 0 ? "-" : "+";
+  };
+
+  const formatStones = (kg) => {
+    if (isNaN(kg)) return "N/A";
+    const pounds = kg * 2.20462;
+    const stones = Math.floor(pounds / 14);
+    const remainingPounds = Math.round(pounds % 14);
+    return `${stones}st ${remainingPounds}lb`;
+  };
+
+  if (unitPreference === "Imperial") {
+    const sign = getChangeSign(weightChangeKg);
+    const absChange = Math.abs(weightChangeKg);
+
+    document.getElementById("currentWeight").innerText = formatStones(currentWeight);
+    document.getElementById("startingWeight").innerText = formatStones(startWeight);
+    document.getElementById("weightChange").innerText =
+      absChange === 0 ? "0" : `${sign}${formatStones(absChange)}`;
+  } else {
+    const sign = getChangeSign(weightChangeKg);
+    const absChange = Math.abs(weightChangeKg);
+
+    document.getElementById("currentWeight").innerText = `${currentWeight}kg`;
+    document.getElementById("startingWeight").innerText = `${startWeight}kg`;
+    document.getElementById("weightChange").innerText =
+      absChange === 0 ? "0kg" : `${sign}${absChange}kg`;
+  }
 }
+
 
 
 function updateGreeting(name = "there") {
