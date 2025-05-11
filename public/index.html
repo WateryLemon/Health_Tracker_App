@@ -11,6 +11,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
     </script>
   </head>
 
@@ -228,27 +229,36 @@
       </div>
     </template>
 
-    <template id="foodForm">
-        <div class="menu-form-wrapper">
-            <h1>Log Meal</h1>
-            <form id="foodForm" class="log-form">
-                <div class="search-wrapper">
-                    <form name="search">
-                        <input type="text" class="search-bar" name="txt" onmouseout="this.value = ''; this.blur();">
-                    </form>
-                    <i class="fas fa-search"></i>
-                </div>
-                <label for="calorie" class="number-input-label">Calorie per serving (kcal):</label>
-                <input type="number" class="number-input" id="calorie-input" placeholder="Enter calories" required>
-                <label for="serving" class="number-input-label">Number of servings:</label>
-                <input type="number" class="number-input" id="serving-input" placeholder="Enter servings" required>
-                <div class="nav-wrapper">
-                    <button class="nav-buttons" id="backButton" type="button" onclick="loadMenuForm()"><i class="fa-solid fa-backward"></i></button>
-                    <button class="nav-buttons" id="submitButton" type="submit"><i class="fa-solid fa-check"></i></button>
-                </div>
-            </form>
-        </div>
-    </template>
+
+<template id="foodForm">
+  <div class="menu-form-wrapper">
+    <h1>Log Meal</h1>
+    <form id="foodForm" class="log-form">
+      <div class="search-wrapper">
+        <input type="text" class="search-bar" name="search" onmouseout="this.value = ''; this.blur();">
+        <i class="fas fa-search"></i>
+      </div>
+
+      <label for="calorie-input" class="number-input-label">Calorie per serving (kcal):</label>
+      <input type="number" class="number-input" id="calorie-input" name="calories" placeholder="Enter calories" required>
+
+      <label for="serving-input" class="number-input-label">Number of servings:</label>
+      <input type="number" class="number-input" id="serving-input" name="servings" placeholder="Enter servings"required>
+
+      <label for="meal-input" class="number-input-label">Meal Name:</label>
+      <input type="text" class="number-input" id="meal-input" name="meal" placeholder="Enter Meal"required>
+
+      <div class="nav-wrapper">
+        <button class="nav-buttons" id="backButton" type="button" onclick="loadMenuForm()">
+          <i class="fa-solid fa-backward"></i>
+        </button>
+          <button class="nav-buttons " id="submitButton" type="submit"><i class="fa-solid fa-check"></i></button> 
+        </button>
+      </div>
+    </form>
+  </div>
+</template>
+
 
     <template id="exerciseForm">
         <div class="menu-form-wrapper">

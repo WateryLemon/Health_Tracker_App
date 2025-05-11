@@ -18,6 +18,7 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+
 window.auth = auth;
 window.db = db;
 
@@ -307,9 +308,45 @@ function loadMenuForm() {
           const clone = formTemplate.content.cloneNode(true);
           formContainer.innerHTML = "";
           formContainer.appendChild(clone);
-        }
-      });
-    });
+
+      console.log("Cloned form content:", formContainer.innerHTML);
+
+      const formElement = formContainer.querySelector("form");
+      console.log("Form element found:", formElement);
+
+          
+      // 🟢 After form is loaded, wait for submit
+      const submitButton = formContainer.querySelector("#submitButton"); // Ensure you use this class in your HTML
+      console.log("Submit button found:", submitButton);
+
+      if (submitButton) {
+        formElement.addEventListener("submit", function (event)  {
+          console.log("Submit button event listener attached");
+          event.preventDefault(); // Prevent default form submission
+
+          // 🟠 Grab form data
+          const formElement = formContainer.querySelector("form");
+          const formData = new FormData(formElement);
+          const data = Object.fromEntries(formData.entries());
+
+          // 🟡 Determine the form type (e.g., "food", "exercise")
+          const formType = formId.replace("Form", ""); // e.g. "foodForm" => "food"
+
+          // 🔵 Save to Firebase
+          const userId = firebase.auth().currentUser.uid;
+          firebase.firestore().collection("users").doc(userId).collection(formType).add(data)
+            .then(() => {
+              alert(`${formType} entry saved!`);
+            })
+            .catch((error) => {
+              console.error("Error saving data:", error);
+              alert("Failed to save. Try again.");
+            });
+        });
+      }
+    }
+  });
+  });
   }
 }
 
