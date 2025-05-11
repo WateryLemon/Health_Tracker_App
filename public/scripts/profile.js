@@ -68,26 +68,38 @@ async function loadUserData() {
       document.getElementById("dob").value = data.date_of_birth || "";
       document.getElementById("location").value = data.location || "";
       document.getElementById("email").value = data.email || "";
-      
+
       // Set weight value and store it for reference
-      userWeight = data.weight || "";
+      userWeight = data.weight || ""; // Use 'weight' instead of 'current_weight'
       document.getElementById("currentWeight").value = userWeight;
+
+      // Calculate and populate BMI
+      const height = parseFloat(data.current_height) / 100; // Convert cm to meters
+      const weight = parseFloat(data.weight); // Use 'weight' instead of 'current_weight'
+      if (height > 0 && weight > 0) {
+        const bmi = (weight / (height * height)).toFixed(2); // Calculate BMI and round to 2 decimal places
+        document.getElementById("bmi").value = bmi;
+      } else {
+        document.getElementById("bmi").value = ""; // Clear BMI field if data is invalid
+      }
 
       // Set fitness goal and target weight
       const fitnessGoal = data.fitness_goal || "";
       document.getElementById("fitness_goal").value = fitnessGoal;
-      
+
       // Handle target weight
       const goalData = data.goal_data || {};
       const targetWeight = goalData.target_weight || "";
       document.getElementById("target_weight").value = targetWeight;
-      
+
       // Show/hide target weight field based on goal
       handleGoalChange();
 
       // Set units radio button
       const unitValue = data.units || "Metric";
       document.querySelector(`input[value="${unitValue}"]`).checked = true;
+    } else {
+      console.log("No user document found in Firestore.");
     }
   } catch (error) {
     console.error("Error loading user data:", error);
