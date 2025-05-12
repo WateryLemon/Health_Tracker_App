@@ -108,51 +108,7 @@ function updateGreeting(name = "there") {
   greetingElement.textContent = `${greeting}, ${name}!`;
 }
 
-function goalLogic() {
-  const currentCalories = 1500; // Replace with dynamic value
-  const dailyGoal = 2000; // Replace with dynamic value
-  const burntCalories = 100; // Replace with dynamic value
-  const remainingCalories = dailyGoal - (currentCalories - burntCalories);
-  const currentTotalCalories = currentCalories - burntCalories;
 
-  const messageElement = document.getElementById("goalMessage");
-  const circle = document.querySelector("#circularProgress");
-  const burntCircle = document.querySelector(".burnt-circle");
-
-  // Update circular progress bar based on current calorie intake and burn
-  const progressPercent = Math.min(
-    (currentCalories / dailyGoal) * 100,
-    100
-  ).toFixed(1);
-  const progressPercentBurnt = Math.min(
-    (burntCalories / dailyGoal) * 100,
-    100
-  ).toFixed(1);
-  circle.style.setProperty("--progress", progressPercent);
-  circle.style.setProperty("--progress-burnt", progressPercentBurnt);
-
-  // Hide burnt calorie circle if = 0
-  if (burntCalories === 0) {
-    burntCircle.style.display = "none";
-  } else {
-    burntCircle.style.display = "block";
-  }
-
-  // Update SVG text
-  document.getElementById(
-    "currentCaloriesText"
-  ).textContent = `${currentTotalCalories} kcal`;
-  document.getElementById(
-    "dailyGoalText"
-  ).textContent = `${dailyGoal} kcal goal`;
-
-  // Update goal message (calander)
-  if (remainingCalories > 0) {
-    messageElement.textContent = `You have ${remainingCalories} kcal left till your daily goal.`;
-  } else {
-    messageElement.textContent = "Congrats on reaching your daily goal!";
-  }
-}
 
 function calendearLogic() {
   const calendarWidget = document.getElementById("calenderWidget");
@@ -253,6 +209,116 @@ function weightGraphLogic() {
   });
 }
 
+function fetchDailyCalories(userId) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const startOfToday = today.toISOString();
+
+  return db.collection("users").doc(userId).collection("food").where("timestamp", ">=", startOfToday).get().then(snapshot => {
+      let total = 0;
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const cals = parseFloat(data.caloriesConsumed);
+        const servings = parseFloat(data.servings);
+        if (!isNaN(cals) && !isNaN(servings)) {
+          total += cals * servings;
+        }
+      });
+      return total;
+    });
+}
+
+function fetchDailyBurntCalories(userId) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const startOfToday = today.toISOString();
+
+  return db.collection("users").doc(userId).collection("exercise").where("timestamp", ">=", startOfToday).get().then(snapshot => {
+      let total = 0;
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const cals = parseFloat(data.caloriesBurned); 
+        if (!isNaN(cals)) {
+          total += cals;
+        }
+      });
+      return total;
+    });
+}
+
+
+function updateDailyWaterIntake(userId) {
+  
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Midnight
+
+  const startOfToday = today.toISOString();
+
+  db.collection("users").doc(userId).collection("water").where("timestamp", ">=", startOfToday).get().then((querySnapshot) => {
+      let total = 0;
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const amount = parseInt(data.water, 10);
+        if (!isNaN(amount)) {
+          total += amount;
+        }
+      });
+
+      document.getElementById("currentIntake").textContent = total;
+    })
+    .catch((error) => {
+      console.error("Failed to fetch water logs:", error);
+    });
+}
+
+
+function goalLogic(userId) {
+  const dailyGoal = 2000;
+
+  Promise.all([
+    fetchDailyCalories(userId),
+    fetchDailyBurntCalories(userId)
+  ]).then(([currentCalories, burntCalories]) => {
+    const remainingCalories = dailyGoal - (currentCalories - burntCalories);
+    const currentTotalCalories = currentCalories - burntCalories;
+
+    const messageElement = document.getElementById("goalMessage");
+    const circle = document.querySelector("#circularProgress");
+    const burntCircle = document.querySelector(".burnt-circle");
+
+    const progressPercent = Math.min(
+      (currentCalories / dailyGoal) * 100,
+      100
+    ).toFixed(1);
+    const progressPercentBurnt = Math.min(
+      (burntCalories / dailyGoal) * 100,
+      100
+    ).toFixed(1);
+
+    circle.style.setProperty("--progress", progressPercent);
+    circle.style.setProperty("--progress-burnt", progressPercentBurnt);
+
+    if (burntCalories === 0) {
+      burntCircle.style.display = "none";
+    } else {
+      burntCircle.style.display = "block";
+    }
+
+    document.getElementById("currentCaloriesText").textContent = `${currentTotalCalories} kcal`;
+    document.getElementById("dailyGoalText").textContent = `${dailyGoal} kcal goal`;
+
+    if (remainingCalories > 0) {
+      messageElement.textContent = `You have ${remainingCalories} kcal left till your daily goal.`;
+    } else {
+      messageElement.textContent = "Congrats on reaching your daily goal!";
+    }
+  }).catch(error => {
+    console.error("Error calculating daily calorie data:", error);
+  });
+}
+
+
+
 function closeAddMenu() {
   document.getElementById("formMenu").style.display = "none";
 }
@@ -328,13 +394,33 @@ function loadMenuForm() {
           const formElement = formContainer.querySelector("form");
           const formData = new FormData(formElement);
           const data = Object.fromEntries(formData.entries());
+          data.timestamp = new Date().toISOString();
+          
 
           // 🟡 Determine the form type (e.g., "food", "exercise")
           const formType = formId.replace("Form", ""); // e.g. "foodForm" => "food"
 
           // 🔵 Save to Firebase
           const userId = firebase.auth().currentUser.uid;
-          firebase.firestore().collection("users").doc(userId).collection(formType).add(data)
+
+            if (formType === "food") {
+              const mealName = data.meal?.trim();
+              if (!mealName) {
+                alert("Meal name is required.");
+              return;
+          }
+          firebase.firestore().collection("users").doc(userId).collection("food").doc(mealName).set(data)
+            .then(() => {
+              alert(`${formType} entry saved!`);
+            })
+          .catch((error) => {
+          console.error("Error saving data:", error);
+          alert("Failed to save. Try again.");
+          });
+
+        }
+        else{
+            firebase.firestore().collection("users").doc(userId).collection(formType).add(data)
             .then(() => {
               alert(`${formType} entry saved!`);
             })
@@ -342,6 +428,7 @@ function loadMenuForm() {
               console.error("Error saving data:", error);
               alert("Failed to save. Try again.");
             });
+          }
         });
       }
     }
@@ -395,9 +482,11 @@ document.addEventListener("DOMContentLoaded", () => {
   auth.onAuthStateChanged((user) => {
     if (user) {
       loadUserData(user);  // 🔁 pass the user object to loadUserData()
-      goalLogic();
+      goalLogic(user.uid);
       calendearLogic();
       weightGraphLogic();
+      updateDailyWaterIntake(user.uid);
+      
     } else {
       window.location.href = "/sign-in.html"; // not signed in
     }

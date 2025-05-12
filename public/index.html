@@ -181,10 +181,10 @@
 
         <section id="waterWidget" class="widget">
           <h2>Water Intake</h2>
-          <div class="water-stats">
+          <div id="waterIntakeDisplay" class="water-stats">
             <span class="intake-text"
               ><i class="fa-solid fa-glass-water"></i
-              ><span id="currentIntake"> 500</span>
+              ><span id="currentIntake"></span>
               <span style="color: #7030a1">/</span>
               <span id="dailyGoal">2000</span>
               <span style="color: #7030a1">ml</span></span
@@ -240,7 +240,7 @@
       </div>
 
       <label for="calorie-input" class="number-input-label">Calorie per serving (kcal):</label>
-      <input type="number" class="number-input" id="calorie-input" name="calories" placeholder="Enter calories" required>
+      <input type="number" class="number-input" id="calorie-input" name="caloriesConsumed" placeholder="Enter calories" required>
 
       <label for="serving-input" class="number-input-label">Number of servings:</label>
       <input type="number" class="number-input" id="serving-input" name="servings" placeholder="Enter servings"required>
@@ -275,7 +275,9 @@
                     <i class="fas fa-search"></i>
                 </div>
                 <label for="cburnt" class="number-input-label">Calories burnt cardio (kcal):</label>
-                <input type="number" class="number-input" id="burnt-input" placeholder="Enter calories" required>
+                <input type="number" class="number-input" id="burnt-input" name="caloriesBurned" placeholder="Enter calories" required>
+                <label for="exercise-input" class="number-input-label">Name of Exercise:</label>
+                <input type="text" class="number-input" id="exercise-input" name="exercise" placeholder="Enter Exercise Name"required>
                 <div class="nav-wrapper">
                     <button class="nav-buttons" id="backButton" type="button" onclick="loadMenuForm()"><i class="fa-solid fa-backward"></i></button>
                     <button class="nav-buttons" id="submitButton" type="submit"><i class="fa-solid fa-check"></i></button>
@@ -289,7 +291,9 @@
                     <i class="fas fa-search"></i>
                 </div>
                 <label for="cburnt" class="number-input-label">Calories burnt strength (kcal):</label>
-                <input type="number" class="number-input" id="burnt-input" placeholder="Enter calories" required>
+                <input type="number" class="number-input" id="burnt-input" name="caloriesBurned" placeholder="Enter calories" required>
+                <label for="exercise-input" class="number-input-label">Name of Exercise:</label>
+                <input type="text" class="number-input" id="exercise-input" name="exercise" placeholder="Enter Exercise Name"required>
                 <div class="nav-wrapper">
                     <button class="nav-buttons" id="backButton" type="button" onclick="loadMenuForm()"><i class="fa-solid fa-backward"></i></button>
                     <button class="nav-buttons" id="submitButton" type="submit"><i class="fa-solid fa-check"></i></button>
@@ -298,25 +302,41 @@
         </div>
     </template>
 
-    <template id="waterForm">
-        <div class="menu-form-wrapper">
-            <h1>Log Water</h1>
-            <form class="log-form">
-                <input type="number" placeholder="Amount (ml)" required>
-                <button type="submit">Submit</button>
-            </form>
-        </div>
-    </template>
+<template id="waterForm">
+  <div class="menu-form-wrapper">
+    <h1>Log Water</h1>
+    <form id="waterForm" class="log-form">
+
+      <label for="water-input" class="number-input-label">Log Water (ml):</label>
+      <input type="number" class="number-input" id="water-input" name="water" placeholder="Enter water (ml)" required>
+
+      <div class="nav-wrapper">
+        <button class="nav-buttons" id="backButton" type="button" onclick="loadMenuForm()">
+          <i class="fa-solid fa-backward"></i>
+        </button>
+          <button class="nav-buttons " id="submitButton" type="submit"><i class="fa-solid fa-check"></i></button> 
+      </div>
+    </form>
+  </div>
+</template>
 
     <template id="weightForm">
         <div class="menu-form-wrapper">
             <h1>Log Weight</h1>
-            <form class="log-form">
-                <input type="number" placeholder="Weight (kg)" required>
-                <button class="circular-button"  type="submit">Submit</button>
-            </form>
-        </div>
-    </template>
+            <form id="weightForm" class="log-form">
+
+            <label for="water-input" class="number-input-label">Log Weight (kg):</label>
+            <input type="number" class="number-input" id="weight-input" name="weight" placeholder="Enter Weight (kg)" required>
+
+            <div class="nav-wrapper">
+            <button class="nav-buttons" id="backButton" type="button" onclick="loadMenuForm()">
+            <i class="fa-solid fa-backward"></i>
+          </button>
+          <button class="nav-buttons " id="submitButton" type="submit"><i class="fa-solid fa-check"></i></button> 
+      </div>
+    </form>
+  </div>
+</template>
 
     <script src="/scripts/index.js" defer></script>
   </body>
