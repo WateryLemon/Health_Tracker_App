@@ -115,6 +115,11 @@ app.post("/submit", async (req, res) => {
       username,
       email,
       forename,
+      surname, // Add surname
+      current_height, // Add current_height
+      current_weight, // Add current_weight
+      height: current_height, // Also store as height for compatibility
+      weight: current_weight, // Also store as weight for compatibility
       sex,
       date_of_birth,
       created_at: serverTimestamp(),

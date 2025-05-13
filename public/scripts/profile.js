@@ -68,16 +68,25 @@ function setupTabNavigation() {
 // Handle fitness goal selection change
 function handleGoalChange() {
   const fitnessGoal = document.getElementById("fitness_goal").value;
-  const targetWeightGroup = document.getElementById("target_weight_group");
   const targetWeightInput = document.getElementById("target_weight");
+  // Get the parent form-group of target weight for showing/hiding
+  const targetWeightGroup = targetWeightInput?.closest(".form-group");
 
   if (fitnessGoal === "maintain_weight") {
-    targetWeightInput.value = userWeight;
-    targetWeightGroup.style.display = "none";
+    if (targetWeightInput) {
+      targetWeightInput.value = userWeight;
+    }
+    if (targetWeightGroup) {
+      targetWeightGroup.style.display = "none";
+    }
   } else if (fitnessGoal === "lose_weight" || fitnessGoal === "build_muscle") {
-    targetWeightGroup.style.display = "flex";
+    if (targetWeightGroup) {
+      targetWeightGroup.style.display = "flex";
+    }
   } else {
-    targetWeightGroup.style.display = "none";
+    if (targetWeightGroup) {
+      targetWeightGroup.style.display = "none";
+    }
   }
 }
 
@@ -92,22 +101,22 @@ async function loadUserData() {
       document.getElementById("username").value = data.username || "";
       document.getElementById("forename").value = data.forename || "";
       document.getElementById("surname").value = data.surname || "";
+      // Use the correct field names from signup form (current_height and current_weight)
       document.getElementById("height").value =
         data.current_height || data.height || "";
       document.getElementById("sex").value = data.sex || "";
       document.getElementById("dob").value = data.date_of_birth || "";
-      document.getElementById("location").value = data.location || "";
       document.getElementById("email").value = data.email || "";
 
       // Set weight value and store it for reference
-      userWeight = data.weight || ""; // Use 'weight' instead of 'current_weight'
+      userWeight = data.current_weight || data.weight || "";
       document.getElementById("currentWeight").value = userWeight;
 
       // Calculate and populate BMI
-      const height = parseFloat(data.current_height) / 100; // Convert cm to meters
-      const weight = parseFloat(data.weight); // Use 'weight' instead of 'current_weight'
+      const height = parseFloat(data.current_height || data.height || "0");
+      const weight = parseFloat(userWeight || "0");
       if (height > 0 && weight > 0) {
-        const bmi = (weight / (height * height)).toFixed(2); // Calculate BMI and round to 2 decimal places
+        const bmi = calculateBMI(height, weight);
         document.getElementById("bmi").value = bmi;
       } else {
         document.getElementById("bmi").value = ""; // Clear BMI field if data is invalid
@@ -124,10 +133,6 @@ async function loadUserData() {
 
       // Show/hide target weight field based on goal
       handleGoalChange();
-
-      // Set units radio button
-      const unitValue = data.units || "Metric";
-      document.querySelector(`input[value="${unitValue}"]`).checked = true;
     } else {
       console.log("No user document found in Firestore.");
     }
@@ -144,6 +149,11 @@ document.getElementById("saveButton").addEventListener("click", async () => {
     const fitnessGoal = document.getElementById("fitness_goal").value;
     let targetWeight = document.getElementById("target_weight").value;
     const currentWeight = document.getElementById("currentWeight").value;
+    const height = document.getElementById("height").value;
+
+    // Calculate BMI for display
+    const bmi = calculateBMI(parseFloat(height), parseFloat(currentWeight));
+    document.getElementById("bmi").value = bmi !== "NaN" ? bmi : "";
 
     // If maintaining weight, use current weight as target
     if (fitnessGoal === "maintain_weight") {
@@ -161,20 +171,20 @@ document.getElementById("saveButton").addEventListener("click", async () => {
       forename: document.getElementById("forename").value,
       surname: document.getElementById("surname").value,
       height: document.getElementById("height").value,
+      current_height: document.getElementById("height").value, // Add current_height field
       sex: document.getElementById("sex").value,
       date_of_birth: document.getElementById("dob").value,
-      location: document.getElementById("location").value,
+      // location property removed as requested
       email: document.getElementById("email").value,
       weight: currentWeight,
+      current_weight: currentWeight, // Add current_weight field
       fitness_goal: fitnessGoal,
       goal_data: {
         start_date: serverTimestamp(),
         goal_type: fitnessGoal,
         target_weight: targetWeight || null,
       },
-      units:
-        document.querySelector('input[name="units"]:checked')?.value ||
-        "Metric",
+      units: "Metric", // Default to Metric since units selection was removed
       updated_at: new Date(),
     };
 
@@ -246,3 +256,35 @@ function showMessage(message, isError = false) {
     messageEl.textContent = "";
   }, 3000);
 }
+
+// Helper function to calculate BMI
+function calculateBMI(height, weight) {
+  // Convert height from cm to meters for metric calculations
+  const heightInMeters = height / 100;
+  return (weight / (heightInMeters * heightInMeters)).toFixed(2);
+}
+
+// Update BMI when height or weight changes
+document.addEventListener("DOMContentLoaded", () => {
+  const heightInput = document.getElementById("height");
+  const weightInput = document.getElementById("currentWeight");
+  const bmiInput = document.getElementById("bmi");
+
+  // Make BMI field read-only
+  bmiInput.readOnly = true;
+
+  // Add event listeners to recalculate BMI when values change
+  heightInput?.addEventListener("input", updateBMI);
+  weightInput?.addEventListener("input", updateBMI);
+
+  function updateBMI() {
+    const height = parseFloat(heightInput.value || "0");
+    const weight = parseFloat(weightInput.value || "0");
+
+    if (height > 0 && weight > 0) {
+      bmiInput.value = calculateBMI(height, weight);
+    } else {
+      bmiInput.value = "";
+    }
+  }
+});

@@ -168,10 +168,11 @@ h2 {
 /* Form Styles */
 .form-group {
   margin-bottom: 20px;
+  display: block !important;
 }
 
 .form-group label {
-  display: block;
+  display: block !important;
   margin-bottom: 8px;
   font-weight: bold;
   color: #555;
@@ -186,6 +187,11 @@ h2 {
   border: 1px solid #ccc;
   font-size: 16px;
   background-color: #f9f9f9;
+}
+
+.form-group input {
+  display: block !important;
+  width: 100% !important;
 }
 
 .form-group textarea {
@@ -220,6 +226,26 @@ h2 {
 
 .radio-option label {
   margin-bottom: 0;
+  cursor: pointer;
+}
+
+.radio-group {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.radio-group input[type="radio"] {
+  width: auto;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.radio-group label {
+  margin-bottom: 0;
+  display: inline;
+  font-weight: normal;
+  margin-right: 15px;
   cursor: pointer;
 }
 
