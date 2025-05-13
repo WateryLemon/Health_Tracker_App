@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -10,6 +10,7 @@
       href="https://cdn-icons-png.flaticon.com/512/4434/4434478.png"
     />
     <link rel="stylesheet" href="/stylesheets/profile.css" />
+    <script src="https://kit.fontawesome.com/2fe1601858.js" crossorigin="anonymous"></script>
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
       import { getAuth } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
@@ -32,8 +33,9 @@
   <body>
     <header>
       <div class="header-content">
-        <a href="index.html" class="home-link">
-          <button class="home-button">Home</button>
+        <a href="index.html" class="nav-link">
+          <i class="fas fa-home"></i>
+          <span>Home</span>
         </a>
 
         <div id="streak">

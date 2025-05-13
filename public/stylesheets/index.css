@@ -69,12 +69,9 @@ header .header-content {
   background-color: #d41e29;
 }
 
+/* Profile icon styling - no longer needed as we're using font awesome icons */
 .profile-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 10px;
-  cursor: pointer;
-  background-color: white;
+  display: none; /* Hide the old profile icon styling */
 }
 
 main {
@@ -206,8 +203,8 @@ li.day .weekday {
 #circularProgress circle.burnt-circle {
   transform: rotate(
     calc(
-      -90deg + (var(--progress) / 100 * 360deg) - (var(--progress-burnt) / 100 *
-            360deg)
+      -90deg + (var(--progress) / 100 * 360deg) -
+        (var(--progress-burnt) / 100 * 360deg)
     )
   );
   transform-origin: var(--half-size) var(--half-size);
@@ -694,7 +691,9 @@ form h1 {
 }
 
 .nav-buttons:hover {
-  box-shadow: 9px 9px 33px #d1d1d1, -9px -9px 33px #ffffff;
+  box-shadow:
+    9px 9px 33px #d1d1d1,
+    -9px -9px 33px #ffffff;
   transform: translateY(-2px);
 }
 

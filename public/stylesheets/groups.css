@@ -64,6 +64,26 @@ header .header-content {
   background-color: white;
 }
 
+/* Nav Icons in Header */
+.nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+  font-size: 12px;
+  transition: transform 0.2s;
+}
+
+.nav-link:hover {
+  transform: translateY(-2px);
+}
+
+.nav-link i {
+  font-size: 24px;
+  margin-bottom: 3px;
+}
+
 footer {
   position: fixed;
   left: 0;
