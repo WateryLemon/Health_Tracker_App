@@ -256,8 +256,8 @@ li.day .weekday {
 }
 
 .dropdown-wrapper {
-    position: relative;
-    z-index: 0;
+  position: relative;
+  z-index: 0;
 }
 
 .dropdown-wrapper:hover .dropdown-content {
@@ -369,12 +369,12 @@ li.day .weekday {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #7030A1;
+  background-color: #7030a1;
   border-radius: 10px;
   margin-top: 20px;
   height: 171.5px;
   overflow: auto;
-  padding-top: 119px
+  padding-top: 119px;
 }
 
 table {
@@ -385,35 +385,34 @@ table {
   font-family: sans-serif;
   font-size: 0.8rem;
   letter-spacing: 1px;
-  border: 1px solid #7030A1;
+  border: 1px solid #7030a1;
   border-radius: 14px;
 }
 
 thead {
-  background-color: #7030A1;
+  background-color: #7030a1;
   color: white;
 }
 
-
-th,td {
-  border: 1px solid #7030A1;
+th,
+td {
+  border: 1px solid #7030a1;
   padding: 8px 10px;
 }
 
-th,td {
-  border: 1px solid #7030A1;
+th,
+td {
+  border: 1px solid #7030a1;
   padding: 8px 10px;
 }
-
-
 
 td:last-of-type {
   text-align: center;
 }
 
 tbody > tr:nth-of-type(even) {
-    background-color: #b07cd87f;
-  }
+  background-color: #b07cd87f;
+}
 
 /* ===========================
     Water Intake Widget
@@ -574,7 +573,7 @@ form h1 {
     Form Styles
     =========================== */
 
-.search-wrapper{
+.search-wrapper {
   margin-top: 10px;
   position: relative;
   display: flex;
@@ -592,9 +591,9 @@ form h1 {
   box-sizing: border-box;
   font-size: 20px;
   outline: none;
-  transition: .5s;
+  transition: 0.5s;
 }
-.search-wrapper:hover input{
+.search-wrapper:hover input {
   width: 350px;
   padding-left: 10px;
   padding-right: 10px;
@@ -603,7 +602,8 @@ form h1 {
 }
 
 .search-bar:hover {
-  border: #7030A1 solid 2.5px;}
+  border: #7030a1 solid 2.5px;
+}
 
 .search-wrapper i {
   position: absolute;
@@ -611,22 +611,22 @@ form h1 {
   transform: translateY(-50%);
   font-size: 26px;
   color: rgba(243, 207, 238, 1);
-  transition: .2s;
+  transition: 0.2s;
 }
 
 .search-wrapper:hover i {
   display: none;
 }
 
-.search-wrapper i{
+.search-wrapper i {
   opacity: 1;
   z-index: 1;
 }
 
 .number-input-label {
-  margin-bottom: 0; 
+  margin-bottom: 0;
   font-size: 0.875rem;
-  font-weight: 500; 
+  font-weight: 500;
   color: #000000;
   display: block;
   text-align: left;
@@ -635,8 +635,8 @@ form h1 {
 
 .number-input {
   background-color: #f9fafb;
-  border: 2px solid #7030A1;
-  color: #111827; 
+  border: 2px solid #7030a1;
+  color: #111827;
   font-size: 16px;
   border-radius: 0.5rem;
   display: block;
@@ -645,11 +645,10 @@ form h1 {
 }
 
 .number-input:hover {
-    background-color: rgba(243, 207, 238, 1)
+  background-color: rgba(243, 207, 238, 1);
 }
 
 /* Food Form */
-
 
 .nav-wrapper {
   margin-top: 20px;
@@ -688,7 +687,7 @@ form h1 {
   font-size: 20px;
   transition: all 0.4s ease-in;
 }
-   
+
 .nav-buttons:hover > svg {
   font-size: 1.2em;
   transform: translateX(-5px);
@@ -712,7 +711,7 @@ form h1 {
   position: relative;
   display: inline-block;
   width: 60px;
-  height: 34px;     
+  height: 34px;
   margin: 10px 0;
 }
 
@@ -730,8 +729,8 @@ form h1 {
   right: 0;
   bottom: 0;
   background-color: rgba(243, 207, 238, 1);
-  -webkit-transition: .4s;
-  transition: .4s;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
   border-radius: 34px;
 }
 
@@ -743,17 +742,17 @@ form h1 {
   left: 4px;
   bottom: 4px;
   background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
   border-radius: 50%;
 }
 
 #exerciseCheckbox:checked + .toggle-slider {
-  background-color: #7030A1;
+  background-color: #7030a1;
 }
 
 #exerciseCheckbox:focus + .toggle-slider {
-  box-shadow: 0 0 1px #7030A1;
+  box-shadow: 0 0 1px #7030a1;
 }
 
 #exerciseCheckbox:checked + .toggle-slider:before {
@@ -764,4 +763,30 @@ form h1 {
 
 #exerciseFormStrength {
   display: none;
+}
+
+/* Nav Icons in Header */
+.nav-icons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+  font-size: 12px;
+  transition: transform 0.2s;
+}
+
+.nav-link:hover {
+  transform: translateY(-2px);
+}
+
+.nav-link i {
+  font-size: 24px;
+  margin-bottom: 3px;
 }

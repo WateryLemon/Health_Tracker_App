@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/stylesheets/groups.css" />
+    <title>Health Groups</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="https://cdn-icons-png.flaticon.com/512/4434/4434478.png"
+    />
+    <script
+      src="https://kit.fontawesome.com/2fe1601858.js"
+      crossorigin="anonymous"
+    ></script>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+      import { getAuth } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+      import {
+        getFirestore,
+        collection,
+        doc,
+        getDoc,
+        setDoc,
+        addDoc,
+        deleteDoc,
+        query,
+        where,
+        getDocs,
+        serverTimestamp,
+      } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCQiV6-wvqLWa9NHatHsu9AE3zcb4FqmOI",
+        authDomain: "health-tracker-fa572.firebaseapp.com",
+        projectId: "health-tracker-fa572",
+        storageBucket: "health-tracker-fa572.firebasestorage.app",
+        messagingSenderId: "277390438554",
+        appId: "1:277390438554:web:8ce3ec3a1ef13b20aaef23",
+        measurementId: "G-SRHMFGLNN2",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      window.auth = auth;
+      window.db = db;
+      window.serverTimestamp = serverTimestamp;
+      window.query = query;
+      window.where = where;
+      window.collection = collection;
+      window.getDocs = getDocs;
+      window.doc = doc;
+      window.getDoc = getDoc;
+      window.setDoc = setDoc;
+      window.addDoc = addDoc;
+      window.deleteDoc = deleteDoc;
+    </script>
+  </head>
+
+  <body>
+    <header>
+      <div class="header-content">
+        <a href="index.html" class="home-link">
+          <button class="home-button">Home</button>
+        </a>
+        <h1>Health Groups</h1>
+        <a href="profile.html">
+          <img
+            src="https://static.thenounproject.com/png/4216248-200.png"
+            alt="Profile Icon"
+            class="profile-icon"
+          />
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <div class="groups-container">
+        <div class="groups-tabs">
+          <button class="tab-button active" data-tab="my-groups">
+            My Groups
+          </button>
+          <button class="tab-button" data-tab="create-group">
+            Create Group
+          </button>
+          <button class="tab-button" data-tab="join-group">Join Group</button>
+        </div>
+
+        <div class="tab-content active" id="my-groups">
+          <h2>My Groups</h2>
+          <div class="group-list" id="user-groups-list">
+            <!-- Groups will be dynamically populated here -->
+            <div class="no-groups-message">
+              You are not a member of any groups yet.
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="create-group">
+          <h2>Create a New Group</h2>
+          <form id="create-group-form">
+            <div class="form-group">
+              <label for="group-name">Group Name</label>
+              <input type="text" id="group-name" name="group-name" required />
+            </div>
+            <div class="form-group">
+              <label for="group-description">Description</label>
+              <textarea
+                id="group-description"
+                name="group-description"
+                rows="4"
+                required
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="group-type">Group Type</label>
+              <select id="group-type" name="group-type" required>
+                <option value="">Select a type</option>
+                <option value="weight-loss">Weight Loss</option>
+                <option value="muscle-gain">Muscle Gain</option>
+                <option value="fitness">General Fitness</option>
+                <option value="nutrition">Nutrition</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <button type="submit" class="submit-btn">Create Group</button>
+          </form>
+        </div>
+
+        <div class="tab-content" id="join-group">
+          <h2>Join a Group</h2>
+          <form id="join-group-form">
+            <div class="form-group">
+              <label for="group-code">Group Code</label>
+              <input type="text" id="group-code" name="group-code" required />
+            </div>
+            <button type="submit" class="submit-btn">Join Group</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Group Details Modal -->
+      <div id="group-modal" class="modal">
+        <div class="modal-content">
+          <span class="close-modal">&times;</span>
+          <h2 id="modal-group-name">Group Name</h2>
+          <p id="modal-group-description">
+            Group description will appear here.
+          </p>
+
+          <div class="modal-tabs">
+            <button class="modal-tab-button active" data-modal-tab="members">
+              Members
+            </button>
+            <button class="modal-tab-button" data-modal-tab="goals">
+              Group Goals
+            </button>
+            <button class="modal-tab-button" data-modal-tab="share">
+              Share Group
+            </button>
+          </div>
+
+          <div class="modal-tab-content active" id="members-tab">
+            <h3>Members</h3>
+            <div id="group-members-list">
+              <!-- Members will be listed here -->
+            </div>
+          </div>
+
+          <div class="modal-tab-content" id="goals-tab">
+            <h3>Group Goals</h3>
+            <div id="group-goals-list">
+              <!-- Goals will be listed here -->
+            </div>
+            <form id="create-goal-form">
+              <div class="form-group">
+                <label for="goal-title">Goal Title</label>
+                <input type="text" id="goal-title" required />
+              </div>
+              <div class="form-group">
+                <label for="goal-description">Description</label>
+                <textarea id="goal-description" rows="3" required></textarea>
+              </div>
+              <div class="form-group">
+                <label for="goal-target">Target Value</label>
+                <input type="number" id="goal-target" required />
+              </div>
+              <div class="form-group">
+                <label for="goal-unit">Unit</label>
+                <select id="goal-unit" required>
+                  <option value="kg">Kilograms (kg)</option>
+                  <option value="steps">Steps</option>
+                  <option value="km">Kilometers (km)</option>
+                  <option value="miles">Miles</option>
+                  <option value="minutes">Minutes</option>
+                  <option value="calories">Calories</option>
+                </select>
+              </div>
+              <button type="submit" class="submit-btn">Create Goal</button>
+            </form>
+          </div>
+
+          <div class="modal-tab-content" id="share-tab">
+            <h3>Share This Group</h3>
+            <p>Send this code to friends to invite them to join:</p>
+            <div class="group-code-display">
+              <span id="group-share-code">CODE123</span>
+              <button id="copy-code-btn" class="share-btn">
+                <i class="fas fa-copy"></i> Copy
+              </button>
+            </div>
+            <div class="email-share">
+              <h3>Share via Email</h3>
+              <form id="share-email-form">
+                <div class="form-group">
+                  <label for="recipient-email">Recipient Email</label>
+                  <input type="email" id="recipient-email" required />
+                </div>
+                <button type="submit" class="share-btn">
+                  <i class="fas fa-envelope"></i> Send Invite
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button id="leave-group-btn" class="danger-btn">Leave Group</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Health Tracker App</p>
+    </footer>
+    <script src="/scripts/groups.js"></script>
+  </body>
+</html>
