@@ -35,6 +35,13 @@ header .header-content {
   max-width: 960px;
   width: 100%;
   margin: 0 auto;
+  position: relative;
+}
+
+/* Nav buttons positioned together on the right */
+.nav-buttons-right {
+  display: flex;
+  gap: 20px;
 }
 
 .home-link {

@@ -27,23 +27,58 @@ footer {
   bottom: 0;
 }
 
+/* Header content styling - aligned across all pages */
 header .header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
+  max-width: 960px;
   width: 100%;
   margin: 0 auto;
+  position: relative;
+}
+
+/* Nav Icons in Header */
+.nav-buttons-right {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+  font-size: 12px;
+  transition: transform 0.2s;
+}
+
+.nav-link:hover {
+  transform: translateY(-2px);
+}
+
+.nav-link i {
+  font-size: 24px;
+  margin-bottom: 3px;
 }
 
 /* ===========================
     Home Page Styles (index.html)
     =========================== */
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
+h1 {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* Specific styling for the greeting text to match other page titles */
+#greeting {
+  font-size: 28px; /* Increased from 24px */
+  font-weight: bold;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: white;
+  text-align: left;
 }
 
 .profile-controls {
@@ -95,6 +130,7 @@ main {
   border-radius: 10px;
   background-color: white;
   padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 /* ===========================
@@ -161,6 +197,7 @@ li.day .weekday {
 
 #calorieWidget h2 {
   margin-bottom: 1rem;
+  color: #333;
 }
 
 .circular-progress {
@@ -231,6 +268,11 @@ li.day .weekday {
   border-radius: 10px;
 }
 
+h2 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
 .dropdown {
   position: relative;
   display: flex;
@@ -250,6 +292,7 @@ li.day .weekday {
   text-align: center;
   z-index: 2;
   position: relative;
+  transition: all 0.3s ease;
 }
 
 .dropdown-wrapper {
@@ -397,12 +440,6 @@ td {
   padding: 8px 10px;
 }
 
-th,
-td {
-  border: 1px solid #7030a1;
-  padding: 8px 10px;
-}
-
 td:last-of-type {
   text-align: center;
 }
@@ -459,6 +496,11 @@ tbody > tr:nth-of-type(even) {
   border: none;
   border-radius: 10px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#addButton:hover {
+  background-color: #4a1b6e;
 }
 
 /* ===========================
@@ -496,6 +538,7 @@ form h1 {
   padding: 12px;
   font-size: 2rem;
   text-align: center;
+  color: #333;
 }
 
 #addMenu {
@@ -536,6 +579,7 @@ form h1 {
   padding: 12px 16px;
   font-size: 16px;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .log-button i {
@@ -543,7 +587,8 @@ form h1 {
 }
 
 .log-button:hover {
-  background-color: RoyalBlue;
+  opacity: 0.9;
+  transform: translateY(-2px);
 }
 
 #foodButton {
@@ -560,10 +605,6 @@ form h1 {
 
 #weightButton {
   background-color: #ab47bc;
-}
-
-.log-button:hover {
-  opacity: 0.9;
 }
 
 /* ===========================
@@ -639,10 +680,17 @@ form h1 {
   display: block;
   width: 235px;
   padding: 0.625rem;
+  transition: all 0.3s ease;
 }
 
 .number-input:hover {
   background-color: rgba(243, 207, 238, 1);
+}
+
+.number-input:focus {
+  outline: none;
+  border-color: #7030a1;
+  box-shadow: 0 0 0 2px rgba(112, 48, 161, 0.2);
 }
 
 /* Food Form */
@@ -764,28 +812,22 @@ form h1 {
   display: none;
 }
 
-/* Nav Icons in Header */
-.nav-icons {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
+/* Mobile responsiveness - keeping this improvement */
+@media (max-width: 768px) {
+  #dashboard {
+    grid-template-columns: 1fr;
+  }
 
-.nav-link {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: white;
-  text-decoration: none;
-  font-size: 12px;
-  transition: transform 0.2s;
-}
+  #calenderWidget,
+  #addMenuButton {
+    grid-column: span 1;
+  }
 
-.nav-link:hover {
-  transform: translateY(-2px);
-}
+  .button-grid {
+    grid-template-columns: 1fr;
+  }
 
-.nav-link i {
-  font-size: 24px;
-  margin-bottom: 3px;
+  .search-wrapper:hover input {
+    width: 200px;
+  }
 }

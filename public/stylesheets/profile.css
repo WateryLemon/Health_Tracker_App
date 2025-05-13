@@ -1,3 +1,4 @@
+/* Global Styles (matching other pages) */
 * {
   margin: 0;
   padding: 0;
@@ -5,9 +6,17 @@
   font-family: Arial, sans-serif;
 }
 
+html {
+  overflow-y: scroll; /* Always show scrollbar to prevent layout shift */
+  scrollbar-width: thin; /* For Firefox */
+}
+
 body {
   background-color: rgba(243, 207, 238, 1);
-  padding-bottom: 70px; /* Add padding to prevent footer overlap */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 60px; /* Space for footer */
 }
 
 header {
@@ -22,7 +31,7 @@ header .header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 750px;
+  max-width: 960px;
   width: 100%;
   margin: 0 auto;
   position: relative;
@@ -51,6 +60,12 @@ header .header-content {
   transition: background-color 0.3s ease;
 }
 
+/* Nav buttons positioned together on the right */
+.nav-buttons-right {
+  display: flex;
+  gap: 20px;
+}
+
 /* Nav Icons in Header */
 .nav-link {
   display: flex;
@@ -60,8 +75,6 @@ header .header-content {
   text-decoration: none;
   font-size: 12px;
   transition: transform 0.2s;
-  position: absolute;
-  left: -120px;
 }
 
 .nav-link:hover {
@@ -73,163 +86,6 @@ header .header-content {
   margin-bottom: 3px;
 }
 
-.profile-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 10px;
-  background-color: white;
-}
-
-#streak,
-#profile,
-#progress {
-  font-size: 21px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-#profileBody {
-  margin: 0 auto;
-  margin-top: 20px;
-  margin-bottom: 80px; /* Increase bottom margin to ensure no overlap with footer */
-  width: 750px;
-  background-color: white;
-  font-size: 25px;
-  padding: 20px;
-  border-radius: 10px;
-}
-
-.profileInfo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.profileInfo:last-child {
-  margin-bottom: 0;
-}
-
-input {
-  background-color: #dddddd;
-  border: none;
-}
-
-#username,
-#forename,
-#surname,
-#height,
-#sex,
-#dob,
-#location,
-#email,
-#currentWeight,
-#bmi,
-#target_weight {
-  padding: 8px;
-  width: 400px;
-  font-size: 20px;
-  border-radius: 8px;
-}
-
-#fitness_goal {
-  padding: 8px;
-  width: 400px;
-  font-size: 20px;
-  border-radius: 8px;
-  background-color: #dddddd;
-  border: none;
-  cursor: pointer;
-}
-
-#fitness_goal:focus,
-#currentWeight:focus,
-#target_weight:focus {
-  outline: none;
-  border-color: #7030a1;
-}
-
-#radioContainer {
-  display: flex;
-  justify-content: space-between;
-  width: 400px;
-}
-
-#saveButton {
-  width: 100%;
-  padding: 1rem;
-  font-size: 1.5rem;
-  background-color: #7030a1;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-#message {
-  padding: 10px;
-  border-radius: 5px;
-  margin: 10px 0;
-  font-size: 16px;
-  transition: opacity 0.3s ease;
-}
-
-input:invalid {
-  border: 2px solid #ff0000;
-}
-
-input:focus {
-  outline: none;
-  border-color: #7030a1;
-}
-
-.profileInfo input[type="text"],
-.profileInfo input[type="email"],
-.profileInfo input[type="date"] {
-  transition: border-color 0.3s ease;
-}
-
-.radioBtns label {
-  margin-left: 5px;
-  cursor: pointer;
-}
-
-.radioBtns input[type="radio"] {
-  cursor: pointer;
-}
-
-#saveButton:hover {
-  background-color: #4a1b6e;
-  transition: background-color 0.3s ease;
-}
-
-.profile-controls {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.sign-out-btn {
-  padding: 8px 16px;
-  background-color: #ff2431;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
-}
-
-.sign-out-btn:hover {
-  background-color: #a31720;
-  transition: background-color 0.3s ease;
-}
-
 footer {
   position: fixed;
   left: 0;
@@ -239,5 +95,214 @@ footer {
   text-align: center;
   background-color: #333;
   color: white;
-  height: 60px; /* Set a fixed height for the footer */
+}
+
+main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Profile Page Styles */
+.profile-container {
+  max-width: 960px;
+  width: 100%;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.profile-tabs {
+  display: flex;
+  border-bottom: 2px solid #f3cfee;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  position: relative;
+  color: #666;
+  transition: color 0.3s;
+}
+
+.tab-button:hover {
+  color: #7030a1;
+}
+
+.tab-button.active {
+  color: #7030a1;
+  font-weight: bold;
+}
+
+.tab-button.active::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #7030a1;
+}
+
+.tab-content {
+  display: none;
+  padding: 20px 0;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+h2 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #555;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  background-color: #f9f9f9;
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.form-group select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%237030a1%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+  padding-right: 25px;
+}
+
+.radio-options {
+  display: flex;
+  gap: 20px;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.radio-option input[type="radio"] {
+  width: auto;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.radio-option label {
+  margin-bottom: 0;
+  cursor: pointer;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #7030a1;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #4a1b6e;
+}
+
+.secondary-btn {
+  padding: 10px 20px;
+  background-color: #666;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.secondary-btn:hover {
+  background-color: #444;
+}
+
+.danger-btn {
+  padding: 10px 20px;
+  background-color: #ff3b30;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.danger-btn:hover {
+  background-color: #e0221a;
+}
+
+.save-container {
+  margin-top: 30px;
+}
+
+.account-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* Add placeholder styling */
+::placeholder {
+  color: #aaa;
+}
+
+/* Add focus styles */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #7030a1;
+  box-shadow: 0 0 0 2px rgba(112, 48, 161, 0.2);
+}
+
+/* For error validation */
+input:invalid {
+  border-color: #ff3b30;
+}
+
+/* Add transitions */
+.form-group input,
+.form-group select,
+.form-group textarea,
+button {
+  transition: all 0.3s ease;
 }

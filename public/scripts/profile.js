@@ -3,7 +3,7 @@ import {
   doc,
   getDoc,
   updateDoc,
-  serverTimestamp
+  serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
 import { signOut } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
@@ -32,16 +32,45 @@ document.addEventListener("DOMContentLoaded", async () => {
     ?.addEventListener("click", handleSignOut);
 
   // Add goal selection change handler
-  document.getElementById("fitness_goal")
+  document
+    .getElementById("fitness_goal")
     ?.addEventListener("change", handleGoalChange);
+
+  // Add tab switching functionality
+  setupTabNavigation();
 });
+
+// Setup tab navigation
+function setupTabNavigation() {
+  const tabButtons = document.querySelectorAll(".tab-button");
+
+  tabButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      // Remove active class from all tabs and buttons
+      document.querySelectorAll(".tab-content").forEach((tab) => {
+        tab.classList.remove("active");
+      });
+
+      tabButtons.forEach((btn) => {
+        btn.classList.remove("active");
+      });
+
+      // Add active class to clicked button
+      button.classList.add("active");
+
+      // Show the corresponding tab
+      const tabId = button.getAttribute("data-tab");
+      document.getElementById(tabId).classList.add("active");
+    });
+  });
+}
 
 // Handle fitness goal selection change
 function handleGoalChange() {
   const fitnessGoal = document.getElementById("fitness_goal").value;
   const targetWeightGroup = document.getElementById("target_weight_group");
   const targetWeightInput = document.getElementById("target_weight");
-  
+
   if (fitnessGoal === "maintain_weight") {
     targetWeightInput.value = userWeight;
     targetWeightGroup.style.display = "none";
@@ -63,7 +92,8 @@ async function loadUserData() {
       document.getElementById("username").value = data.username || "";
       document.getElementById("forename").value = data.forename || "";
       document.getElementById("surname").value = data.surname || "";
-      document.getElementById("height").value = data.current_height || data.height || "";
+      document.getElementById("height").value =
+        data.current_height || data.height || "";
       document.getElementById("sex").value = data.sex || "";
       document.getElementById("dob").value = data.date_of_birth || "";
       document.getElementById("location").value = data.location || "";
@@ -114,7 +144,7 @@ document.getElementById("saveButton").addEventListener("click", async () => {
     const fitnessGoal = document.getElementById("fitness_goal").value;
     let targetWeight = document.getElementById("target_weight").value;
     const currentWeight = document.getElementById("currentWeight").value;
-    
+
     // If maintaining weight, use current weight as target
     if (fitnessGoal === "maintain_weight") {
       targetWeight = currentWeight;
@@ -140,7 +170,7 @@ document.getElementById("saveButton").addEventListener("click", async () => {
       goal_data: {
         start_date: serverTimestamp(),
         goal_type: fitnessGoal,
-        target_weight: targetWeight || null
+        target_weight: targetWeight || null,
       },
       units:
         document.querySelector('input[name="units"]:checked')?.value ||
@@ -161,6 +191,11 @@ document.getElementById("saveButton").addEventListener("click", async () => {
     console.error("Error saving profile:", error);
     showMessage("Error saving profile", true);
   }
+});
+
+// Add change password functionality
+document.getElementById("change-password")?.addEventListener("click", () => {
+  window.location.href = "/Password-Reset.html";
 });
 
 // Fix radio button IDs and add name attribute
@@ -194,9 +229,11 @@ function showMessage(message, isError = false) {
   if (!messageEl) {
     messageEl = document.createElement("div");
     messageEl.id = "message";
-    document
-      .getElementById("profileBody")
-      .insertBefore(messageEl, document.getElementById("saveButton"));
+    const saveContainer = document.querySelector(".save-container");
+    saveContainer.insertBefore(
+      messageEl,
+      document.getElementById("saveButton")
+    );
   }
 
   messageEl.textContent = message;
@@ -209,4 +246,3 @@ function showMessage(message, isError = false) {
     messageEl.textContent = "";
   }, 3000);
 }
-
