@@ -10,11 +10,65 @@ document.addEventListener("DOMContentLoaded", () => {
       currentUser = user;
       loadUserData();
       loadUserGroups();
+      // Setup real-time validation for group name
+      setupGroupNameValidation();
     } else {
       // Redirect to sign in if not logged in
       window.location.href = "/sign-in.html";
     }
   });
+
+  // Setup real-time validation for group name field
+  function setupGroupNameValidation() {
+    const groupNameInput = document.getElementById("group-name");
+    const validationMessage = document.getElementById("group-name-validation");
+    let typingTimer;
+    const doneTypingInterval = 500; // time in ms (0.5 seconds)
+
+    groupNameInput.addEventListener("input", function () {
+      clearTimeout(typingTimer);
+
+      validationMessage.textContent = "";
+      validationMessage.className = "validation-message";
+
+      if (!this.value.trim()) {
+        return;
+      }
+
+      typingTimer = setTimeout(
+        () => validateGroupName(this.value),
+        doneTypingInterval
+      );
+    });
+
+    async function validateGroupName(name) {
+      if (name.length < 3) {
+        validationMessage.textContent =
+          "Group name must be at least 3 characters long";
+        validationMessage.className = "validation-message error";
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `/check-group-name?name=${encodeURIComponent(name)}`
+        );
+        const data = await response.json();
+
+        if (data.available) {
+          validationMessage.textContent = "This group name is available";
+          validationMessage.className = "validation-message success";
+        } else {
+          validationMessage.textContent = `The name "${data.existingName}" is already taken`;
+          validationMessage.className = "validation-message error";
+        }
+      } catch (error) {
+        console.error("Error checking group name:", error);
+        validationMessage.textContent = "Couldn't verify name availability";
+        validationMessage.className = "validation-message error";
+      }
+    }
+  }
 
   // Tab switching functionality
   const tabButtons = document.querySelectorAll(".tab-button");
@@ -305,50 +359,59 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const formData = new FormData(event.target);
-    const groupName = formData.get("group-name");
+    const groupName = formData.get("group-name").trim();
     const groupDescription = formData.get("group-description");
     const groupType = formData.get("group-type");
 
-    try {
-      const db = window.db;
+    if (!groupName) {
+      showMessage("Group name cannot be empty", true);
+      return;
+    }
 
-      // Generate a unique code for the group
+    if (groupName.length < 3) {
+      showMessage("Group name must be at least 3 characters long", true);
+      return;
+    }
+
+    try {
       const groupCode = generateGroupCode();
 
-      // Create the group document
-      const groupRef = window.doc(window.collection(db, "groups"));
-      const groupId = groupRef.id;
-
-      await window.setDoc(groupRef, {
-        name: groupName,
-        description: groupDescription,
-        type: groupType,
-        code: groupCode,
-        createdBy: currentUser.uid,
-        createdAt: window.serverTimestamp(),
-        memberCount: 1,
+      const response = await fetch("/api/groups", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: groupName,
+          description: groupDescription,
+          type: groupType,
+          code: groupCode,
+          userId: currentUser.uid,
+        }),
       });
 
-      // Add the creator as a member
-      await window.setDoc(
-        window.doc(db, "group_memberships", `${groupId}_${currentUser.uid}`),
-        {
-          userId: currentUser.uid,
-          groupId: groupId,
-          joinedAt: window.serverTimestamp(),
-          role: "admin",
-        }
-      );
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to create group");
+      }
 
       showMessage("Group created successfully!");
       event.target.reset();
 
-      // Switch to My Groups tab and refresh
+      const validationMessage = document.getElementById(
+        "group-name-validation"
+      );
+      if (validationMessage) {
+        validationMessage.textContent = "";
+        validationMessage.className = "validation-message";
+      }
+
       document.querySelector('[data-tab="my-groups"]').click();
       loadUserGroups();
     } catch (error) {
       console.error("Error creating group:", error);
-      showMessage("Error creating group: " + error.message, true);
+      showMessage(error.message || "Error creating group", true);
     }
   }
 

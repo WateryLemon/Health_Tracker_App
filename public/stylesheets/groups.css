@@ -222,6 +222,22 @@ h2 {
   background-color: #4a1b6e;
 }
 
+/* Validation Message Styles */
+.validation-message {
+  display: block;
+  font-size: 14px;
+  margin-top: 5px;
+  min-height: 20px;
+}
+
+.validation-message.error {
+  color: #ff3b30;
+}
+
+.validation-message.success {
+  color: #34c759;
+}
+
 /* Group Listing */
 .group-list {
   display: grid;

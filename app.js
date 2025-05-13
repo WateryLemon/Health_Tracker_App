@@ -89,6 +89,50 @@ app.get("/check-username", async (req, res) => {
   }
 });
 
+// Route to check if a group name is already in use
+app.get("/check-group-name", async (req, res) => {
+  const groupName = req.query.name;
+  logger(`Checking group name availability: ${groupName}`);
+
+  if (!groupName || groupName.trim().length === 0) {
+    return res.status(400).json({
+      available: false,
+      message: "Group name is required",
+    });
+  }
+
+  try {
+    const normalizedName = groupName.toLowerCase().trim();
+
+    const groupsRef = collection(db, "groups");
+    const q = query(groupsRef, where("normalizedName", "==", normalizedName));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      logger(`Group name "${groupName}" is available`);
+      res.json({
+        available: true,
+      });
+    } else {
+      const existingGroup = querySnapshot.docs[0].data();
+      logger(
+        `Group name "${groupName}" conflicts with existing group "${existingGroup.name}"`
+      );
+      res.json({
+        available: false,
+        existingName: existingGroup.name,
+      });
+    }
+  } catch (error) {
+    logger(`Error checking group name "${groupName}": ${error.message}`);
+    console.error("Error checking group name:", error);
+    res.status(500).json({
+      available: false,
+      message: "Internal server error",
+    });
+  }
+});
+
 // POST route to handle sign up
 app.post("/submit", async (req, res) => {
   const {
@@ -212,6 +256,77 @@ app.post("/api/invite", async (req, res) => {
       `ERROR sending invitation email to ${recipientEmail}: ${error.message}`
     );
     console.error("Error sending invitation email:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// POST route to create a new group with atomic transaction
+app.post("/api/groups", async (req, res) => {
+  const { name, description, type, code, userId } = req.body;
+
+  logger(`Attempting to create group: "${name}" by user: ${userId}`);
+
+  if (!name || !userId) {
+    return res.status(400).json({
+      success: false,
+      message: "Group name and user ID are required",
+    });
+  }
+
+  try {
+    // Create a normalized name (lowercase) for case-insensitive comparison
+    const normalizedName = name.toLowerCase().trim();
+
+    // First check if a group with this name already exists
+    const groupsRef = collection(db, "groups");
+    // Query by normalized name for exact matching
+    const q = query(groupsRef, where("normalizedName", "==", normalizedName));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      const existingGroup = querySnapshot.docs[0].data();
+      logger(
+        `Group creation failed: Name "${name}" already exists as "${existingGroup.name}"`
+      );
+      return res.status(409).json({
+        success: false,
+        message: `A group named "${existingGroup.name}" already exists. Please choose a different name.`,
+      });
+    }
+
+    // Create a new document reference
+    const groupRef = doc(collection(db, "groups"));
+    const groupId = groupRef.id;
+
+    // Create the group with the normalized name field
+    await setDoc(groupRef, {
+      name,
+      normalizedName,
+      description,
+      type,
+      code,
+      createdBy: userId,
+      createdAt: serverTimestamp(),
+      memberCount: 1,
+    });
+
+    // Add the creator as a member
+    await setDoc(doc(db, "group_memberships", `${groupId}_${userId}`), {
+      userId,
+      groupId,
+      joinedAt: serverTimestamp(),
+      role: "admin",
+    });
+
+    logger(`Group "${name}" created successfully with ID: ${groupId}`);
+    res.json({
+      success: true,
+      message: "Group created successfully",
+      groupId,
+    });
+  } catch (error) {
+    logger(`Error creating group "${name}": ${error.message}`);
+    console.error("Error creating group:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 });
