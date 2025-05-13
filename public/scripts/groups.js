@@ -172,7 +172,30 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Load groups the user is a member of
+  let isLoadingGroups = false; // Flag to prevent multiple simultaneous loads
+
+  // Create a persistent styled no-groups message element
+  function createNoGroupsMessage() {
+    const noGroupsMessage = document.createElement("div");
+    noGroupsMessage.className = "no-groups-message";
+    noGroupsMessage.textContent = "You are not a member of any groups yet.";
+
+    // Add some inline styles to make it more visible
+    noGroupsMessage.style.padding = "20px";
+    noGroupsMessage.style.textAlign = "center";
+    noGroupsMessage.style.fontSize = "16px";
+    noGroupsMessage.style.color = "#666";
+    noGroupsMessage.style.border = "1px dashed #ccc";
+    noGroupsMessage.style.borderRadius = "8px";
+    noGroupsMessage.style.margin = "20px 0";
+
+    return noGroupsMessage;
+  }
+
   async function loadUserGroups() {
+    if (isLoadingGroups) return;
+    isLoadingGroups = true;
+
     try {
       const db = window.db;
       const groupMembershipsRef = window.collection(db, "group_memberships");
@@ -181,13 +204,15 @@ document.addEventListener("DOMContentLoaded", () => {
         window.where("userId", "==", currentUser.uid)
       );
       const querySnapshot = await window.getDocs(q);
-
       const groupsList = document.getElementById("user-groups-list");
+
+      // Clear the list completely
       groupsList.innerHTML = "";
 
+      // If no groups found, show the message
       if (querySnapshot.empty) {
-        groupsList.innerHTML =
-          '<div class="no-groups-message">You are not a member of any groups yet.</div>';
+        groupsList.appendChild(createNoGroupsMessage());
+        isLoadingGroups = false;
         return;
       }
 
@@ -209,26 +234,37 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // Render the groups
-      groups.forEach((group) => {
-        const groupCard = document.createElement("div");
-        groupCard.className = "group-card";
-        groupCard.dataset.groupId = group.id;
+      if (groups.length === 0) {
+        groupsList.appendChild(createNoGroupsMessage());
+      } else {
+        groups.forEach((group) => {
+          const groupCard = document.createElement("div");
+          groupCard.className = "group-card";
+          groupCard.dataset.groupId = group.id;
 
-        groupCard.innerHTML = `
-                    <h3>${group.name}</h3>
-                    <p>${group.description}</p>
-                    <div class="group-meta">
-                        <span>${group.type}</span>
-                        <span>${group.memberCount || 1} members</span>
-                    </div>
-                `;
+          groupCard.innerHTML = `
+                      <h3>${group.name}</h3>
+                      <p>${group.description}</p>
+                      <div class="group-meta">
+                          <span>${group.type}</span>
+                          <span>${group.memberCount || 1} members</span>
+                      </div>
+                  `;
 
-        groupCard.addEventListener("click", () => openGroupModal(group));
-        groupsList.appendChild(groupCard);
-      });
+          groupCard.addEventListener("click", () => openGroupModal(group));
+          groupsList.appendChild(groupCard);
+        });
+      }
     } catch (error) {
       console.error("Error loading groups:", error);
       showMessage("Error loading your groups", true);
+
+      // On error, ensure we show the no groups message
+      const groupsList = document.getElementById("user-groups-list");
+      groupsList.innerHTML = "";
+      groupsList.appendChild(createNoGroupsMessage());
+    } finally {
+      isLoadingGroups = false;
     }
   }
 
