@@ -1,90 +1,182 @@
+/* Global Styles (matching other pages) */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+html {
+  overflow-y: scroll; /* Always show scrollbar to prevent layout shift */
+  scrollbar-width: thin; /* For Firefox */
+}
+
+body {
+  background-color: rgba(243, 207, 238, 1);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+}
+
 header {
   width: 100%;
   padding: 1rem;
-  position: fixed;
-  top: 0;
   text-align: center;
   background-color: #333;
   color: white;
+}
+
+header .header-content {
+  display: flex;
+  justify-content: center; /* Changed from space-between to center */
+  align-items: center;
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+}
+
+#greeting {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Nav buttons positioned together on the right */
+.nav-buttons-right {
+  display: flex;
+  gap: 20px;
+}
+
+/* Nav Icons in Header */
+.nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+  font-size: 12px;
+  transition: transform 0.2s;
+}
+
+.nav-link:hover {
+  transform: translateY(-2px);
+}
+
+.nav-link i {
+  font-size: 24px;
+  margin-bottom: 3px;
 }
 
 footer {
   position: fixed;
   left: 0;
   bottom: 0;
+  width: 100%;
+  padding: 1rem;
   text-align: center;
   background-color: #333;
   color: white;
-  width: 100%;
 }
 
+main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px; /* Added padding to account for header and footer */
+}
 
-body {
-    font-family: Arial, sans-serif;
-    background: #f3cfee;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-  }
+/* Sign In Page Styles */
+.login-container {
+  max-width: 500px;
+  width: 100%;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 32px;
+  margin: auto; /* Center the container */
+}
 
-  .login-container {
-    font-family: Arial, sans-serif;
-    background: #fff;
-    padding: 32px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    width: 500px;
-  }
+.login-container h2 {
+  text-align: center;
+  margin-bottom: 24px;
+  color: #333;
+}
 
-  .login-container h2 {
-    text-align: center;
-    margin-bottom: 24px;
-  }
+.form-group {
+  margin-bottom: 20px;
+}
 
-  .form-group {
-    margin-bottom: 16px;
-  }
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #555;
+}
 
-  .form-group label {
-    display: block;
-    margin-bottom: 8px;
-  }
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  background-color: #f9f9f9;
+}
 
-  .form-group input {
-    width: 100%;
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-  }
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #7030a1;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
 
-  .submit-btn {
-    font-family: Arial, sans-serif;
-    width: 100%;
-    padding: 12px;
-    background-color: #7030A1;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-  }
+.submit-btn:hover {
+  background-color: #4a1b6e;
+}
 
-  .submit-btn:hover {
-    background-color: #4a1b6e;
-  }
+.signup-link {
+  margin-top: 20px;
+  text-align: center;
+}
 
-  .signup-link {
-    margin-top: 16px;
-    text-align: center;
-  }
+.signup-link a {
+  color: #7030a1;
+  text-decoration: none;
+  transition: text-decoration 0.3s;
+}
 
-  .signup-link a {
-    color: #7030A1;
-    text-decoration: none;
-  }
+.signup-link a:hover {
+  text-decoration: underline;
+}
 
-  .signup-link a:hover {
-    text-decoration: underline;
-  }
+/* Add placeholder styling */
+::placeholder {
+  color: #aaa;
+}
+
+/* Add focus styles */
+input:focus {
+  outline: none;
+  border-color: #7030a1;
+  box-shadow: 0 0 0 2px rgba(112, 48, 161, 0.2);
+}
+
+/* For error validation */
+input:invalid {
+  border-color: #ff3b30;
+}
+
+/* Add transitions */
+.form-group input,
+button {
+  transition: all 0.3s ease;
+}
