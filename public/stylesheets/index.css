@@ -89,19 +89,19 @@ h1 {
 }
 
 .sign-out-btn {
-  font-family: Arial, sans-serif;
-  padding: 8px 16px;
-  background-color: #ff2431;
+  padding: 10px 20px;
+  background-color: #666;
   color: white;
   border: none;
   border-radius: 5px;
+  font-weight: bold;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   transition: background-color 0.3s ease;
 }
 
 .sign-out-btn:hover {
-  background-color: #d41e29;
+  background-color: #444;
 }
 
 /* Profile icon styling - no longer needed as we're using font awesome icons */
