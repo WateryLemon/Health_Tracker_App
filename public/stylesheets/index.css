@@ -509,6 +509,27 @@ tbody > tr:nth-of-type(even) {
 
 #formMenu {
   z-index: 10;
+  display: none;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#formMenu.show {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.form-container {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.form-container.show {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .menu-form-wrapper {

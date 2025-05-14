@@ -329,15 +329,21 @@ function addMenuLogic() {
   const formContainer = document.querySelector(".form-container");
   const icon = addButton.querySelector("i");
 
-  if (formMenu.style.display === "block") {
+  if (formMenu.classList.contains("show")) {
     // Close the menu
-    formMenu.style.display = "none";
+    formMenu.classList.remove("show");
+    setTimeout(() => {
+      formMenu.style.display = "none"; // Hide after animation
+    }, 300);
     addButton.style.backgroundColor = "#7030A1";
     icon.className = "fas fa-plus";
     formContainer.innerHTML = "";
   } else {
     // Open the menu
     formMenu.style.display = "block";
+    setTimeout(() => {
+      formMenu.classList.add("show");
+    }, 10); // Slight delay to trigger the transition
     addButton.style.backgroundColor = "#FF2431";
     icon.className = "fa-solid fa-xmark";
 
@@ -353,6 +359,10 @@ function loadMenuForm() {
     const clone = menuFormTemplate.content.cloneNode(true);
     formContainer.innerHTML = "";
     formContainer.appendChild(clone);
+
+    setTimeout(() => {
+      formContainer.classList.add("show");
+    }, 10); // Slight delay to trigger the transition
 
     // Reattach event listeners for the buttons in the menu form
     const logButtons = formContainer.querySelectorAll(".log-button");
@@ -372,15 +382,24 @@ function loadMenuForm() {
         // Load the corresponding form template
         if (formTemplate) {
           const clone = formTemplate.content.cloneNode(true);
-          formContainer.innerHTML = "";
-          formContainer.appendChild(clone);
+
+          formContainer.classList.remove("show");
+
+          // Wait for the transition to complete before replacing the content
+          setTimeout(() => {
+            formContainer.innerHTML = "";
+            formContainer.appendChild(clone);
+
+            setTimeout(() => {
+              formContainer.classList.add("show");
+            }, 10);
+          }, 300); // Match the transition duration in CSS
 
       console.log("Cloned form content:", formContainer.innerHTML);
 
       const formElement = formContainer.querySelector("form");
       console.log("Form element found:", formElement);
 
-          
       // 🟢 After form is loaded, wait for submit
       const submitButton = formContainer.querySelector("#submitButton"); // Ensure you use this class in your HTML
       console.log("Submit button found:", submitButton);
