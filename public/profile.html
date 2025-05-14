@@ -10,6 +10,7 @@
       href="https://cdn-icons-png.flaticon.com/512/4434/4434478.png"
     />
     <link rel="stylesheet" href="/stylesheets/profile.css" />
+    <link rel="stylesheet" href="/stylesheets/goal-popup.css" />
     <script
       src="https://kit.fontawesome.com/2fe1601858.js"
       crossorigin="anonymous"
@@ -51,16 +52,15 @@
     </header>
 
     <main>
-      <div class="profile-container">        <div class="profile-tabs">
+      <div class="profile-container">
+        <div class="profile-tabs">
           <button class="tab-button active" data-tab="personal-details">
             Personal Details
           </button>
           <button class="tab-button" data-tab="health-metrics">
             Health Metrics
           </button>
-          <button class="tab-button" data-tab="goals">
-            Goals
-          </button>
+          <button class="tab-button" data-tab="goals">Goals</button>
           <button class="tab-button" data-tab="account-settings">
             Account Settings
           </button>
@@ -99,19 +99,21 @@
           <div class="form-group">
             <label for="currentWeight">Current Weight (kg)</label>
             <input type="number" step="0.25" id="currentWeight" />
-          </div>          <div class="form-group">
+          </div>
+          <div class="form-group">
             <label for="bmi">BMI</label>
             <input type="text" id="bmi" readonly />
           </div>
-        </div>        <div class="tab-content" id="goals">
+        </div>
+        <div class="tab-content" id="goals">
           <h2>My Fitness Goals</h2>
+          <!-- Weight Management Goals -->
           <div class="form-group">
             <label for="fitness_goal_tab">Primary Fitness Goal</label>
             <select id="fitness_goal_tab">
               <option value="">Select your goal</option>
               <option value="lose_weight">Lose Weight</option>
               <option value="gain_weight">Gain Weight</option>
-              <option value="maintain_weight">Maintain Weight</option>
               <option value="build_muscle">Build Muscle</option>
             </select>
           </div>
@@ -119,11 +121,13 @@
           <div class="form-group" id="target_weight_group_tab">
             <label for="target_weight_tab">Target Weight (kg)</label>
             <input type="number" step="0.25" id="target_weight_tab" />
-          </div>          <div class="form-group">
+          </div>
+
+          <div class="form-group">
             <label for="target_date">Target Date</label>
             <input type="date" id="target_date" />
           </div>
-            <div class="form-group">
+          <div class="form-group">
             <label>Goal Progress</label>
             <div class="progress-container">
               <div class="progress-bar" id="goal-progress-bar"></div>
@@ -162,6 +166,41 @@
         </div>
       </div>
     </main>
+    <!-- Goal Achievement Popup -->
+    <div id="goal-popup" class="goal-popup">
+      <div class="goal-popup-content">
+        <i class="fas fa-trophy goal-popup-icon"></i>
+        <h3 class="goal-popup-title">Congratulations!</h3>
+        <p class="goal-popup-message">You've met your weight goal!</p>
+        <div class="goal-popup-details">
+          <i class="fas fa-star"></i>
+          <span>Goal completed successfully</span>
+        </div>
+        <div class="button-container">
+          <button id="goal-popup-button" class="goal-popup-button">
+            <i class="fas fa-flag"></i> Set New Goal
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Target Date Reached Popup -->
+    <div id="target-date-popup" class="goal-popup">
+      <div class="goal-popup-content">
+        <i class="fas fa-calendar-check goal-popup-icon"></i>
+        <h3 class="goal-popup-title">Target Date Reached!</h3>
+        <p class="goal-popup-message">Your target date has arrived!</p>
+        <div class="goal-popup-details">
+          <i class="fas fa-clock"></i>
+          <span>It's time to check your progress</span>
+        </div>
+        <div class="button-container">
+          <button id="target-date-popup-button" class="goal-popup-button">
+            <i class="fas fa-check"></i> Acknowledge
+          </button>
+        </div>
+      </div>
+    </div>
 
     <footer>
       <p>&copy; 2025 Health Tracker App</p>
