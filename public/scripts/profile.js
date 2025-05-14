@@ -32,14 +32,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     } else {
       // Redirect to sign in if not logged in
       window.location.href = "/sign-in.html";
-    }  });
+    }
+  });
 
   // Add sign out button handler
   document
     .getElementById("signOutButton")
     ?.addEventListener("click", handleSignOut);
-  
-  // Add fitness goal tab change listener  
+
+  // Add fitness goal tab change listener
   document
     .getElementById("fitness_goal_tab")
     ?.addEventListener("change", function () {
@@ -77,7 +78,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (targetWeightTabInput) {
     targetWeightTabInput.addEventListener("input", updateProgressFromInputs);
-  }  if (currentWeightInput) {
+  }
+  if (currentWeightInput) {
     currentWeightInput.addEventListener("input", updateProgressFromInputs);
   }
 });
@@ -106,8 +108,6 @@ function setupTabNavigation() {
     });
   });
 }
-
-
 
 // Handle fitness goal selection change in Goals tab
 function handleGoalChangeTab() {
@@ -160,7 +160,8 @@ function handleGoalChangeTab() {
 // Load user data from Firestore
 async function loadUserData() {
   try {
-    const userDoc = await getDoc(doc(db, "users", currentUser.uid));    if (userDoc.exists()) {
+    const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+    if (userDoc.exists()) {
       const data = userDoc.data();
 
       // Populate form fields
@@ -169,10 +170,11 @@ async function loadUserData() {
       document.getElementById("surname").value = data.surname || "";
       // Use the correct field names from signup form (current_height and current_weight)
       document.getElementById("height").value =
-        data.current_height || data.height || "";      document.getElementById("sex").value = data.sex || "";
+        data.current_height || data.height || "";
+      document.getElementById("sex").value = data.sex || "";
       document.getElementById("dob").value = data.date_of_birth || "";
       document.getElementById("email").value = data.email || "";
-      
+
       // Set weight value and store it for reference
       userWeight = data.current_weight || data.weight || "";
       document.getElementById("currentWeight").value = userWeight;
@@ -185,18 +187,19 @@ async function loadUserData() {
       const weight = parseFloat(userWeight || "0");
       if (height > 0 && weight > 0) {
         const bmi = calculateBMI(height, weight);
-        document.getElementById("bmi").value = bmi;      } else {
+        document.getElementById("bmi").value = bmi;
+      } else {
         document.getElementById("bmi").value = ""; // Clear BMI field if data is invalid
       }
-      
+
       // Set fitness goal
       const fitnessGoal = data.fitness_goal || "";
       document.getElementById("fitness_goal_tab").value = fitnessGoal;
-        // Handle target weight
+      // Handle target weight
       const goalData = data.goal_data || {};
       const targetWeight = goalData.target_weight || "";
       document.getElementById("target_weight_tab").value = targetWeight;
-      
+
       // Populate Goals tab data
       if (goalData.target_date) {
         document.getElementById("target_date").value = formatDateForInput(
@@ -237,7 +240,8 @@ document.getElementById("saveButton").addEventListener("click", async () => {
     if (targetWeight && parseFloat(targetWeight) <= 0) {
       showMessage("Target weight must be greater than 0", true);
       return;
-    }    const userData = {
+    }
+    const userData = {
       username: document.getElementById("username").value,
       forename: document.getElementById("forename").value,
       surname: document.getElementById("surname").value,
@@ -259,15 +263,15 @@ document.getElementById("saveButton").addEventListener("click", async () => {
       },
       units: "Metric",
       updated_at: new Date(),
-    };    // Validate required fields
+    }; // Validate required fields
     if (!userData.username || !userData.email) {
       showMessage("Username and email are required", true);
       return;
     }
-    
+
     // Update user document in Firestore
     await updateDoc(doc(db, "users", currentUser.uid), userData);
-    showMessage("Profile updated successfully");    // Check if target date has been reached
+    showMessage("Profile updated successfully"); // Check if target date has been reached
     if (targetDate) {
       // Remove any existing popup flags to allow the popup to show if date is current or past
       sessionStorage.removeItem("target_date_popup_shown");
@@ -607,8 +611,6 @@ function showGoalAchievementPopup() {
   });
 }
 
-
-
 // Function to reset the goal after achievement
 async function resetGoalAfterAchievement() {
   // Get the current weight as the new initial weight
@@ -685,17 +687,16 @@ function checkTargetDateReached(targetDate) {
   } else {
     targetDateObj = new Date(targetDate);
   }
-  
+
   // Set hours to 0 to compare just the dates
   targetDateObj.setHours(0, 0, 0, 0);
-  
+
   // Get current date with time set to 0
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  
+
   // Check if target date has passed or is today
   if (today.getTime() >= targetDateObj.getTime()) {
-
     // Get current progress
     const currentWeight = document.getElementById("currentWeight").value;
     const targetWeight = document.getElementById("target_weight_tab").value;
@@ -725,7 +726,7 @@ function checkTargetDateReached(targetDate) {
       // No progress
       popupMessage.textContent = "Your target date has arrived!";
       popupDetails.textContent = "It's time to check your progress";
-    }    // Show popup
+    } // Show popup
     showTargetDatePopup();
 
     // Mark as shown in session storage
