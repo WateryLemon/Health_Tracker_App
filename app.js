@@ -262,8 +262,16 @@ app.post("/api/invite", async (req, res) => {
 
 // POST route to send goal invitations via email
 app.post("/api/send-goal-invite", async (req, res) => {
-  const { recipientEmail, groupName, goalTitle, goalJoinCode, senderName } =
-    req.body;
+  const {
+    recipientEmail,
+    groupName,
+    goalTitle,
+    goalJoinCode,
+    senderName,
+    isExistingGoal,
+  } = req.body;
+
+  const isForExistingGoal = isExistingGoal === true;
 
   logger(
     `Processing goal invitation email to ${recipientEmail} for "${goalTitle}" in group "${groupName}" (code: ${goalJoinCode})`
@@ -272,22 +280,38 @@ app.post("/api/send-goal-invite", async (req, res) => {
   try {
     // Send email using Resend
     logger(`Attempting to send goal invitation email to ${recipientEmail}`);
+
+    const subject = isForExistingGoal
+      ? `Join existing goal "${goalTitle}" in ${groupName} group`
+      : `${senderName} created a new goal "${goalTitle}" in ${groupName}`;
+
+    const headingText = isForExistingGoal
+      ? "Join Existing Group Goal"
+      : "New Group Goal Created!";
+
+    const introText = isForExistingGoal
+      ? `You've joined the <strong>${groupName}</strong> group which has an existing goal: <strong>"${goalTitle}"</strong>.`
+      : `${senderName} has created a new goal <strong>"${goalTitle}"</strong> in the <strong>${groupName}</strong> group.`;
+
     const emailResponse = await resend.emails.send({
       from: "Health Tracker <onboarding@healthtracker103.tech>",
       to: recipientEmail,
-      subject: `${senderName} created a new goal "${goalTitle}" in ${groupName}`,
+      subject: subject,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2>New Group Goal Created!</h2>
-          <p>${senderName} has created a new goal <strong>"${goalTitle}"</strong> in the <strong>${groupName}</strong> group.</p>
-          <p>Use this code to join the goal: <strong>${goalJoinCode}</strong></p>
+          <h2>${headingText}</h2>
+          <p>${introText}</p>
+          <div style="background-color: #f0f7ff; border-left: 4px solid #3498db; padding: 15px; margin: 20px 0;">
+            <p style="font-weight: bold; margin-top: 0;">Important: You must use this code to track the goal</p>
+            <p style="font-size: 20px; background-color: #fff; padding: 10px; border: 1px dashed #3498db; text-align: center;"><strong>${goalJoinCode}</strong></p>
+          </div>
           <p>To join this goal:</p>
           <ol>
             <li>Sign in to your Health Tracker account</li>
             <li>Go to the Groups page</li>
             <li>Open the ${groupName} group</li>
             <li>Go to the "Group Goals" tab</li>
-            <li>Enter the goal join code above</li>
+            <li>Enter the goal join code above in the "Join a Goal" section</li>
           </ol>
           <p>Track your fitness journey together!</p>
           <p>- The Health Tracker Team</p>

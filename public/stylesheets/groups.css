@@ -188,6 +188,7 @@ main {
 .tab-content {
   display: none;
   padding: 20px 0;
+  min-height: 400px; /* Set a minimum height for all tab content */
 }
 
 .tab-content.active {

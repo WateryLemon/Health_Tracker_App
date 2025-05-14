@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/stylesheets/groups.css" />
     <link rel="stylesheet" href="/stylesheets/progress-details.css" />
+    <link rel="stylesheet" href="/stylesheets/groups-fix.css" />
     <title>Health Groups</title>
     <link
       rel="icon"
@@ -98,7 +99,6 @@
             <!-- The no-groups message will be added by JavaScript when needed -->
           </div>
         </div>
-
         <div class="tab-content" id="create-group">
           <h2>Create a New Group</h2>
           <form id="create-group-form">
@@ -115,14 +115,13 @@
               <textarea
                 id="group-description"
                 name="group-description"
-                rows="4"
+                rows="6"
                 required
               ></textarea>
             </div>
             <button type="submit" class="submit-btn">Create Group</button>
           </form>
         </div>
-
         <div class="tab-content" id="join-group">
           <h2>Join a Group</h2>
           <form id="join-group-form">
@@ -163,9 +162,18 @@
             </div>
             <button id="leave-group-btn" class="danger-btn">Leave Group</button>
           </div>
-
           <div class="modal-tab-content" id="goals-tab">
             <h3>Group Goals</h3>
+            <div class="goal-instructions">
+              <p>
+                To track goals with your group, you need a join code. You'll
+                receive this via email when:
+              </p>
+              <ul>
+                <li>You join a group with existing goals</li>
+                <li>A new goal is created in your group</li>
+              </ul>
+            </div>
             <div id="group-goals-list">
               <!-- Goals will be listed here -->
             </div>
@@ -179,9 +187,13 @@
                     type="text"
                     id="goal-join-code"
                     name="goal-join-code"
-                    placeholder="Enter the code you received"
+                    placeholder="Example: GOAL-ABC123"
                     required
                   />
+                  <p class="form-help-text">
+                    You must enter a join code to track a goal with your group.
+                    Check your email for the code.
+                  </p>
                 </div>
                 <button type="submit" class="submit-btn">Join Goal</button>
               </form>
@@ -189,6 +201,10 @@
             <!-- Form to create a new goal -->
             <div class="create-goal-section">
               <h4>Create New Goal</h4>
+              <p class="create-goal-info">
+                When you create a goal, a join code will be generated. You and
+                other members must use this code to start tracking the goal.
+              </p>
               <form id="create-goal-form">
                 <div class="form-group">
                   <label for="group_fitness_goal"

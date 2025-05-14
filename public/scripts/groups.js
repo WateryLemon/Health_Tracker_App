@@ -584,16 +584,14 @@ document.addEventListener("DOMContentLoaded", () => {
         } // Convert the timestamp to a readable date
         const startDate = goal.start_date
           ? new Date(goal.start_date.seconds * 1000).toLocaleDateString()
-          : "N/A";
-
-        // Check if the current user is participating in this goal
+          : "N/A"; // Check if the current user is participating in this goal
         const isParticipating =
           goal.participants && goal.participants.includes(currentUser.uid);
 
         // Show a join button or participation status based on whether the user is already in the goal
         const participationHTML = isParticipating
           ? `<div class="goal-joined-indicator">✓ You're participating</div>`
-          : "";
+          : `<div class="goal-not-joined">You are not tracking this goal yet. Enter the join code above to participate.</div>`;
 
         goalItem.innerHTML = `
                     <div class="goal-header">
@@ -829,6 +827,13 @@ document.addEventListener("DOMContentLoaded", () => {
         memberCount: (groupData.memberCount || 0) + 1,
       });
 
+      // Send goal join codes to the new member
+      await sendGoalJoinCodesToNewMember(
+        groupId,
+        groupData.name,
+        currentUser.uid
+      );
+
       showMessage("You've successfully joined the group!");
       event.target.reset();
 
@@ -870,9 +875,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // Generate a unique join code for this goal
-      const goalJoinCode = generateGoalJoinCode();
-
-      // Add goal to the group
+      const goalJoinCode = generateGoalJoinCode(); // Add goal to the group
       const goalRef = window.doc(
         window.collection(db, "groups", currentGroup.id, "goals")
       );
@@ -886,11 +889,9 @@ document.addEventListener("DOMContentLoaded", () => {
         start_date: window.serverTimestamp(),
         createdBy: currentUser.uid,
         createdAt: window.serverTimestamp(),
-        participants: [currentUser.uid], // Creator is automatically a participant
+        participants: [], // No automatic participants - everyone must use the join code
         joinCode: goalJoinCode,
-      });
-
-      // Send email notifications to all group members with goal join code
+      }); // Send email notifications to all group members with goal join code
       await notifyGroupMembersAboutGoal(currentGroup.id, {
         type: "new_goal",
         goalTitle: getFitnessGoalName(fitnessGoal),
@@ -900,7 +901,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       showMessage(
-        "Goal created successfully! Other members will receive a join code."
+        `Goal created successfully! Your join code is: ${goalJoinCode}. You must use this code to join the goal.`
       );
       event.target.reset();
 
@@ -1087,15 +1088,10 @@ document.addEventListener("DOMContentLoaded", () => {
         membershipsRef,
         window.where("groupId", "==", groupId)
       );
-      const querySnapshot = await window.getDocs(q);
-
-      // For each member, create a notification
+      const querySnapshot = await window.getDocs(q); // For each member, create a notification
       for (const doc of querySnapshot.docs) {
         const membership = doc.data();
         const userId = membership.userId;
-
-        // Skip notification for the user who created the event
-        if (userId === currentUser.uid) continue;
 
         // Add to notifications collection
         await window.addDoc(window.collection(db, "notifications"), {
@@ -1155,6 +1151,92 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch (error) {
       console.error("Error sending goal notifications:", error);
+    }
+  }
+
+  // Send goal join codes to a new group member
+  async function sendGoalJoinCodesToNewMember(groupId, groupName, userId) {
+    try {
+      const db = window.db;
+
+      // Fetch user's email
+      const userDoc = await window.getDoc(window.doc(db, "users", userId));
+      if (!userDoc.exists()) {
+        console.error("User document not found");
+        return;
+      }
+
+      const userData = userDoc.data();
+      const userEmail = userData.email;
+
+      if (!userEmail) {
+        console.error("User has no email address configured");
+        return;
+      }
+
+      // Fetch existing goals for this group
+      const goalsRef = window.collection(db, "groups", groupId, "goals");
+      const goalsSnapshot = await window.getDocs(goalsRef);
+
+      if (goalsSnapshot.empty) {
+        console.log("No goals found for this group");
+        return;
+      }
+
+      // Send goal join codes for each goal
+      for (const goalDoc of goalsSnapshot.docs) {
+        const goalData = goalDoc.data();
+        const goalJoinCode = goalData.joinCode;
+        const goalTitle = getFitnessGoalName(goalData.fitness_goal);
+
+        if (goalJoinCode) {
+          // Send notification about this goal
+          await window.addDoc(window.collection(db, "notifications"), {
+            userId,
+            groupId,
+            type: "existing_goal",
+            goalTitle,
+            groupName,
+            goalJoinCode,
+            goalId: goalDoc.id,
+            read: false,
+            createdAt: window.serverTimestamp(),
+          });
+
+          // Send email with the goal join code
+          console.log(
+            `Sending existing goal join code to new member ${userEmail}: ${goalJoinCode}`
+          );
+
+          try {
+            const response = await fetch("/api/send-goal-invite", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                recipientEmail: userEmail,
+                groupName,
+                goalTitle,
+                goalJoinCode,
+                senderName: "Health Tracker",
+                isExistingGoal: true,
+              }),
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json().catch(() => ({}));
+              console.error("Email notification failed:", errorData);
+            } else {
+              console.log(`Successfully sent goal invitation to ${userEmail}`);
+            }
+          } catch (emailError) {
+            console.error("Error sending goal join email:", emailError);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error sending goal join codes to new member:", error);
     }
   }
 
