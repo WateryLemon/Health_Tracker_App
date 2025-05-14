@@ -260,6 +260,52 @@ app.post("/api/invite", async (req, res) => {
   }
 });
 
+// POST route to send goal invitations via email
+app.post("/api/send-goal-invite", async (req, res) => {
+  const { recipientEmail, groupName, goalTitle, goalJoinCode, senderName } =
+    req.body;
+
+  logger(
+    `Processing goal invitation email to ${recipientEmail} for "${goalTitle}" in group "${groupName}" (code: ${goalJoinCode})`
+  );
+
+  try {
+    // Send email using Resend
+    logger(`Attempting to send goal invitation email to ${recipientEmail}`);
+    const emailResponse = await resend.emails.send({
+      from: "Health Tracker <onboarding@healthtracker103.tech>",
+      to: recipientEmail,
+      subject: `${senderName} created a new goal "${goalTitle}" in ${groupName}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>New Group Goal Created!</h2>
+          <p>${senderName} has created a new goal <strong>"${goalTitle}"</strong> in the <strong>${groupName}</strong> group.</p>
+          <p>Use this code to join the goal: <strong>${goalJoinCode}</strong></p>
+          <p>To join this goal:</p>
+          <ol>
+            <li>Sign in to your Health Tracker account</li>
+            <li>Go to the Groups page</li>
+            <li>Open the ${groupName} group</li>
+            <li>Go to the "Group Goals" tab</li>
+            <li>Enter the goal join code above</li>
+          </ol>
+          <p>Track your fitness journey together!</p>
+          <p>- The Health Tracker Team</p>
+        </div>
+      `,
+    });
+
+    logger(`Goal invitation email sent successfully to ${recipientEmail}`);
+    res.json({ success: true, id: emailResponse.id });
+  } catch (error) {
+    logger(`Error sending goal invitation email: ${error.message}`);
+    console.error("Full error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to send invitation email" });
+  }
+});
+
 // POST route to create a new group with atomic transaction
 app.post("/api/groups", async (req, res) => {
   const { name, description, type, code, userId } = req.body;
@@ -317,7 +363,6 @@ app.post("/api/groups", async (req, res) => {
       joinedAt: serverTimestamp(),
       role: "admin",
     });
-
     logger(`Group "${name}" created successfully with ID: ${groupId}`);
     res.json({
       success: true,

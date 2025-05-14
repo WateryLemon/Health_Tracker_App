@@ -70,29 +70,21 @@ document.addEventListener("DOMContentLoaded", () => {
         validationMessage.className = "validation-message error";
       }
     }
-  } // Setup group fitness goal selection behavior
+  }
+  // Setup group fitness goal selection behavior
   function setupGroupGoalSelection() {
     const fitnessGoalSelect = document.getElementById("group_fitness_goal");
     const targetWeightGroup = document.getElementById(
       "group_target_weight_group"
     );
     const targetWeightInput = document.getElementById("group_target_weight");
-    const targetWeightLabel = document.querySelector(
-      'label[for="group_target_weight"]'
-    );
+    const targetWeightLabel = document.querySelector('label[for="group_target_weight"]');
 
     if (fitnessGoalSelect) {
       fitnessGoalSelect.addEventListener("change", function () {
-        // First, cancel any pending transitions
-        if (window.weightTransitionTimer) {
-          clearTimeout(window.weightTransitionTimer);
-        }
-
         if (this.value === "lose_weight") {
-          // Immediately show for lose weight
           targetWeightGroup.style.display = "block";
-          // Wait a tiny bit before adding the visible class for transition
-          setTimeout(() => targetWeightGroup.classList.add("visible"), 10);
+          targetWeightGroup.classList.add("visible");
           targetWeightInput.required = true;
           targetWeightInput.value = "";
           // Update label for weight loss
@@ -100,10 +92,8 @@ document.addEventListener("DOMContentLoaded", () => {
             targetWeightLabel.textContent = "Target Weight Loss (kg)";
           }
         } else if (this.value === "gain_weight") {
-          // Immediately show for gain weight
           targetWeightGroup.style.display = "block";
-          // Wait a tiny bit before adding the visible class for transition
-          setTimeout(() => targetWeightGroup.classList.add("visible"), 10);
+          targetWeightGroup.classList.add("visible");
           targetWeightInput.required = true;
           targetWeightInput.value = "";
           // Update label for weight gain
@@ -111,17 +101,17 @@ document.addEventListener("DOMContentLoaded", () => {
             targetWeightLabel.textContent = "Target Weight Gain (kg)";
           }
         } else {
-          // For other options, hide gradually
           targetWeightGroup.classList.remove("visible");
           targetWeightInput.required = false;
           targetWeightInput.value = "";
           // Wait for transition to complete before hiding
-          window.weightTransitionTimer = setTimeout(() => {
+          setTimeout(() => {
             if (!targetWeightGroup.classList.contains("visible")) {
               targetWeightGroup.style.display = "none";
             }
           }, 300);
         }
+      });
       });
     }
   }
@@ -155,29 +145,12 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       document.querySelectorAll(".modal-tab-content").forEach((content) => {
         content.classList.remove("active");
-      }); // Add active class to clicked modal tab
+      });
+
+      // Add active class to clicked modal tab
       button.classList.add("active");
       const tabId = button.getAttribute("data-modal-tab") + "-tab";
-      const tabElement = document.getElementById(tabId);
-
-      if (tabElement) {
-        tabElement.classList.add("active"); // Special handling for share tab
-        if (tabId === "share-tab" && currentGroup) {
-          console.log("Share tab activated, ensuring code is displayed");
-          const codeElement = document.getElementById("group-share-code");
-
-          if (!currentGroup.code) {
-            // If the group doesn't have a code yet, show loading indicator
-            codeElement.textContent = "Loading...";
-            updateGroupWithCode(currentGroup);
-          } else {
-            // Set the code in the UI
-            codeElement.textContent = currentGroup.code;
-          }
-        }
-      } else {
-        console.error(`Tab element not found: ${tabId}`);
-      }
+      document.getElementById(tabId).classList.add("active");
     });
   });
 
@@ -193,37 +166,30 @@ document.addEventListener("DOMContentLoaded", () => {
       modal.style.display = "none";
     }
   });
+
   // Form submission handlers
   const createGroupForm = document.getElementById("create-group-form");
   createGroupForm.addEventListener("submit", handleCreateGroup);
 
   const joinGroupForm = document.getElementById("join-group-form");
   joinGroupForm.addEventListener("submit", handleJoinGroup);
+
   const createGoalForm = document.getElementById("create-goal-form");
   createGoalForm.addEventListener("submit", handleCreateGoal);
 
-  const joinGoalForm = document.getElementById("join-goal-form");
-  joinGoalForm.addEventListener("submit", handleJoinGoal);
-
   const shareEmailForm = document.getElementById("share-email-form");
   shareEmailForm.addEventListener("submit", handleShareViaEmail);
+
   // Copy group code to clipboard
   document.getElementById("copy-code-btn").addEventListener("click", () => {
     const code = document.getElementById("group-share-code").textContent;
-
-    if (!code || code === "Loading...") {
-      showMessage("No group code available to copy", true);
-      return;
-    }
-
     navigator.clipboard
       .writeText(code)
       .then(() => {
-        showMessage("Group code copied to clipboard!");
+        alert("Group code copied to clipboard!");
       })
       .catch((err) => {
         console.error("Could not copy code: ", err);
-        showMessage("Failed to copy code to clipboard", true);
       });
   });
 
@@ -297,6 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const groups = [];
+
       for (const doc of querySnapshot.docs) {
         const membership = doc.data();
         const groupId = membership.groupId;
@@ -305,21 +272,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const groupDoc = await window.getDoc(window.doc(db, "groups", groupId));
         if (groupDoc.exists()) {
           const groupData = groupDoc.data();
-
-          // Ensure the group has a code
-          if (!groupData.code) {
-            const newCode = generateGroupCode();
-            console.log(`Generated new code for group ${groupId}: ${newCode}`);
-
-            // Update the group with the new code
-            await window.updateDoc(window.doc(db, "groups", groupId), {
-              code: newCode,
-            });
-
-            // Add the code to the group data
-            groupData.code = newCode;
-          }
-
           groups.push({
             id: groupId,
             ...groupData,
@@ -360,60 +312,21 @@ document.addEventListener("DOMContentLoaded", () => {
     } finally {
       isLoadingGroups = false;
     }
-  } // Open group details modal
+  }
+
+  // Open group details modal
   function openGroupModal(group) {
     currentGroup = group;
-    console.log("Opening group modal with data:", group);
 
     document.getElementById("modal-group-name").textContent = group.name;
     document.getElementById("modal-group-description").textContent =
       group.description;
-
-    // Fix for share tab - ensure the group code is available
-    if (group.code) {
-      document.getElementById("group-share-code").textContent = group.code;
-    } else {
-      // If code is missing, generate one and update the group
-      updateGroupWithCode(group);
-    }
+    document.getElementById("group-share-code").textContent = group.code;
 
     loadGroupMembers(group.id);
     loadGroupGoals(group.id);
 
     document.getElementById("group-modal").style.display = "block";
-  }
-
-  // Update a group with a new code if it's missing
-  async function updateGroupWithCode(group) {
-    try {
-      console.log("Generating code for group:", group.id);
-      const newCode = generateGroupCode();
-
-      // Update in Firebase first
-      const db = window.db;
-      await window.updateDoc(window.doc(db, "groups", group.id), {
-        code: newCode,
-      });
-
-      // Then update the UI and local object after successful database update
-      document.getElementById("group-share-code").textContent = newCode;
-
-      // Update the current group object
-      currentGroup.code = newCode;
-
-      console.log("Group code updated successfully:", newCode);
-
-      // Show a success message to the user
-      showMessage("Group sharing code generated successfully");
-
-      return newCode;
-    } catch (error) {
-      console.error("Error updating group code:", error);
-      document.getElementById("group-share-code").textContent =
-        "Error generating code";
-      showMessage("Error generating sharing code", true);
-      return null;
-    }
   }
 
   // Load group members
@@ -463,7 +376,9 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       console.error("Error loading group members:", error);
     }
-  } // Load group goals
+  }
+
+  // Load group goals
   async function loadGroupGoals(groupId) {
     try {
       const db = window.db;
@@ -485,117 +400,47 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       });
 
-      // Process goals one by one with proper async handling
-      for (const goal of goals) {
+      goals.forEach((goal) => {
         const goalItem = document.createElement("div");
         goalItem.className = "goal-item";
 
-        // Calculate the progress
-        const progressPercentage = await calculateFitnessGoalProgress(goal);
+        const progressPercentage = calculateFitnessGoalProgress(goal);
 
         // Format the goal information based on the goal type
         let goalTitle = "";
         let goalDetails = "";
-        let progressDetails = "";
-        let currentWeight = parseFloat(goal.initial_weight); // Default to initial weight
-
-        // Fetch current weight from user profile
-        try {
-          const userDoc = await window.getDoc(
-            window.doc(window.db, "users", currentUser.uid)
-          );
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-            currentWeight = parseFloat(
-              userData.current_weight || userData.weight || goal.initial_weight
-            );
-          }
-        } catch (error) {
-          console.error("Error fetching user weight:", error);
-        }
 
         switch (goal.fitness_goal) {
           case "lose_weight":
             goalTitle = "Lose Weight";
-            if (goal.target_weight && goal.initial_weight) {
-              const targetWeightKg = parseFloat(goal.target_weight);
-              const initialWeightKg = parseFloat(goal.initial_weight);
-              const weightLossTarget = (
-                initialWeightKg - targetWeightKg
-              ).toFixed(1);
-              goalDetails = `Target Weight Loss: ${weightLossTarget} kg (from ${initialWeightKg} kg to ${targetWeightKg} kg)`;
-
-              // Get current weight from user's profile for progress display
-              const weightLostSoFar = (initialWeightKg - currentWeight).toFixed(
-                1
-              );
-              progressDetails = `Current Progress: ${weightLostSoFar} kg lost, ${((weightLostSoFar / weightLossTarget) * 100).toFixed(0)}% of goal`;
-            } else {
-              goalDetails = goal.target_weight
-                ? `Target: ${goal.target_weight} kg`
-                : "";
-            }
+            goalDetails = goal.target_weight
+              ? `Target: ${goal.target_weight} kg`
+              : "";
             break;
           case "maintain_weight":
             goalTitle = "Maintain Weight";
-            if (goal.initial_weight) {
-              const initialWeightKg = parseFloat(goal.initial_weight);
-              goalDetails = `Maintain weight at: ${initialWeightKg} kg`;
-
-              // Show current weight status
-              const weightDifference = (
-                currentWeight - initialWeightKg
-              ).toFixed(1);
-              const direction =
-                weightDifference > 0
-                  ? "above"
-                  : weightDifference < 0
-                    ? "below"
-                    : "at";
-              progressDetails = `Current weight: ${currentWeight} kg (${Math.abs(weightDifference)} kg ${direction} target)`;
-            }
             break;
           case "build_muscle":
             goalTitle = "Build Muscle";
-            if (goal.target_weight && goal.initial_weight) {
-              const targetWeightKg = parseFloat(goal.target_weight);
-              const initialWeightKg = parseFloat(goal.initial_weight);
-              const weightGainTarget = (
-                targetWeightKg - initialWeightKg
-              ).toFixed(1);
-              goalDetails = `Target Weight Gain: ${weightGainTarget} kg (from ${initialWeightKg} kg to ${targetWeightKg} kg)`;
-
-              // Show progress based on current weight
-              const weightGainedSoFar = (
-                currentWeight - initialWeightKg
-              ).toFixed(1);
-              progressDetails = `Current Progress: ${weightGainedSoFar} kg gained, ${((weightGainedSoFar / weightGainTarget) * 100).toFixed(0)}% of goal`;
-            } else {
-              goalDetails = goal.target_weight
-                ? `Target: ${goal.target_weight} kg`
-                : "";
-            }
+            goalDetails = goal.target_weight
+              ? `Target: ${goal.target_weight} kg`
+              : "";
             break;
           default:
             goalTitle = goal.fitness_goal || "Custom Goal";
-        } // Add description if available
+        }
+
+        // Add description if available
         if (goal.description) {
           goalDetails += goalDetails
             ? `<br>${goal.description}`
             : goal.description;
-        } // Convert the timestamp to a readable date
+        }
+
+        // Convert the timestamp to a readable date
         const startDate = goal.start_date
           ? new Date(goal.start_date.seconds * 1000).toLocaleDateString()
           : "N/A";
-
-        // Check if the current user is participating in this goal
-        const isParticipating =
-          goal.participants && goal.participants.includes(currentUser.uid);
-
-        // Show a join button or participation status based on whether the user is already in the goal
-        const participationHTML = isParticipating
-          ? `<div class="goal-joined-indicator">✓ You're participating</div>`
-          : "";
 
         goalItem.innerHTML = `
                     <div class="goal-header">
@@ -604,109 +449,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                     <div class="goal-progress">
                         <div class="progress-bar" style="width: ${progressPercentage}%"></div>
-                        <div class="progress-percentage">${progressPercentage}%</div>
                     </div>
                     <div class="goal-details">${goalDetails}</div>
-                    ${progressDetails ? `<div class="progress-details">${progressDetails}</div>` : ""}
-                    ${participationHTML}
                 `;
 
         goalsList.appendChild(goalItem);
-      }
+      });
     } catch (error) {
       console.error("Error loading group goals:", error);
     }
-  } // Calculate goal progress for fitness goals
-  async function calculateFitnessGoalProgress(goal) {
-    // Default to 0 progress if we don't have necessary data
-    if (!goal || !goal.fitness_goal) {
-      return 0;
-    }
-
-    // Check if user is participating in this goal
-    const isParticipating =
-      goal.participants && goal.participants.includes(currentUser.uid);
-
-    // If user is not participating, show 0 progress
-    if (!isParticipating) {
-      return 0;
-    }
-
-    // For goals that don't involve weight tracking
-    if (
-      goal.fitness_goal !== "lose_weight" &&
-      goal.fitness_goal !== "maintain_weight" &&
-      goal.fitness_goal !== "build_muscle"
-    ) {
-      // Return a placeholder progress (this should be replaced with actual calculation in a real app)
-      return Math.floor(Math.random() * 100);
-    }
-
-    try {
-      // Get user's current weight from their profile
-      const userDoc = await window.getDoc(
-        window.doc(window.db, "users", currentUser.uid)
-      );
-      if (!userDoc.exists()) {
-        return 0;
-      }
-      const userData = userDoc.data();
-      const currentWeight = parseFloat(
-        userData.current_weight || userData.weight || goal.initial_weight || 0
-      );
-      const initialWeight = parseFloat(goal.initial_weight || 0);
-      const targetWeight = parseFloat(goal.target_weight || 0);
-
-      // If we're missing any required data, return 0 progress
-      if (
-        isNaN(currentWeight) ||
-        isNaN(targetWeight) ||
-        isNaN(initialWeight) ||
-        initialWeight === 0
-      ) {
-        return 0;
-      }
-
-      // Calculate progress based on goal type
-      let progressPercentage = 0;
-
-      switch (goal.fitness_goal) {
-        case "maintain_weight":
-          // For maintain weight, progress is 100% if current matches target
-          progressPercentage = currentWeight === targetWeight ? 100 : 0;
-          break;
-
-        case "lose_weight":
-          // Goal is to lose weight
-          if (initialWeight <= targetWeight) {
-            // Invalid goal (target > initial for weight loss), return 0
-            return 0;
-          }
-
-          const weightLossNeeded = initialWeight - targetWeight;
-          const weightLostSoFar = initialWeight - currentWeight;
-          progressPercentage = (weightLostSoFar / weightLossNeeded) * 100;
-          break;
-
-        case "build_muscle":
-          // Goal is to gain weight/muscle
-          if (initialWeight >= targetWeight) {
-            // Invalid goal (target < initial for muscle gain), return 0
-            return 0;
-          }
-
-          const weightGainNeeded = targetWeight - initialWeight;
-          const weightGainedSoFar = currentWeight - initialWeight;
-          progressPercentage = (weightGainedSoFar / weightGainNeeded) * 100;
-          break;
-      }
-
-      // Ensure progress is between 0 and 100
-      return Math.min(100, Math.max(0, Math.round(progressPercentage)));
-    } catch (error) {
-      console.error("Error calculating fitness goal progress:", error);
-      return 0;
-    }
+  }
+  // Calculate goal progress for fitness goals
+  function calculateFitnessGoalProgress(goal) {
+    // This is a placeholder - in a real app, you would calculate based on actual data
+    // For example, weight loss progress, etc.
+    return Math.floor(Math.random() * 100);
   }
 
   // Create a new group
@@ -844,7 +601,8 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error joining group:", error);
       showMessage("Error joining group: " + error.message, true);
     }
-  } // Create a new goal for the current group
+  }
+  // Create a new goal for the current group
   async function handleCreateGoal(event) {
     event.preventDefault();
 
@@ -860,23 +618,6 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const db = window.db;
 
-      // Get the user's current weight to use as initial weight for the goal
-      let initialWeight = null;
-      try {
-        const userDoc = await window.getDoc(
-          window.doc(db, "users", currentUser.uid)
-        );
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          initialWeight = userData.current_weight || userData.weight;
-        }
-      } catch (userError) {
-        console.error("Error fetching user weight:", userError);
-      }
-
-      // Generate a unique join code for this goal
-      const goalJoinCode = generateGoalJoinCode();
-
       // Add goal to the group
       const goalRef = window.doc(
         window.collection(db, "groups", currentGroup.id, "goals")
@@ -884,29 +625,20 @@ document.addEventListener("DOMContentLoaded", () => {
       await window.setDoc(goalRef, {
         fitness_goal: fitnessGoal,
         goal_type: fitnessGoal,
-        target_weight:
-          fitnessGoal === "maintain_weight" ? initialWeight : targetWeight,
-        initial_weight: initialWeight,
+        target_weight: fitnessGoal === "maintain_weight" ? null : targetWeight,
         description: goalDescription,
         start_date: window.serverTimestamp(),
         createdBy: currentUser.uid,
         createdAt: window.serverTimestamp(),
-        participants: [currentUser.uid], // Creator is automatically a participant
-        joinCode: goalJoinCode,
-      });
-
-      // Send email notifications to all group members with goal join code
-      await notifyGroupMembersAboutGoal(currentGroup.id, {
+        participants: [],
+      }); // Send email notifications to all group members
+      await notifyGroupMembers(currentGroup.id, {
         type: "new_goal",
         goalTitle: getFitnessGoalName(fitnessGoal),
         groupName: currentGroup.name,
-        goalJoinCode: goalJoinCode,
-        goalId: goalRef.id,
       });
 
-      showMessage(
-        "Goal created successfully! Other members will receive a join code."
-      );
+      showMessage("Goal created successfully!");
       event.target.reset();
 
       // Refresh goals list
@@ -1081,88 +813,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Special notification function for goals that includes join code
-  async function notifyGroupMembersAboutGoal(groupId, goalInfo) {
-    try {
-      const db = window.db;
-
-      // Get all group members
-      const membershipsRef = window.collection(db, "group_memberships");
-      const q = window.query(
-        membershipsRef,
-        window.where("groupId", "==", groupId)
-      );
-      const querySnapshot = await window.getDocs(q);
-
-      // For each member, create a notification
-      for (const doc of querySnapshot.docs) {
-        const membership = doc.data();
-        const userId = membership.userId;
-
-        // Skip notification for the user who created the event
-        if (userId === currentUser.uid) continue;
-
-        // Add to notifications collection
-        await window.addDoc(window.collection(db, "notifications"), {
-          userId,
-          groupId,
-          ...goalInfo,
-          read: false,
-          createdAt: window.serverTimestamp(),
-        });
-
-        // Get user email for email notification
-        try {
-          const userDoc = await window.getDoc(window.doc(db, "users", userId));
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-            const userEmail = userData.email;
-
-            if (userEmail) {
-              console.log(
-                `Sending goal join invitation to ${userEmail} with code ${goalInfo.goalJoinCode}`
-              );
-
-              // Send email with goal join code
-              const response = await fetch("/api/send-goal-invite", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  recipientEmail: userEmail,
-                  groupName: goalInfo.groupName,
-                  goalTitle: goalInfo.goalTitle,
-                  goalJoinCode: goalInfo.goalJoinCode,
-                  senderName: currentUser.displayName || "A group member",
-                }),
-              });
-
-              if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                console.error("Email notification failed:", errorData);
-              } else {
-                console.log(
-                  `Successfully sent goal invitation to ${userEmail}`
-                );
-              }
-            } else {
-              console.warn(
-                `User ${userId} does not have an email address configured`
-              );
-            }
-          } else {
-            console.warn(`User document not found for user ${userId}`);
-          }
-        } catch (emailError) {
-          console.error("Error sending goal join email:", emailError);
-        }
-      }
-    } catch (error) {
-      console.error("Error sending goal notifications:", error);
-    }
-  }
-
   // Generate a random code for group sharing
   function generateGroupCode() {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -1171,90 +821,6 @@ document.addEventListener("DOMContentLoaded", () => {
       code += characters.charAt(Math.floor(Math.random() * characters.length));
     }
     return code;
-  }
-
-  // Generate a random code for goal joining
-  function generateGoalJoinCode() {
-    const characters = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // Removed confusing characters like 0, O, 1, I
-    let code = "GOAL-";
-    for (let i = 0; i < 6; i++) {
-      code += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return code;
-  }
-
-  // Handle joining a goal with a code
-  async function handleJoinGoal(event) {
-    event.preventDefault();
-
-    if (!currentUser || !currentGroup) {
-      alert("Error: Missing user or group information.");
-      return;
-    }
-
-    const joinCode = document.getElementById("goal-join-code").value.trim();
-
-    if (!joinCode) {
-      showMessage("Please enter a valid goal join code", true);
-      return;
-    }
-
-    try {
-      const db = window.db;
-
-      // Search for the goal with this join code in this group
-      const goalsRef = window.collection(
-        db,
-        "groups",
-        currentGroup.id,
-        "goals"
-      );
-      const q = window.query(
-        goalsRef,
-        window.where("joinCode", "==", joinCode)
-      );
-      const querySnapshot = await window.getDocs(q);
-
-      if (querySnapshot.empty) {
-        showMessage(
-          "No goal found with this code in this group. Please check and try again.",
-          true
-        );
-        return;
-      }
-
-      const goalDoc = querySnapshot.docs[0];
-      const goalData = goalDoc.data();
-
-      // Check if user is already a participant
-      if (
-        goalData.participants &&
-        goalData.participants.includes(currentUser.uid)
-      ) {
-        showMessage("You are already participating in this goal.", true);
-        return;
-      }
-
-      // Add user to participants
-      const updatedParticipants = [
-        ...(goalData.participants || []),
-        currentUser.uid,
-      ];
-
-      // Update the goal document
-      await window.updateDoc(goalDoc.ref, {
-        participants: updatedParticipants,
-      });
-
-      showMessage("You have successfully joined the goal!");
-      event.target.reset();
-
-      // Refresh goals list
-      loadGroupGoals(currentGroup.id);
-    } catch (error) {
-      console.error("Error joining goal:", error);
-      showMessage("Error joining goal: " + error.message, true);
-    }
   }
 
   // Display a message to the user

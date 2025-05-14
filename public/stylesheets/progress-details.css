@@ -1,0 +1,9 @@
+.progress-details {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background-color: #efe4f7;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #4a2d64;
+  border-left: 3px solid #7030a1;
+}

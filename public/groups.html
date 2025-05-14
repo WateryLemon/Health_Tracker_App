@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/stylesheets/groups.css" />
+    <link rel="stylesheet" href="/stylesheets/progress-details.css" />
     <title>Health Groups</title>
     <link
       rel="icon"
@@ -25,6 +26,7 @@
         setDoc,
         addDoc,
         deleteDoc,
+        updateDoc,
         query,
         where,
         getDocs,
@@ -56,6 +58,7 @@
       window.setDoc = setDoc;
       window.addDoc = addDoc;
       window.deleteDoc = deleteDoc;
+      window.updateDoc = updateDoc;
     </script>
   </head>
 
@@ -177,39 +180,71 @@
             <div id="group-goals-list">
               <!-- Goals will be listed here -->
             </div>
-            <form id="create-goal-form">
-              <div class="form-group">
-                <label for="goal-title">Goal Title</label>
-                <input type="text" id="goal-title" required />
-              </div>
-              <div class="form-group">
-                <label for="goal-description">Description</label>
-                <textarea id="goal-description" rows="3" required></textarea>
-              </div>
-              <div class="form-group">
-                <label for="goal-target">Target Value</label>
-                <input type="number" id="goal-target" required />
-              </div>
-              <div class="form-group">
-                <label for="goal-unit">Unit</label>
-                <select id="goal-unit" required>
-                  <option value="kg">Kilograms (kg)</option>
-                  <option value="steps">Steps</option>
-                  <option value="km">Kilometers (km)</option>
-                  <option value="miles">Miles</option>
-                  <option value="minutes">Minutes</option>
-                  <option value="calories">Calories</option>
-                </select>
-              </div>
-              <button type="submit" class="submit-btn">Create Goal</button>
-            </form>
+            <!-- Form to join a goal using a code -->
+            <div class="join-goal-section">
+              <h4>Join a Goal</h4>
+              <form id="join-goal-form">
+                <div class="form-group">
+                  <label for="goal-join-code">Enter Goal Join Code</label>
+                  <input
+                    type="text"
+                    id="goal-join-code"
+                    name="goal-join-code"
+                    placeholder="Enter the code you received"
+                    required
+                  />
+                </div>
+                <button type="submit" class="submit-btn">Join Goal</button>
+              </form>
+            </div>
+            <!-- Form to create a new goal -->
+            <div class="create-goal-section">
+              <h4>Create New Goal</h4>
+              <form id="create-goal-form">
+                <div class="form-group">
+                  <label for="group_fitness_goal"
+                    >Select group's primary goal</label
+                  >
+                  <select
+                    id="group_fitness_goal"
+                    name="group_fitness_goal"
+                    required
+                  >
+                    <option value="">Select your goal</option>
+                    <option value="lose_weight">Lose Weight</option>
+                    <option value="gain_weight">Gain Weight</option>
+                  </select>
+                </div>
+                <div
+                  class="form-group"
+                  id="group_target_weight_group"
+                  style="display: none"
+                >
+                  <label for="group_target_weight">Target Weight (kg)</label>
+                  <input
+                    type="number"
+                    step="0.25"
+                    min="0"
+                    id="group_target_weight"
+                    name="group_target_weight"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="goal-description"
+                    >Additional Description (optional)</label
+                  >
+                  <textarea id="goal-description" rows="3"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Set Group Goal</button>
+              </form>
+            </div>
           </div>
 
           <div class="modal-tab-content" id="share-tab">
             <h3>Share This Group</h3>
             <p>Send this code to friends to invite them to join:</p>
             <div class="group-code-display">
-              <span id="group-share-code">CODE123</span>
+              <span id="group-share-code">Loading...</span>
               <button id="copy-code-btn" class="share-btn">
                 <i class="fas fa-copy"></i> Copy
               </button>
