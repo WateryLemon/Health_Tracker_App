@@ -335,12 +335,10 @@ document.addEventListener("DOMContentLoaded", () => {
           const groupCard = document.createElement("div");
           groupCard.className = "group-card";
           groupCard.dataset.groupId = group.id;
-
           groupCard.innerHTML = `
                       <h3>${group.name}</h3>
                       <p>${group.description}</p>
                       <div class="group-meta">
-                          <span>${group.type}</span>
                           <span>${group.memberCount || 1} members</span>
                       </div>
                   `;
@@ -717,11 +715,9 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("You must be logged in to create a group.");
       return;
     }
-
     const formData = new FormData(event.target);
     const groupName = formData.get("group-name").trim();
     const groupDescription = formData.get("group-description");
-    const groupType = formData.get("group-type");
 
     if (!groupName) {
       showMessage("Group name cannot be empty", true);
@@ -744,7 +740,6 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify({
           name: groupName,
           description: groupDescription,
-          type: groupType,
           code: groupCode,
           userId: currentUser.uid,
         }),
