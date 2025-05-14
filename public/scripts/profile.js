@@ -11,6 +11,7 @@ import { signOut } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth
 const db = getFirestore();
 let currentUser = null;
 let userWeight = null;
+let initialWeight = null;
 
 // Load user data when the page loads
 document.addEventListener("DOMContentLoaded", async () => {
@@ -24,20 +25,38 @@ document.addEventListener("DOMContentLoaded", async () => {
       // Redirect to sign in if not logged in
       window.location.href = "/sign-in.html";
     }
-  });
-
-  // Add sign out button handler
+  });  // Add sign out button handler
   document
     .getElementById("signOutButton")
     ?.addEventListener("click", handleSignOut);
 
-  // Add goal selection change handler
+  // Add fitness goal tab change listener
   document
-    .getElementById("fitness_goal")
-    ?.addEventListener("change", handleGoalChange);
-
+    .getElementById("fitness_goal_tab")
+    ?.addEventListener("change", function() {
+      const selectedGoal = this.value;
+      console.log("Goal changed to:", selectedGoal);
+      
+      // Reset the initial weight when goal type changes
+      resetInitialWeightForGoal();
+        // Update the target weight options and visibility
+      handleGoalChangeTab();
+    });
   // Add tab switching functionality
   setupTabNavigation();
+    // Add event listeners for updating progress bar
+  const targetWeightTabInput = document.getElementById("target_weight_tab");
+  const currentWeightInput = document.getElementById("currentWeight");
+  
+  if (targetWeightTabInput) {
+    targetWeightTabInput.addEventListener("input", updateProgressFromInputs);
+  }
+    if (currentWeightInput) {
+    currentWeightInput.addEventListener("input", function() {
+      // Don't automatically update target weight for maintain weight goal when current weight changes
+      updateProgressFromInputs();
+    });
+  }
 });
 
 // Setup tab navigation
@@ -65,29 +84,63 @@ function setupTabNavigation() {
   });
 }
 
-// Handle fitness goal selection change
+// Handle fitness goal selection change (simplified as fitness_goal has been removed)
 function handleGoalChange() {
-  const fitnessGoal = document.getElementById("fitness_goal").value;
-  const targetWeightInput = document.getElementById("target_weight");
-  // Get the parent form-group of target weight for showing/hiding
-  const targetWeightGroup = targetWeightInput?.closest(".form-group");
+  // This function is kept as a placeholder for any future goal-related changes
+  // but currently doesn't need to do anything since fitness_goal was removed
+}
 
-  if (fitnessGoal === "maintain_weight") {
+// Handle fitness goal selection change in Goals tab
+function handleGoalChangeTab() {
+  const fitnessGoal = document.getElementById("fitness_goal_tab").value;
+  const targetWeightInput = document.getElementById("target_weight_tab");
+  // Get the parent form-group of target weight for showing/hiding
+  const targetWeightGroup = document.getElementById("target_weight_group_tab");  if (fitnessGoal === "maintain_weight") {
     if (targetWeightInput) {
-      targetWeightInput.value = userWeight;
+      // Only set target weight to initial weight if it hasn't been set yet
+      if (!targetWeightInput.value || targetWeightInput.value === "") {
+        targetWeightInput.value = initialWeight;
+      }
+      
+      // Update the target weight display based on the current input value
+      const targetWeightDisplay = document.getElementById("target-weight-display");
+      if (targetWeightDisplay && targetWeightInput.value) {
+        targetWeightDisplay.textContent = `Target: ${targetWeightInput.value} kg`;
+      }
     }
     if (targetWeightGroup) {
+      // Still hide the input field since it's not editable for maintain weight
       targetWeightGroup.style.display = "none";
     }
-  } else if (fitnessGoal === "lose_weight" || fitnessGoal === "build_muscle") {
+  } else if (fitnessGoal === "lose_weight" || fitnessGoal === "build_muscle" || fitnessGoal === "gain_weight") {
     if (targetWeightGroup) {
-      targetWeightGroup.style.display = "flex";
+      targetWeightGroup.style.display = "block";
+    }
+    
+    // Set a default target weight if none is set
+    if (targetWeightInput && (!targetWeightInput.value || targetWeightInput.value === "0")) {
+      if (fitnessGoal === "lose_weight") {
+        // Default to 5kg less
+        targetWeightInput.value = Math.max(45, parseFloat(userWeight) - 5).toFixed(2);
+      } else if (fitnessGoal === "gain_weight" || fitnessGoal === "build_muscle") {
+        // Default to 5kg more
+        targetWeightInput.value = (parseFloat(userWeight) + 5).toFixed(2);
+      }
     }
   } else {
     if (targetWeightGroup) {
       targetWeightGroup.style.display = "none";
     }
   }
+  // Update progress bar whenever goal changes
+  const progress = calculateGoalProgress(
+    document.getElementById("currentWeight").value,
+    targetWeightInput.value
+  );
+  updateProgressBar(progress);
+  
+  // Make sure to update all the progress info displays
+  updateProgressFromInputs();
 }
 
 // Load user data from Firestore
@@ -106,11 +159,12 @@ async function loadUserData() {
         data.current_height || data.height || "";
       document.getElementById("sex").value = data.sex || "";
       document.getElementById("dob").value = data.date_of_birth || "";
-      document.getElementById("email").value = data.email || "";
-
-      // Set weight value and store it for reference
+      document.getElementById("email").value = data.email || "";      // Set weight value and store it for reference
       userWeight = data.current_weight || data.weight || "";
       document.getElementById("currentWeight").value = userWeight;
+      
+      // Store initial weight from goal data if it exists, or use current weight
+      initialWeight = data.goal_data?.initial_weight || userWeight;
 
       // Calculate and populate BMI
       const height = parseFloat(data.current_height || data.height || "0");
@@ -120,19 +174,20 @@ async function loadUserData() {
         document.getElementById("bmi").value = bmi;
       } else {
         document.getElementById("bmi").value = ""; // Clear BMI field if data is invalid
-      }
-
-      // Set fitness goal and target weight
+      }      // Set fitness goal
       const fitnessGoal = data.fitness_goal || "";
-      document.getElementById("fitness_goal").value = fitnessGoal;
-
-      // Handle target weight
+      document.getElementById("fitness_goal_tab").value = fitnessGoal;// Handle target weight
       const goalData = data.goal_data || {};
       const targetWeight = goalData.target_weight || "";
-      document.getElementById("target_weight").value = targetWeight;
+      document.getElementById("target_weight_tab").value = targetWeight;// Populate Goals tab data
+      if (goalData.target_date) {
+        document.getElementById("target_date").value = formatDateForInput(goalData.target_date);
+      }
+        // Activity level has been removed// Update progress bar and info displays
+      updateProgressFromInputs();
 
       // Show/hide target weight field based on goal
-      handleGoalChange();
+      handleGoalChangeTab();
     } else {
       console.log("No user document found in Firestore.");
     }
@@ -144,20 +199,31 @@ async function loadUserData() {
 
 // Save profile changes
 document.getElementById("saveButton").addEventListener("click", async () => {
-  try {
-    // Get fitness goal and target weight
-    const fitnessGoal = document.getElementById("fitness_goal").value;
-    let targetWeight = document.getElementById("target_weight").value;
+  try {    // Get fitness goal and target weight
+    const fitnessGoal = document.getElementById("fitness_goal_tab").value;
+    let targetWeight = document.getElementById("target_weight_tab").value;
     const currentWeight = document.getElementById("currentWeight").value;
     const height = document.getElementById("height").value;
 
     // Calculate BMI for display
     const bmi = calculateBMI(parseFloat(height), parseFloat(currentWeight));
-    document.getElementById("bmi").value = bmi !== "NaN" ? bmi : "";
-
-    // If maintaining weight, use current weight as target
+    document.getElementById("bmi").value = bmi !== "NaN" ? bmi : "";  // If maintaining weight, only set target weight to initial weight if it hasn't been manually changed
     if (fitnessGoal === "maintain_weight") {
-      targetWeight = currentWeight;
+      // Only update the value if the field is empty or hasn't been manually changed
+      const currentTargetValue = document.getElementById("target_weight_tab").value;
+      if (!currentTargetValue || currentTargetValue === "") {
+        targetWeight = initialWeight;
+        document.getElementById("target_weight_tab").value = initialWeight;
+        
+        // Update the target weight display
+        const targetWeightDisplay = document.getElementById("target-weight-display");
+        if (targetWeightDisplay && initialWeight) {
+          targetWeightDisplay.textContent = `Target: ${initialWeight} kg`;
+        }
+      } else {
+        // Use the current value if it's already been set (manually or otherwise)
+        targetWeight = currentTargetValue;
+      }
     }
 
     // Validate target weight if provided
@@ -178,11 +244,16 @@ document.getElementById("saveButton").addEventListener("click", async () => {
       email: document.getElementById("email").value,
       weight: currentWeight,
       current_weight: currentWeight, // Add current_weight field
-      fitness_goal: fitnessGoal,
-      goal_data: {
+      fitness_goal: fitnessGoal,      goal_data: {
         start_date: serverTimestamp(),
         goal_type: fitnessGoal,
+        initial_weight: initialWeight || currentWeight, // Store initial weight for progress tracking
         target_weight: targetWeight || null,
+        target_date: document.getElementById("target_date").value || null,
+        progress: calculateGoalProgress(
+          currentWeight, 
+          targetWeight
+        )
       },
       units: "Metric", // Default to Metric since units selection was removed
       updated_at: new Date(),
@@ -264,15 +335,157 @@ function calculateBMI(height, weight) {
   return (weight / (heightInMeters * heightInMeters)).toFixed(2);
 }
 
+// Helper function to format date for HTML date input
+function formatDateForInput(dateValue) {
+  // If it's a Firebase timestamp
+  if (dateValue && typeof dateValue.toDate === 'function') {
+    dateValue = dateValue.toDate();
+  }
+  
+  // If it's a Date object or can be converted to one
+  if (dateValue) {
+    const date = new Date(dateValue);
+    if (!isNaN(date.getTime())) {
+      return date.toISOString().split('T')[0];
+    }
+  }
+  return '';
+}
+
+// Calculate progress percentage towards goal
+function calculateGoalProgress(currentWeight, targetWeight) {
+  // If any required values are missing, return 0 progress
+  if (!currentWeight || !targetWeight || !initialWeight) {
+    return 0;
+  }
+  
+  currentWeight = parseFloat(currentWeight);
+  targetWeight = parseFloat(targetWeight);
+  const startWeight = parseFloat(initialWeight);
+    // For maintain weight goals, target weight equals initial weight
+  // so we measure how close current weight is to initial/target weight
+  const fitnessGoal = document.getElementById("fitness_goal_tab").value;
+    if (fitnessGoal === "maintain_weight") {
+    // If current weight is not equal to target weight, show progress as 0
+    if (currentWeight !== targetWeight) {
+      return 0;
+    } else {
+      // If they match exactly, show 100% progress
+      return 100;
+    }
+  }
+  
+  // For other goals (lose/gain weight):
+  // If current weight equals target weight, goal is achieved
+  if (currentWeight === targetWeight) {
+    return 100;
+  }
+  
+  // If current weight equals initial weight, we're at the starting point
+  if (currentWeight === startWeight) {
+    return 0;
+  }
+  
+  // Calculate the total weight change needed to reach the goal
+  const totalChangeNeeded = Math.abs(targetWeight - startWeight);
+  
+  // If no change is needed, return 100% (goal already achieved)
+  if (totalChangeNeeded === 0) {
+    return 100;
+  }
+  
+  // Calculate progress based on whether the goal is to lose or gain weight
+  let progressPercentage;
+  
+  if (targetWeight < startWeight) {
+    // Goal is to lose weight
+    const weightLost = startWeight - currentWeight;
+    progressPercentage = (weightLost / totalChangeNeeded) * 100;
+  } else {
+    // Goal is to gain weight
+    const weightGained = currentWeight - startWeight;
+    progressPercentage = (weightGained / totalChangeNeeded) * 100;
+  }
+  
+  // Ensure progress is between 0 and 100
+  progressPercentage = Math.min(100, Math.max(0, progressPercentage));
+  
+  // Return the progress as an integer percentage
+  return Math.round(progressPercentage);
+}
+
+// Update the progress bar display
+function updateProgressBar(progress) {
+  const progressBar = document.getElementById('goal-progress-bar');
+  const progressText = document.getElementById('goal-progress-text');
+  
+  if (progressBar && progressText) {
+    // Ensure progress is between 0 and 100
+    progress = Math.min(100, Math.max(0, progress));
+    
+    // Update the progress bar width and text
+    progressBar.style.width = progress + '%';
+    
+    if (progress === 0) {
+      progressText.textContent = 'Initial Weight';
+    } else if (progress === 100) {
+      progressText.textContent = 'Goal Achieved!';
+    } else {
+      progressText.textContent = progress + '%';
+    }
+    
+    // Change color based on progress
+    if (progress < 25) {
+      progressBar.style.backgroundColor = '#ff9800'; // Orange for just started
+    } else if (progress < 75) {
+      progressBar.style.backgroundColor = '#4CAF50'; // Green for in progress
+    } else {
+      progressBar.style.backgroundColor = '#7030a1'; // Purple for near completion
+    }
+    
+    // Make sure the progress bar container is visible
+    const progressContainer = document.querySelector('.progress-container');
+    if (progressContainer) {
+      progressContainer.style.display = 'block';
+    }
+  }
+}
+
+// Function to update progress bar based on form inputs
+function updateProgressFromInputs() {
+  const currentWeight = document.getElementById("currentWeight").value;
+  const targetWeight = document.getElementById("target_weight_tab").value;
+  
+  // Update progress bar
+  const progress = calculateGoalProgress(currentWeight, targetWeight);
+  updateProgressBar(progress);
+  
+  // Update the progress info text displays
+  const initialWeightDisplay = document.getElementById("initial-weight-display");
+  const currentProgressDisplay = document.getElementById("current-progress-display");
+  const targetWeightDisplay = document.getElementById("target-weight-display");
+  
+  if (initialWeightDisplay && initialWeight) {
+    initialWeightDisplay.textContent = `Initial: ${initialWeight} kg`;
+  }
+  
+  if (currentProgressDisplay && currentWeight) {
+    currentProgressDisplay.textContent = `Current: ${currentWeight} kg`;
+  }
+  
+  if (targetWeightDisplay && targetWeight) {
+    targetWeightDisplay.textContent = `Target: ${targetWeight} kg`;
+  }
+}
+
 // Update BMI when height or weight changes
-document.addEventListener("DOMContentLoaded", () => {
-  const heightInput = document.getElementById("height");
+document.addEventListener("DOMContentLoaded", () => {  const heightInput = document.getElementById("height");
   const weightInput = document.getElementById("currentWeight");
   const bmiInput = document.getElementById("bmi");
+  const targetWeightTabInput = document.getElementById("target_weight_tab");
 
   // Make BMI field read-only
   bmiInput.readOnly = true;
-
   // Add event listeners to recalculate BMI when values change
   heightInput?.addEventListener("input", updateBMI);
   weightInput?.addEventListener("input", updateBMI);
@@ -288,3 +501,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+
+// Function to reset initial weight when goal type changes
+function resetInitialWeightForGoal() {
+  initialWeight = document.getElementById("currentWeight").value;
+  console.log("Initial weight reset to current weight:", initialWeight);
+  
+  // Update the initial weight display
+  const initialWeightDisplay = document.getElementById("initial-weight-display");
+  if (initialWeightDisplay && initialWeight) {
+    initialWeightDisplay.textContent = `Initial: ${initialWeight} kg`;
+  }
+  
+  // For maintain weight goal, preserve any manually set target weight
+  const fitnessGoal = document.getElementById("fitness_goal_tab").value;
+  if (fitnessGoal === "maintain_weight") {
+    // Let the handleGoalChangeTab function handle any target weight updates
+  } else {
+    // For other goals, update the target weight based on the goal type
+  }
+  
+  // Update progress calculation and display
+  updateProgressFromInputs();
+}

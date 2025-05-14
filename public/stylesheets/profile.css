@@ -334,3 +334,90 @@ input:invalid {
 button {
   transition: all 0.3s ease;
 }
+
+/* Checkbox styles for Goals tab */
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.checkbox-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkbox-option input[type="checkbox"] {
+  width: auto;
+  cursor: pointer;
+}
+
+.checkbox-option label {
+  margin-bottom: 0;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+/* Style for textarea */
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  background-color: #f9f9f9;
+}
+
+/* Progress bar styles */
+.progress-container {
+  width: 100%;
+  height: 30px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  margin-bottom: 8px;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #7030a1;
+  width: 0%;
+  transition: width 0.5s ease;
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #333;
+  font-weight: bold;
+  text-shadow: 0 0 3px rgba(255, 255, 255, 0.7);
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #666;
+  margin-top: 5px;
+}
+
+.progress-info span {
+  flex: 1;
+}
+
+.progress-info span:first-child {
+  text-align: left;
+}
+
+.progress-info span:nth-child(2) {
+  text-align: center;
+}
+
+.progress-info span:last-child {
+  text-align: right;
+}

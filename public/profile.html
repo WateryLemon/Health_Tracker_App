@@ -51,13 +51,15 @@
     </header>
 
     <main>
-      <div class="profile-container">
-        <div class="profile-tabs">
+      <div class="profile-container">        <div class="profile-tabs">
           <button class="tab-button active" data-tab="personal-details">
             Personal Details
           </button>
           <button class="tab-button" data-tab="health-metrics">
             Health Metrics
+          </button>
+          <button class="tab-button" data-tab="goals">
+            Goals
           </button>
           <button class="tab-button" data-tab="account-settings">
             Account Settings
@@ -97,26 +99,41 @@
           <div class="form-group">
             <label for="currentWeight">Current Weight (kg)</label>
             <input type="number" step="0.25" id="currentWeight" />
-          </div>
-
-          <div class="form-group">
+          </div>          <div class="form-group">
             <label for="bmi">BMI</label>
             <input type="text" id="bmi" readonly />
           </div>
-
+        </div>        <div class="tab-content" id="goals">
+          <h2>My Fitness Goals</h2>
           <div class="form-group">
-            <label for="target_weight">Target Weight (kg)</label>
-            <input type="number" step="0.25" id="target_weight" />
-          </div>
-
-          <div class="form-group">
-            <label for="fitness_goal">Fitness Goal</label>
-            <select id="fitness_goal">
+            <label for="fitness_goal_tab">Primary Fitness Goal</label>
+            <select id="fitness_goal_tab">
               <option value="">Select your goal</option>
               <option value="lose_weight">Lose Weight</option>
+              <option value="gain_weight">Gain Weight</option>
               <option value="maintain_weight">Maintain Weight</option>
               <option value="build_muscle">Build Muscle</option>
             </select>
+          </div>
+
+          <div class="form-group" id="target_weight_group_tab">
+            <label for="target_weight_tab">Target Weight (kg)</label>
+            <input type="number" step="0.25" id="target_weight_tab" />
+          </div>          <div class="form-group">
+            <label for="target_date">Target Date</label>
+            <input type="date" id="target_date" />
+          </div>
+            <div class="form-group">
+            <label>Goal Progress</label>
+            <div class="progress-container">
+              <div class="progress-bar" id="goal-progress-bar"></div>
+              <div class="progress-text" id="goal-progress-text">0%</div>
+            </div>
+            <div class="progress-info">
+              <span id="initial-weight-display">Initial: --</span>
+              <span id="current-progress-display">Progress: --</span>
+              <span id="target-weight-display">Target: --</span>
+            </div>
           </div>
         </div>
 
