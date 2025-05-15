@@ -373,86 +373,81 @@ function loadMenuForm() {
       weightButton: "weightForm",
     };
 
-    // Handles click events for each button
-    logButtons.forEach((button) => {
-      button.addEventListener("click", function () {
-        const formId = templateMap[this.id];
-        const formTemplate = document.getElementById(formId);
+ logButtons.forEach((button) => {
+  button.addEventListener("click", function () {
+    const formId = templateMap[this.id];
+    const formTemplate = document.getElementById(formId);
 
-        // Load the corresponding form template
-        if (formTemplate) {
-          const clone = formTemplate.content.cloneNode(true);
+    if (formTemplate) {
+      const clone = formTemplate.content.cloneNode(true);
 
-          formContainer.classList.remove("show");
+      formContainer.classList.remove("show");
 
-          // Wait for the transition to complete before replacing the content
-          setTimeout(() => {
-            formContainer.innerHTML = "";
-            formContainer.appendChild(clone);
+      setTimeout(() => {
+        formContainer.innerHTML = "";
+        formContainer.appendChild(clone);
 
-            setTimeout(() => {
-              formContainer.classList.add("show");
-            }, 10);
-          }, 300); // Match the transition duration in CSS
+        setTimeout(() => {
+          formContainer.classList.add("show");
 
-      console.log("Cloned form content:", formContainer.innerHTML);
-
-      const formElement = formContainer.querySelector("form");
-      console.log("Form element found:", formElement);
-
-      // 🟢 After form is loaded, wait for submit
-      const submitButton = formContainer.querySelector("#submitButton"); // Ensure you use this class in your HTML
-      console.log("Submit button found:", submitButton);
-
-      if (submitButton) {
-        formElement.addEventListener("submit", function (event)  {
-          console.log("Submit button event listener attached");
-          event.preventDefault(); // Prevent default form submission
-
-          // 🟠 Grab form data
+          // 🔽 YOUR EXISTING CODE (unchanged)
           const formElement = formContainer.querySelector("form");
-          const formData = new FormData(formElement);
-          const data = Object.fromEntries(formData.entries());
-          data.timestamp = new Date().toISOString();
-          
+          console.log("Form element found:", formElement);
 
-          // 🟡 Determine the form type (e.g., "food", "exercise")
-          const formType = formId.replace("Form", ""); // e.g. "foodForm" => "food"
+          // 🟢 After form is loaded, wait for submit
+          const submitButton = formContainer.querySelector("#submitButton"); // Ensure you use this class in your HTML
+          console.log("Submit button found:", submitButton);
 
-          // 🔵 Save to Firebase
-          const userId = firebase.auth().currentUser.uid;
+          if (submitButton) {
+            formElement.addEventListener("submit", function (event)  {
+              console.log("Submit button event listener attached");
+              event.preventDefault(); // Prevent default form submission
 
-            if (formType === "food") {
-              const mealName = data.meal?.trim();
-              if (!mealName) {
-                alert("Meal name is required.");
-              return;
-          }
-          firebase.firestore().collection("users").doc(userId).collection("food").doc(mealName).set(data)
-            .then(() => {
-              alert(`${formType} entry saved!`);
-            })
-          .catch((error) => {
-          console.error("Error saving data:", error);
-          alert("Failed to save. Try again.");
-          });
+              // 🟠 Grab form data
+              const formElement = formContainer.querySelector("form");
+              const formData = new FormData(formElement);
+              const data = Object.fromEntries(formData.entries());
+              data.timestamp = new Date().toISOString();
+              console.log("📝 Data to save:", data);
 
-        }
-        else{
-            firebase.firestore().collection("users").doc(userId).collection(formType).add(data)
-            .then(() => {
-              alert(`${formType} entry saved!`);
-            })
-            .catch((error) => {
-              console.error("Error saving data:", error);
-              alert("Failed to save. Try again.");
+              // 🟡 Determine the form type (e.g., "food", "exercise")
+              const formType = formId.replace("Form", ""); // e.g. "foodForm" => "food"
+              const userId = firebase.auth().currentUser.uid;
+
+              // 🔵 Save to Firebase
+              if (formType === "food") {
+                const mealName = data.meal?.trim();
+                if (!mealName) {
+                  alert("Meal name is required.");
+                  return;
+                }
+                firebase.firestore().collection("users").doc(userId).collection("food").doc(mealName).set(data)
+                  .then(() => {
+                    alert(`${formType} entry saved!`);
+                  })
+                  .catch((error) => {
+                    console.error("Error saving data:", error);
+                    alert("Failed to save. Try again.");
+                  });
+              } else {
+                firebase.firestore().collection("users").doc(userId).collection(formType).add(data)
+                  .then(() => {
+                    alert(`${formType} entry saved!`);
+                  })
+                  .catch((error) => {
+                    console.error("Error saving data:", error);
+                    alert("Failed to save. Try again.");
+                  });
+              }
             });
           }
-        });
-      }
+
+        }, 10); // Wait for inner DOM to render before querying it
+
+      }, 300); // Match your transition delay
     }
   });
-  });
+});
   }
 }
 
