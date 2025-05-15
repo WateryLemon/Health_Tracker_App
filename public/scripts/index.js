@@ -1,4 +1,6 @@
-//firebase config
+// ===========================
+// Firebase Configuration & Initialization
+// ===========================
 const firebaseConfig = {
   apiKey: "AIzaSyCQiV6-wvqLWa9NHatHsu9AE3zcb4FqmOI",
   authDomain: "health-tracker-fa572.firebaseapp.com",
@@ -9,20 +11,24 @@ const firebaseConfig = {
   measurementId: "G-SRHMFGLNN2",
 };
 
-//initialise firebase
+// Initialise Firebase
 firebase.initializeApp(firebaseConfig);
 
-//db globally accessible and user auth
+// Make Firebase Auth and Firestore globally accessible
 const auth = firebase.auth();
 const db = firebase.firestore();
 window.auth = auth;
 window.db = db;
 
-//loads user profile and weight data from Firestore
+// ===========================
+// User Data Loading & Display
+// ===========================
+
+// Loads user profile and weight data from Firestore
 async function loadUserData(user) {
   try {
     const userDoc = await db.collection("users").doc(user.uid).get();
-    //weightsnapshot gets the most resent weight from weight collection under the user collection
+    // Get the most recent weight from the user's weight collection
     const weightSnapshot = await db.collection("users").doc(user.uid).collection("weight").orderBy("timestamp", "desc").limit(1).get();
     
     let latestWeight = null;
@@ -30,7 +36,6 @@ async function loadUserData(user) {
       const weightData = weightSnapshot.docs[0].data();
       latestWeight = weightData.weight;
     }
-
 
     if (userDoc.exists) {
       const data = userDoc.data();
@@ -46,24 +51,20 @@ async function loadUserData(user) {
   }
 }
 
-//returns the weight change with the appropriate sign i.e.
-//returns '-' if weight was lost and '+' if weight was gained
+// Returns the weight change with the appropriate sign
 function formatSignedChange(startWeight, currentWeight) {
   if (currentWeight == null || startWeight == null) {
     return "N/A";
   }
-
   const weightChange = startWeight - currentWeight;
   if (weightChange === 0) return "0";
-
   const sign = weightChange > 0 ? "-" : "+";
   return `${sign}${Math.abs(weightChange)}`;
 }
 
-//displays weight and changes in appropriate unit (kg or stones/lbs) depending on user choice
-function displayWeight(startWeight, currentWeight, unitPreference){
-
-const weightChangeKg = Number(startWeight) - Number(currentWeight);
+// Displays weight and changes in appropriate unit (kg or stones/lbs)
+function displayWeight(startWeight, currentWeight, unitPreference) {
+  const weightChangeKg = Number(startWeight) - Number(currentWeight);
 
   const getChangeSign = (change) => {
     if (change === 0) return "";
@@ -97,7 +98,7 @@ const weightChangeKg = Number(startWeight) - Number(currentWeight);
   }
 }
 
-//updates the greeting message based on time of day and depending on user's name
+// Updates the greeting message based on time of day and user's name
 function updateGreeting(name = "there") {
   const greetingElement = document.getElementById("greeting");
   const currentHour = new Date().getHours();
@@ -114,16 +115,21 @@ function updateGreeting(name = "there") {
   greetingElement.textContent = `${greeting}, ${name}!`;
 }
 
+// ===========================
+// Calendar Widget Logic
+// ===========================
+
 function calendearLogic() {
   const calendarWidget = document.getElementById("calenderWidget");
   const todayEl = document.getElementById("today");
 
   const weekdays = [
     "Sunday", "Monday", "Tuesday", "Wednesday",
-    "Thursday", "Friday","Saturday",];
+    "Thursday", "Friday", "Saturday",
+  ];
   const currentDate = new Date();
 
-//generate calendar UI elements for previous/next days around current day
+  // Generate calendar UI elements for previous/next days around current day
   function createDayElement(offset) {
     const date = new Date(currentDate);
     date.setDate(currentDate.getDate() + offset);
@@ -138,7 +144,7 @@ function calendearLogic() {
     return li;
   }
 
-  //creates date elements for previous and next days
+  // Creates date elements for previous and next days
   for (let i = -2; i < 0; i++) {
     calendarWidget.insertBefore(createDayElement(i), todayEl);
   }
@@ -151,50 +157,150 @@ function calendearLogic() {
     weekdays[currentDate.getDay()];
 }
 
-//fetches and draws weight progress chart for a user
-async function weightGraphLogic(userId) {
+// ===========================
+// Weight Graph Logic with Time Scale
+// ===========================
+
+let currentWeightScale = "days"; // default
+
+// Helper: Get last N days as Date objects (ending today)
+function getLastNDates(n) {
+  const dates = [];
+  const today = new Date();
+  for (let i = n - 1; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    d.setHours(0, 0, 0, 0);
+    dates.push(d);
+  }
+  return dates;
+}
+
+// Helper: Get last N weeks (ending this week, Sunday-Saturday)
+function getLastNWeeks(n) {
+  const weeks = [];
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  // Find last Sunday
+  const lastSunday = new Date(today);
+  lastSunday.setDate(today.getDate() - today.getDay());
+  for (let i = n - 1; i >= 0; i--) {
+    const weekStart = new Date(lastSunday);
+    weekStart.setDate(lastSunday.getDate() - i * 7);
+    weeks.push(new Date(weekStart));
+  }
+  return weeks;
+}
+
+// Helper: Get last N months (ending this month)
+function getLastNMonths(n) {
+  const months = [];
+  const today = new Date();
+  for (let i = n - 1; i >= 0; i--) {
+    const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+    months.push(d);
+  }
+  return months;
+}
+
+// Main function: Draw weight graph for selected scale
+async function weightGraphLogic(userId, scale = "days") {
   try {
-    //retrieve all weight logs for the user, ordered by ascending order 
+    // Fetch all weight logs for the user
     const snapshot = await db.collection("users").doc(userId).collection("weight").orderBy("timestamp", "asc").get();
-
     const weightLogs = [];
-
-    //parse each document to extract weight and date, validate, and store
     snapshot.forEach((doc) => {
       const data = doc.data();
-      const weight = parseFloat(data.weight); 
+      const weight = parseFloat(data.weight);
       const date = new Date(data.timestamp);
       if (!isNaN(weight) && !isNaN(date)) {
         weightLogs.push({ date, weight });
       }
     });
 
-    const ctx = document.getElementById("weightChart").getContext("2d");
+    let labels = [];
+    let weights = [];
 
-    //destroy any existing chart instance to prevent overlap
+    if (scale === "days") {
+      // Last 7 days, today last
+      const days = getLastNDates(7);
+      labels = days.map(d => d.getDate());
+      weights = days.map(day => {
+        // Find the latest log for this day
+        const log = weightLogs
+          .filter(l => l.date.toDateString() === day.toDateString())
+          .sort((a, b) => b.date - a.date)[0];
+        return log ? log.weight : null;
+      });
+    } else if (scale === "weeks") {
+      // Last 7 weeks, today last
+      const weeks = getLastNWeeks(7);
+      labels = weeks.map(weekStart => {
+        // Label as "dd MMM" (start of week)
+        return `${weekStart.getDate()} ${weekStart.toLocaleString("en-GB", { month: "short" })}`;
+      });
+      weights = weeks.map(weekStart => {
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 6);
+        // Find the latest log in this week
+        const log = weightLogs
+          .filter(l => l.date >= weekStart && l.date <= weekEnd)
+          .sort((a, b) => b.date - a.date)[0];
+        return log ? log.weight : null;
+      });
+    } else if (scale === "months") {
+      // Last 7 months, today last
+      const months = getLastNMonths(7);
+      const today = new Date();
+      const targetDay = today.getDate();
+      labels = months.map(m => m.toLocaleString("en-GB", { month: "short" }));
+      weights = months.map(monthStart => {
+        // Try to find a log for this month on the same day as today
+        const year = monthStart.getFullYear();
+        const month = monthStart.getMonth();
+        let day = targetDay;
+        // Handle months with fewer days (e.g. Feb)
+        const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
+        if (day > lastDayOfMonth) {
+          day = lastDayOfMonth;
+        }
+        const targetDate = new Date(year, month, day);
+        // Find the latest log on or before this date in the month
+        const log = weightLogs
+          .filter(l =>
+            l.date.getFullYear() === year &&
+            l.date.getMonth() === month &&
+            l.date.getDate() === day
+          )
+          .sort((a, b) => b.date - a.date)[0];
+        // If no log for that day, try to find the closest before that day in the month
+        if (!log) {
+          const beforeLog = weightLogs
+            .filter(l =>
+              l.date.getFullYear() === year &&
+              l.date.getMonth() === month &&
+              l.date.getDate() < day
+            )
+            .sort((a, b) => b.date - a.date)[0];
+          return beforeLog ? beforeLog.weight : null;
+        }
+        return log.weight;
+      });
+    }
+
+    // Destroy any existing chart instance to prevent overlap
+    const ctx = document.getElementById("weightChart").getContext("2d");
     if (window.weightChartInstance) {
       window.weightChartInstance.destroy();
     }
 
-    let labels, weights;
-
-    if (weightLogs.length === 0) {
-      // Show an empty chart with a placeholder label and no data
+    // If all weights are null, show empty chart with "No Data"
+    if (weights.every(w => w === null)) {
       labels = ["No Data"];
       weights = [null];
-    } else {
-      //formats dates for chart labels
-      labels = weightLogs.map((log) =>
-        log.date.toLocaleDateString("en-GB", {
-          day: "numeric",
-          month: "short"
-        })
-      );
-      //extracts just the weight values
-      weights = weightLogs.map((log) => log.weight);
     }
 
-    //creates a new chart instance
+    // Draw chart
     window.weightChartInstance = new Chart(ctx, {
       type: "line",
       data: {
@@ -218,7 +324,7 @@ async function weightGraphLogic(userId) {
         },
         scales: {
           x: {
-            title: { display: true, text: "Date" },
+            title: { display: true, text: scale === "months" ? "Month" : scale === "weeks" ? "Week" : "Day" },
             grid: { color: "rgba(243, 207, 238, 1)" }
           },
           y: {
@@ -234,13 +340,17 @@ async function weightGraphLogic(userId) {
   }
 }
 
-//fetches total calories consumed today by the user
+// ===========================
+// Calorie & Water Logic
+// ===========================
+
+// Fetches total calories consumed today by the user
 function fetchDailyCalories(userId) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const startOfToday = today.toISOString();
 
-  //querys food logs for today and calculates the total
+  // Query food logs for today and calculate the total
   return db.collection("users").doc(userId).collection("food").where("timestamp", ">=", startOfToday).get().then(snapshot => {
       let total = 0;
       snapshot.forEach(doc => {
@@ -255,13 +365,13 @@ function fetchDailyCalories(userId) {
     });
 }
 
-//fetches total calories consumed today by the user
+// Fetches total calories burnt today by the user
 function fetchDailyBurntCalories(userId) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const startOfToday = today.toISOString();
 
-  //querys exercise logs for today and calculates total burnt
+  // Query exercise logs for today and calculate total burnt
   return db.collection("users").doc(userId).collection("exercise").where("timestamp", ">=", startOfToday).get().then(snapshot => {
       let total = 0;
       snapshot.forEach(doc => {
@@ -275,13 +385,13 @@ function fetchDailyBurntCalories(userId) {
     });
 }
 
-//updates the water intake display for the current day
+// Updates the water intake display for the current day
 function updateDailyWaterIntake(userId) {
   const today = new Date();
-  today.setHours(0, 0, 0, 0); //midnight
+  today.setHours(0, 0, 0, 0); // Midnight
   const startOfToday = today.toISOString();
 
-  //querys water logs and calculates total of all values
+  // Query water logs and calculate total of all values
   db.collection("users").doc(userId).collection("water").where("timestamp", ">=", startOfToday).get().then((querySnapshot) => {
       let total = 0;
       querySnapshot.forEach((doc) => {
@@ -299,11 +409,11 @@ function updateDailyWaterIntake(userId) {
     });
 }
 
-//compares calories consumed and burned against daily goal
+// Compares calories consumed and burned against daily goal
 function goalLogic(userId) {
   const dailyGoal = 2000;
 
-  //fetches both intake and burnt calories
+  // Fetch both intake and burnt calories
   Promise.all([
     fetchDailyCalories(userId),
     fetchDailyBurntCalories(userId)
@@ -315,7 +425,7 @@ function goalLogic(userId) {
     const circle = document.querySelector("#circularProgress");
     const burntCircle = document.querySelector(".burnt-circle");
 
-    //calculates visual progress percentages
+    // Calculate visual progress percentages
     const progressPercent = Math.min(
       (currentCalories / dailyGoal) * 100,
       100
@@ -325,23 +435,22 @@ function goalLogic(userId) {
       100
     ).toFixed(1);
 
-    //applies progress to circular indicator
+    // Apply progress to circular indicator
     circle.style.setProperty("--progress", progressPercent);
     circle.style.setProperty("--progress-burnt", progressPercentBurnt);
 
-    //shows or hides the calorie burnt circle based on data
+    // Show or hide the calorie burnt circle based on data
     if (burntCalories === 0) {
       burntCircle.style.display = "none";
     } else {
       burntCircle.style.display = "block";
     }
 
-    //updates the UI with calorie info
+    // Update the UI with calorie info
     document.getElementById("currentCaloriesText").textContent = `${currentTotalCalories} kcal`;
     document.getElementById("dailyGoalText").textContent = `${dailyGoal} kcal goal`;
 
-
-    //displays message depending on goal progress related to calorie goal
+    // Display message depending on goal progress
     if (remainingCalories > 0) {
       messageElement.textContent = `You have ${remainingCalories} kcal left till your daily goal.`;
     } else {
@@ -352,12 +461,16 @@ function goalLogic(userId) {
   });
 }
 
-//closes the form menu popup
+// ===========================
+// Add Menu & Form Logic
+// ===========================
+
+// Closes the form menu popup
 function closeAddMenu() {
   document.getElementById("formMenu").style.display = "none";
 }
 
-//toggles the display of the add entry form menu
+// Toggles the display of the add entry form menu
 function addMenuLogic() {
   const addButton = document.getElementById("addButton");
   const formMenu = document.getElementById("formMenu");
@@ -365,20 +478,20 @@ function addMenuLogic() {
   const icon = addButton.querySelector("i");
 
   if (formMenu.classList.contains("show")) {
-    //close menu with animation
+    // Close menu with animation
     formMenu.classList.remove("show");
     setTimeout(() => {
-      formMenu.style.display = "none"; //hide after animastion
+      formMenu.style.display = "none"; // Hide after animation
     }, 300);
     addButton.style.backgroundColor = "#7030A1";
     icon.className = "fas fa-plus";
     formContainer.innerHTML = "";
   } else {
-    //opens menu with animation
+    // Open menu with animation
     formMenu.style.display = "block";
     setTimeout(() => {
       formMenu.classList.add("show");
-    }, 10); //delay to trigger animation
+    }, 10); // Delay to trigger animation
     addButton.style.backgroundColor = "#FF2431";
     icon.className = "fa-solid fa-xmark";
 
@@ -386,7 +499,7 @@ function addMenuLogic() {
   }
 }
 
-//loads and displays the main form menu layout
+// Loads and displays the main form menu layout
 function loadMenuForm() {
   const formContainer = document.querySelector(".form-container");
   const menuFormTemplate = document.getElementById("menuForm");
@@ -398,9 +511,9 @@ function loadMenuForm() {
 
     setTimeout(() => {
       formContainer.classList.add("show");
-    }, 10); //minor delay to trigger transition
+    }, 10); // Minor delay to trigger transition
 
-    //reattaches event listeners for buttons in menu form after clone
+    // Reattach event listeners for buttons in menu form after clone
     const logButtons = formContainer.querySelectorAll(".log-button");
     const templateMap = {
       foodButton: "foodForm",
@@ -409,88 +522,91 @@ function loadMenuForm() {
       weightButton: "weightForm",
     };
 
-//sets up button-to-form mapping
- logButtons.forEach((button) => {
-  button.addEventListener("click", function () {
-    const formId = templateMap[this.id];
-    const formTemplate = document.getElementById(formId);
+    // Sets up button-to-form mapping
+    logButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const formId = templateMap[this.id];
+        const formTemplate = document.getElementById(formId);
 
-    if (formTemplate) {
-      const clone = formTemplate.content.cloneNode(true);
+        if (formTemplate) {
+          const clone = formTemplate.content.cloneNode(true);
 
-      formContainer.classList.remove("show");
+          formContainer.classList.remove("show");
 
-      setTimeout(() => {
-        formContainer.innerHTML = "";
-        formContainer.appendChild(clone);
+          setTimeout(() => {
+            formContainer.innerHTML = "";
+            formContainer.appendChild(clone);
 
-        setTimeout(() => {
-          formContainer.classList.add("show");
+            setTimeout(() => {
+              formContainer.classList.add("show");
 
-          const formElement = formContainer.querySelector("form");
-          console.log("Form element found:", formElement);
-
-          //after form is loaded wait for submit
-          const submitButton = formContainer.querySelector("#submitButton");
-          console.log("Submit button found:", submitButton);
-
-          if (submitButton) {
-            //attaches submit event to dynamically loaded form
-            formElement.addEventListener("submit", function (event)  {
-              console.log("Submit button event listener attached");
-              event.preventDefault(); //prevents default form submission
-
-              //grabs form data
               const formElement = formContainer.querySelector("form");
-              const formData = new FormData(formElement);
-              const data = Object.fromEntries(formData.entries());
-              data.timestamp = new Date().toISOString();
-              console.log("📝 Data to save:", data);
+              console.log("Form element found:", formElement);
 
-              //determins form type (e.g. food, exercise)
-              const formType = formId.replace("Form", "");
-              const userId = firebase.auth().currentUser.uid;
+              // After form is loaded wait for submit
+              const submitButton = formContainer.querySelector("#submitButton");
+              console.log("Submit button found:", submitButton);
 
-              //saves to fire base food collection, due to the saving by the meal name
-              if (formType === "food") {
-                const mealName = data.meal?.trim();
-                if (!mealName) {
-                  alert("Meal name is required.");
-                  return;
-                }
-                firebase.firestore().collection("users").doc(userId).collection("food").doc(mealName).set(data)
-                  .then(() => {
-                    alert(`${formType} entry saved!`);
-                  })
-                  .catch((error) => {
-                    console.error("Error saving data:", error);
-                    alert("Failed to save. Try again.");
-                  });
-              } else {
-                //if not food then store in the appropriate collection based on form entry
-                firebase.firestore().collection("users").doc(userId).collection(formType).add(data)
-                  .then(() => {
-                    alert(`${formType} entry saved!`);
-                  })
-                  .catch((error) => {
-                    console.error("Error saving data:", error);
-                    alert("Failed to save. Try again.");
-                  });
+              if (submitButton) {
+                // Attach submit event to dynamically loaded form
+                formElement.addEventListener("submit", function (event)  {
+                  console.log("Submit button event listener attached");
+                  event.preventDefault(); // Prevent default form submission
+
+                  // Grab form data
+                  const formElement = formContainer.querySelector("form");
+                  const formData = new FormData(formElement);
+                  const data = Object.fromEntries(formData.entries());
+                  data.timestamp = new Date().toISOString();
+                  console.log("📝 Data to save:", data);
+
+                  // Determine form type (e.g. food, exercise)
+                  const formType = formId.replace("Form", "");
+                  const userId = firebase.auth().currentUser.uid;
+
+                  // Save to firebase food collection, using meal name as doc id
+                  if (formType === "food") {
+                    const mealName = data.meal?.trim();
+                    if (!mealName) {
+                      alert("Meal name is required.");
+                      return;
+                    }
+                    firebase.firestore().collection("users").doc(userId).collection("food").doc(mealName).set(data)
+                      .then(() => {
+                        alert(`${formType} entry saved!`);
+                      })
+                      .catch((error) => {
+                        console.error("Error saving data:", error);
+                        alert("Failed to save. Try again.");
+                      });
+                  } else {
+                    // If not food then store in the appropriate collection
+                    firebase.firestore().collection("users").doc(userId).collection(formType).add(data)
+                      .then(() => {
+                        alert(`${formType} entry saved!`);
+                      })
+                      .catch((error) => {
+                        console.error("Error saving data:", error);
+                        alert("Failed to save. Try again.");
+                      });
+                  }
+                });
               }
-            });
-          }
 
-        }, 10); //waits for inner dom to render before querying it
+            }, 10); // Waits for inner dom to render before querying it
 
-      }, 300); //matches transition delay
-    }
-  });
-});
+          }, 300); // Matches transition delay
+        }
+      });
+    });
   }
 }
 
-//event listener for exercise checkbox
-//allows user to select type of exercise
+// ===========================
+// Exercise Form Toggle Logic
+// ===========================
+
+// Event listener for exercise checkbox to select type of exercise
 document.addEventListener("change", function (e) {
   if (e.target.id === "exerciseCheckbox") {
     const isChecked = e.target.checked;
@@ -499,7 +615,11 @@ document.addEventListener("change", function (e) {
   }
 });
 
-//displays leaderboard sorted by the number of calories burnt
+// ===========================
+// Leaderboard Logic
+// ===========================
+
+// Displays leaderboard sorted by the number of calories burnt
 async function populateLeaderboard(sortBy = "burnt") {
   try {
     const usersSnapshot = await db.collection("users").get();
@@ -510,7 +630,7 @@ async function populateLeaderboard(sortBy = "burnt") {
       const userData = userDoc.data();
       const name = userData.username || "Unknown";
 
-      //fetch exercise data (calories burnt)
+      // Fetch exercise data (calories burnt)
       const exerciseSnapshot = await db.collection("users").doc(userId).collection("exercise").get();
 
       let totalBurnt = 0;
@@ -522,21 +642,19 @@ async function populateLeaderboard(sortBy = "burnt") {
         }
       });
 
-
       leaderboardData.push({
         name,
         caloriesBurned: totalBurnt,
       });
     }
 
-    //sorts users by calories burnt (default)
+    // Sort users by calories burnt (default)
     leaderboardData.sort((a, b) => b.caloriesBurned - a.caloriesBurned);
     
-
-    //sorts users into top 10 based on kcals
+    // Top 10 users
     const top10 = leaderboardData.slice(0, 10);
 
-    //renders the table rows
+    // Render the table rows
     const tbody = document.querySelector("#leaderboardWidget tbody");
     tbody.innerHTML = "";
 
@@ -563,7 +681,7 @@ async function populateLeaderboard(sortBy = "burnt") {
       tbody.appendChild(row);
     });
 
-    //update leaderboard heading
+    // Update leaderboard heading
     document.querySelector("#leaderboardWidget th:nth-child(3)").textContent =
       sortBy === "weight" ? "Weight Change" : "Calories Burnt";
 
@@ -572,12 +690,16 @@ async function populateLeaderboard(sortBy = "burnt") {
   }
 }
 
-//initialise app features when DOM is fully loaded
+// ===========================
+// App Initialization
+// ===========================
+
+// Initialise app features when DOM is fully loaded
 document.addEventListener("DOMContentLoaded", () => {
   const menu = document.getElementById("formMenu");
   menu.style.display = "none";
 
-  //makes sure firebase authenticates
+  // Make sure firebase authenticates
   auth.onAuthStateChanged((user) => {
     if (user) {
       loadUserData(user);  
@@ -587,18 +709,38 @@ document.addEventListener("DOMContentLoaded", () => {
       updateDailyWaterIntake(user.uid);
       populateLeaderboard("burnt");
 
-    //allows users to sort the leaderboard, ;imited to calories burnt at the moment
-    document.querySelectorAll("#dropdownContentLeaderboard a").forEach((item) => {
-    item.addEventListener("click", (e) => {
-      e.preventDefault();
-      const sortBy = item.getAttribute("data-sort");
-      populateLeaderboard(sortBy);
-      document.getElementById("dropbtnLeaderboard").textContent = `Sort by: ${item.textContent}`;
+      // Allows users to sort the leaderboard (currently only by calories burnt)
+      document.querySelectorAll("#dropdownContentLeaderboard a").forEach((item) => {
+        item.addEventListener("click", (e) => {
+          e.preventDefault();
+          const sortBy = item.getAttribute("data-sort");
+          populateLeaderboard(sortBy);
+          document.getElementById("dropbtnLeaderboard").textContent = `Sort by: ${item.textContent}`;
+        });
+      });
+    } else {
+      window.location.href = "/sign-in.html"; // Redirect to sign in page if not authenticated
+    }
   });
 });
-      
-    } else {
-      window.location.href = "/sign-in.html"; //if user isnt signed in redirect to sign in page
-    }
+
+// ===========================
+// Time Scale Dropdown Handler
+// ===========================
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Add event listeners for time scale dropdown
+  document.querySelectorAll(".dropdown-content a").forEach((item) => {
+    item.addEventListener("click", (e) => {
+      e.preventDefault();
+      let scale = "days";
+      if (item.textContent.toLowerCase().includes("week")) scale = "weeks";
+      if (item.textContent.toLowerCase().includes("month")) scale = "months";
+      currentWeightScale = scale;
+      const user = firebase.auth().currentUser;
+      if (user) {
+        weightGraphLogic(user.uid, scale);
+      }
+    });
   });
 });
