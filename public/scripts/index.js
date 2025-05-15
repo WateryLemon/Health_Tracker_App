@@ -1,6 +1,6 @@
 // import Chart from 'chart.js/auto';
 
-// Firebase config (copy it from your HTML)
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCQiV6-wvqLWa9NHatHsu9AE3zcb4FqmOI",
   authDomain: "health-tracker-fa572.firebaseapp.com",
@@ -11,17 +11,15 @@ const firebaseConfig = {
   measurementId: "G-SRHMFGLNN2",
 };
 
-// Initialize Firebase
+// Initialise firebase
 firebase.initializeApp(firebaseConfig);
 
 // Make auth and db globally accessible
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-
 window.auth = auth;
 window.db = db;
-
 
 async function loadUserData(user) {
   try {
@@ -90,8 +88,6 @@ const weightChangeKg = Number(startWeight) - Number(currentWeight);
   }
 }
 
-
-
 function updateGreeting(name = "there") {
   const greetingElement = document.getElementById("greeting");
   const currentHour = new Date().getHours();
@@ -108,8 +104,6 @@ function updateGreeting(name = "there") {
   greetingElement.textContent = `${greeting}, ${name}!`;
 }
 
-
-
 function calendearLogic() {
   const calendarWidget = document.getElementById("calenderWidget");
   const todayEl = document.getElementById("today");
@@ -125,7 +119,7 @@ function calendearLogic() {
   ];
   const currentDate = new Date();
 
-  // Create day elements for the calendar, before and after the today element
+  // Create day elements for calendar before and after today element
   function createDayElement(offset) {
     const date = new Date(currentDate);
     date.setDate(currentDate.getDate() + offset);
@@ -140,7 +134,7 @@ function calendearLogic() {
     return li;
   }
 
-  // Create date elements for the previous and next days
+  // Create date elements for previous and next days
   for (let i = -2; i < 0; i++) {
     calendarWidget.insertBefore(createDayElement(i), todayEl);
   }
@@ -162,7 +156,7 @@ function weightGraphLogic() {
   const labels = ["27th", "28th", "29th", "30th", "1st", "2nd", "3rd"];
   const weightData = [70, 69.5, 69.5, 69.1, 68.8, 68.9, 68.8];
 
-  // Create the line chart
+  // Create line chart
   new Chart(ctx, {
     type: "line",
     data: {
@@ -171,10 +165,10 @@ function weightGraphLogic() {
         {
           label: "Weight (kg)",
           data: weightData,
-          borderColor: "#7030A1", // Line color
+          borderColor: "#7030A1", // Line colour
           borderWidth: 2,
           tension: 0.4, // Smoothness
-          pointBackgroundColor: "#7030A1", // Point color
+          pointBackgroundColor: "#7030A1", // Point colour
           pointRadius: 2, //  Size of points
         },
       ],
@@ -246,7 +240,6 @@ function fetchDailyBurntCalories(userId) {
     });
 }
 
-
 function updateDailyWaterIntake(userId) {
   
   const today = new Date();
@@ -270,7 +263,6 @@ function updateDailyWaterIntake(userId) {
       console.error("Failed to fetch water logs:", error);
     });
 }
-
 
 function goalLogic(userId) {
   const dailyGoal = 2000;
@@ -317,8 +309,6 @@ function goalLogic(userId) {
   });
 }
 
-
-
 function closeAddMenu() {
   document.getElementById("formMenu").style.display = "none";
 }
@@ -330,7 +320,7 @@ function addMenuLogic() {
   const icon = addButton.querySelector("i");
 
   if (formMenu.classList.contains("show")) {
-    // Close the menu
+    // Close menu
     formMenu.classList.remove("show");
     setTimeout(() => {
       formMenu.style.display = "none"; // Hide after animation
@@ -339,11 +329,11 @@ function addMenuLogic() {
     icon.className = "fas fa-plus";
     formContainer.innerHTML = "";
   } else {
-    // Open the menu
+    // Open menu
     formMenu.style.display = "block";
     setTimeout(() => {
       formMenu.classList.add("show");
-    }, 10); // Slight delay to trigger the transition
+    }, 10); // Slight delay to trigger transition
     addButton.style.backgroundColor = "#FF2431";
     icon.className = "fa-solid fa-xmark";
 
@@ -362,9 +352,9 @@ function loadMenuForm() {
 
     setTimeout(() => {
       formContainer.classList.add("show");
-    }, 10); // Slight delay to trigger the transition
+    }, 10); // Slight delay to trigger transition
 
-    // Reattach event listeners for the buttons in the menu form
+    // Reattach event listeners for buttons in menu form
     const logButtons = formContainer.querySelectorAll(".log-button");
     const templateMap = {
       foodButton: "foodForm",
@@ -390,12 +380,11 @@ function loadMenuForm() {
         setTimeout(() => {
           formContainer.classList.add("show");
 
-          // 🔽 YOUR EXISTING CODE (unchanged)
           const formElement = formContainer.querySelector("form");
           console.log("Form element found:", formElement);
 
-          // 🟢 After form is loaded, wait for submit
-          const submitButton = formContainer.querySelector("#submitButton"); // Ensure you use this class in your HTML
+          // After form is loaded wait for submit
+          const submitButton = formContainer.querySelector("#submitButton");
           console.log("Submit button found:", submitButton);
 
           if (submitButton) {
@@ -403,18 +392,18 @@ function loadMenuForm() {
               console.log("Submit button event listener attached");
               event.preventDefault(); // Prevent default form submission
 
-              // 🟠 Grab form data
+              // Grab form data
               const formElement = formContainer.querySelector("form");
               const formData = new FormData(formElement);
               const data = Object.fromEntries(formData.entries());
               data.timestamp = new Date().toISOString();
               console.log("📝 Data to save:", data);
 
-              // 🟡 Determine the form type (e.g., "food", "exercise")
-              const formType = formId.replace("Form", ""); // e.g. "foodForm" => "food"
+              // Determine form type (e.g. food, exercise)
+              const formType = formId.replace("Form", "");
               const userId = firebase.auth().currentUser.uid;
 
-              // 🔵 Save to Firebase
+              // Save to firebase
               if (formType === "food") {
                 const mealName = data.meal?.trim();
                 if (!mealName) {
@@ -442,16 +431,16 @@ function loadMenuForm() {
             });
           }
 
-        }, 10); // Wait for inner DOM to render before querying it
+        }, 10); // Wait for inner dom to render before querying it
 
-      }, 300); // Match your transition delay
+      }, 300); // Match transition delay
     }
   });
 });
   }
 }
 
-// Event listener for the exercise checkbox
+// Event listener for exercise checkbox
 document.addEventListener("change", function (e) {
   if (e.target.id === "exerciseCheckbox") {
     const isChecked = e.target.checked;
@@ -495,14 +484,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   auth.onAuthStateChanged((user) => {
     if (user) {
-      loadUserData(user);  // 🔁 pass the user object to loadUserData()
+      loadUserData(user);  // Pass user object to loadUserData()
       goalLogic(user.uid);
       calendearLogic();
       weightGraphLogic();
       updateDailyWaterIntake(user.uid);
       
     } else {
-      window.location.href = "/sign-in.html"; // not signed in
+      window.location.href = "/sign-in.html"; // Not signed in
     }
   });
 });

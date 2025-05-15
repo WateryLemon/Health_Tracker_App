@@ -39,12 +39,12 @@ const firebaseConfig = {
   measurementId: "G-SRHMFGLNN2",
 };
 
-// Initialize Firebase
+// Initialise firebase
 const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
 
-// Initialize Resend with API key
+// Initialise resend with api key
 const resend = new Resend("re_iYoehaUZ_6nktERHCK8EGketG2xAfSeJy");
 
 // Verify Resend configuration
@@ -68,17 +68,17 @@ app.get("/check-username", async (req, res) => {
   logger(`Checking username availability: ${username}`);
 
   try {
-    // Query Firestore to check if the username exists
-    const usersRef = collection(db, "users"); // Correctly reference the "users" collection
-    const q = query(usersRef, where("username", "==", username)); // Create a query
-    const querySnapshot = await getDocs(q); // Execute the query
+    // Query firestore to check if username exists
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("username", "==", username));
+    const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
       logger(`Username "${username}" is already taken`);
-      res.json({ available: false }); // Username is already in use
+      res.json({ available: false }); // Username already in use
     } else {
       logger(`Username "${username}" is available`);
-      res.json({ available: true }); // Username is available
+      res.json({ available: true }); // Username available
     }
   } catch (error) {
     logger(`Error checking username "${username}": ${error.message}`);
@@ -89,7 +89,7 @@ app.get("/check-username", async (req, res) => {
   }
 });
 
-// Route to check if a group name is already in use
+// Route to check if group name is already in use
 app.get("/check-group-name", async (req, res) => {
   const groupName = req.query.name;
   logger(`Checking group name availability: ${groupName}`);
@@ -159,11 +159,11 @@ app.post("/submit", async (req, res) => {
       username,
       email,
       forename,
-      surname, // Add surname
-      current_height, // Add current_height
-      current_weight, // Add current_weight
-      height: current_height, // Also store as height for compatibility
-      weight: current_weight, // Also store as weight for compatibility
+      surname,
+      current_height,
+      current_weight,
+      height: current_height,
+      weight: current_weight,
       sex,
       date_of_birth,
       created_at: serverTimestamp(),
@@ -208,7 +208,7 @@ app.post("/api/invite", async (req, res) => {
   );
 
   try {
-    // Send email using Resend
+    // Send email using resend
     logger(`Attempting to send invitation email to ${recipientEmail}`);
     const emailResponse = await resend.emails.send({
       from: "Health Tracker <onboarding@healthtracker103.tech>",
@@ -237,7 +237,7 @@ app.post("/api/invite", async (req, res) => {
       `Email sent successfully to ${recipientEmail}, ID: ${emailResponse.id || "unknown"}`
     );
 
-    // Store invitation in Firebase
+    // Store invitation in firebase
     logger(
       `Storing invitation record in Firestore for email: ${recipientEmail}`
     );
@@ -278,7 +278,7 @@ app.post("/api/send-goal-invite", async (req, res) => {
   );
 
   try {
-    // Send email using Resend
+    // Send email using resend
     logger(`Attempting to send goal invitation email to ${recipientEmail}`);
 
     const subject = isForExistingGoal
@@ -330,7 +330,7 @@ app.post("/api/send-goal-invite", async (req, res) => {
   }
 });
 
-// POST route to create a new group with atomic transaction
+// POST route to create new group with atomic transaction
 app.post("/api/groups", async (req, res) => {
   const { name, description, type, code, userId } = req.body;
 
@@ -344,10 +344,10 @@ app.post("/api/groups", async (req, res) => {
   }
 
   try {
-    // Create a normalized name (lowercase) for case-insensitive comparison
+    // Create normalized name (lowercase) for case insensitive comparison
     const normalizedName = name.toLowerCase().trim();
 
-    // First check if a group with this name already exists
+    // Check if group with this name already exists
     const groupsRef = collection(db, "groups");
     // Query by normalized name for exact matching
     const q = query(groupsRef, where("normalizedName", "==", normalizedName));
@@ -364,11 +364,11 @@ app.post("/api/groups", async (req, res) => {
       });
     }
 
-    // Create a new document reference
+    // Create new document reference
     const groupRef = doc(collection(db, "groups"));
     const groupId = groupRef.id;
 
-    // Create the group with the normalized name field
+    // Create group with normalized name field
     await setDoc(groupRef, {
       name,
       normalizedName,
@@ -380,7 +380,7 @@ app.post("/api/groups", async (req, res) => {
       memberCount: 1,
     });
 
-    // Add the creator as a member
+    // Add creator as a member
     await setDoc(doc(db, "group_memberships", `${groupId}_${userId}`), {
       userId,
       groupId,
@@ -400,7 +400,7 @@ app.post("/api/groups", async (req, res) => {
   }
 });
 
-// Create a function to start the server and handle port conflicts
+// Create function to start server and handle port conflicts
 function startServer(port) {
   return new Promise((resolve, reject) => {
     const server = app
@@ -411,7 +411,7 @@ function startServer(port) {
       .on("error", (err) => {
         if (err.code === "EADDRINUSE") {
           logger(`Port ${port} is busy, trying port ${port + 1}`);
-          resolve(startServer(port + 1)); // Try the next port
+          resolve(startServer(port + 1)); // Try next port
         } else {
           reject(err);
         }
@@ -419,7 +419,7 @@ function startServer(port) {
   });
 }
 
-// Start the server with port 3000 initially
+// Start server with port 3000 initially
 startServer(3000).catch((err) => {
   logger("Failed to start server:", err);
 });
