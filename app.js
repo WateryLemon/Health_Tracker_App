@@ -332,7 +332,8 @@ app.post("/api/send-goal-invite", async (req, res) => {
 
 // POST route to create new group with atomic transaction
 app.post("/api/groups", async (req, res) => {
-  const { name, description, type, code, userId } = req.body;
+  const { name, description, code, userId, fitnessGoal, targetWeight } =
+    req.body;
 
   logger(`Attempting to create group: "${name}" by user: ${userId}`);
 
@@ -373,11 +374,12 @@ app.post("/api/groups", async (req, res) => {
       name,
       normalizedName,
       description,
-      type,
       code,
       createdBy: userId,
       createdAt: serverTimestamp(),
       memberCount: 1,
+      fitnessGoal: fitnessGoal || null,
+      targetWeight: targetWeight || null,
     });
 
     // Add creator as a member
