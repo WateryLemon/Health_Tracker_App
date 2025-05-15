@@ -1,4 +1,3 @@
-
 //firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCQiV6-wvqLWa9NHatHsu9AE3zcb4FqmOI",
@@ -170,24 +169,29 @@ async function weightGraphLogic(userId) {
       }
     });
 
-    if (weightLogs.length === 0) return;
-
-    //formats dates for chart labels
-    const labels = weightLogs.map((log) =>
-      log.date.toLocaleDateString("en-GB", {
-        day: "numeric",
-        month: "short"
-      })
-    );
-
-    //extracts just the weight values
-    const weights = weightLogs.map((log) => log.weight);
-
     const ctx = document.getElementById("weightChart").getContext("2d");
 
-    //destroy's any existing chart instance to prevent overlap
+    //destroy any existing chart instance to prevent overlap
     if (window.weightChartInstance) {
       window.weightChartInstance.destroy();
+    }
+
+    let labels, weights;
+
+    if (weightLogs.length === 0) {
+      // Show an empty chart with a placeholder label and no data
+      labels = ["No Data"];
+      weights = [null];
+    } else {
+      //formats dates for chart labels
+      labels = weightLogs.map((log) =>
+        log.date.toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "short"
+        })
+      );
+      //extracts just the weight values
+      weights = weightLogs.map((log) => log.weight);
     }
 
     //creates a new chart instance
