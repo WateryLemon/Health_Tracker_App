@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="/stylesheets/groups.css" />
     <link rel="stylesheet" href="/stylesheets/progress-details.css" />
     <link rel="stylesheet" href="/stylesheets/groups-fix.css" />
+    <link rel="stylesheet" href="/stylesheets/group-goals.css" />
     <title>Health Groups</title>
     <link
       rel="icon"
@@ -207,32 +208,48 @@
               </p>
               <form id="create-goal-form">
                 <div class="form-group">
-                  <label for="group_fitness_goal"
+                  <label for="goal_fitness_goal"
                     >Select group's primary goal</label
                   >
                   <select
-                    id="group_fitness_goal"
+                    id="goal_fitness_goal"
                     name="group_fitness_goal"
                     required
                   >
                     <option value="">Select your goal</option>
                     <option value="lose_weight">Lose Weight</option>
                     <option value="gain_weight">Gain Weight</option>
+                    <option value="maintain_weight">Maintain Weight</option>
+                    <option value="build_muscle">Build Muscle</option>
                   </select>
+                  <p
+                    class="goal-helper-text"
+                    id="goal-maintain-weight-help"
+                    style="display: none"
+                  >
+                    For maintain weight, enter the acceptable range of weight
+                    fluctuation (e.g., "2" for ±2kg).
+                  </p>
                 </div>
                 <div
                   class="form-group"
-                  id="group_target_weight_group"
+                  id="goal_target_weight_group"
                   style="display: none"
                 >
-                  <label for="group_target_weight">Target Weight (kg)</label>
+                  <label for="goal_target_weight" id="goal_target_weight_label"
+                    >Target Weight Change (kg)</label
+                  >
                   <input
                     type="number"
                     step="0.25"
                     min="0"
-                    id="group_target_weight"
+                    id="goal_target_weight"
                     name="group_target_weight"
                   />
+                  <p class="form-help-text">
+                    Enter how much weight you want to lose/gain. For example,
+                    enter "5" to lose/gain 5kg.
+                  </p>
                 </div>
                 <div class="form-group">
                   <label for="goal-description"

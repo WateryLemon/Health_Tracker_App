@@ -1,0 +1,148 @@
+/* Add styles to ensure the target weight field is visible */
+.visible {
+  display: block !important;
+  opacity: 1 !important;
+}
+
+#group_target_weight_group,
+#goal_target_weight_group,
+#create_group_target_weight_group {
+  transition: opacity 0.3s ease;
+}
+
+#group_target_weight_group.visible,
+#goal_target_weight_group.visible,
+#create_group_target_weight_group.visible {
+  opacity: 1;
+}
+
+/* Add a highlight to emphasize the target weight field */
+#group_target_weight_group.visible,
+#goal_target_weight_group.visible,
+#create_group_target_weight_group.visible {
+  border-left: 3px solid #34c759;
+  padding-left: 10px;
+  background-color: rgba(52, 199, 89, 0.05);
+  margin-top: 8px;
+  margin-bottom: 8px;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Make the input field itself more prominent */
+#group_target_weight,
+#goal_target_weight,
+#create_group_target_weight {
+  padding: 8px;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  width: 100%;
+  max-width: 300px;
+  transition: border-color 0.3s;
+}
+
+#group_target_weight:focus,
+#goal_target_weight:focus,
+#create_group_target_weight:focus {
+  outline: none;
+  border-color: #34c759;
+  box-shadow: 0 0 5px rgba(52, 199, 89, 0.5);
+}
+
+/* Style the goal helper text */
+.goal-helper-text {
+  color: #555;
+  font-size: 0.85em;
+  margin-top: 5px;
+  padding: 5px;
+  border-left: 2px solid #3498db;
+  background-color: rgba(52, 152, 219, 0.05);
+  border-radius: 3px;
+  margin-bottom: 10px;
+}
+
+/* Style the form help text */
+.form-help-text {
+  color: #666;
+  font-size: 0.85em;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+/* Style goal items to match regular goals page */
+.goal-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  padding: 15px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.goal-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.goal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.goal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.goal-date {
+  font-size: 14px;
+  color: #777;
+}
+
+.goal-progress {
+  margin: 15px 0;
+  height: 10px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #34c759;
+  border-radius: 5px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.progress-percentage {
+  position: absolute;
+  right: 5px;
+  top: -3px;
+  font-size: 12px;
+  color: #333;
+  font-weight: bold;
+}
+
+.goal-details,
+.progress-details {
+  margin: 10px 0;
+  font-size: 14px;
+  color: #555;
+  line-height: 1.4;
+}
+
+.progress-details {
+  font-weight: 500;
+  color: #444;
+}

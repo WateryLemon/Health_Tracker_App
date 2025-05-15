@@ -330,9 +330,73 @@ app.post("/api/send-goal-invite", async (req, res) => {
   }
 });
 
+// POST route to send goal completion notification emails
+app.post("/api/send-goal-completion", async (req, res) => {
+  const {
+    recipientEmail,
+    groupName,
+    goalTitle,
+    userName,
+    goalType,
+    achievement,
+  } = req.body;
+
+  logger(
+    `Processing goal completion email to ${recipientEmail} for "${goalTitle}" in group "${groupName}" by ${userName}`
+  );
+
+  try {
+    // Send email using Resend
+    logger(`Attempting to send goal completion email to ${recipientEmail}`);
+
+    const subject = `${userName} completed a goal in ${groupName}!`;
+
+    // Format achievement text based on goal type
+    let achievementText = "";
+    if (goalType === "lose_weight") {
+      achievementText = `lost ${achievement} kg`;
+    } else if (goalType === "gain_weight" || goalType === "build_muscle") {
+      achievementText = `gained ${achievement} kg`;
+    } else if (goalType === "maintain_weight") {
+      achievementText = `successfully maintained their weight within ${achievement} kg`;
+    } else {
+      achievementText = `achieved their fitness goal`;
+    }
+
+    const emailResponse = await resend.emails.send({
+      from: "Health Tracker <onboarding@healthtracker103.tech>",
+      to: recipientEmail,
+      subject: subject,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>Goal Achievement Celebration! 🎉</h2>
+          <p>Exciting news from your health group!</p>
+          <div style="background-color: #f0fff0; border-left: 4px solid #34c759; padding: 15px; margin: 20px 0;">
+            <p style="font-size: 18px;"><strong>${userName}</strong> has completed the <strong>"${goalTitle}"</strong> goal in your <strong>${groupName}</strong> group!</p>
+            <p>They have ${achievementText}. Congratulate them on this amazing achievement!</p>
+          </div>
+          <p>Group goals are more successful when we celebrate each other's victories.</p>
+          <p>Want to achieve your own goals? Log in to the Health Tracker app and keep up your progress!</p>
+          <p>- The Health Tracker Team</p>
+        </div>
+      `,
+    });
+
+    logger(`Goal completion email sent successfully to ${recipientEmail}`);
+    res.json({ success: true, id: emailResponse.id });
+  } catch (error) {
+    logger(`Error sending goal completion email: ${error.message}`);
+    console.error("Full error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to send completion email" });
+  }
+});
+
 // POST route to create a new group with atomic transaction
 app.post("/api/groups", async (req, res) => {
-  const { name, description, type, code, userId } = req.body;
+  const { name, description, code, userId, fitnessGoal, targetWeight } =
+    req.body;
 
   logger(`Attempting to create group: "${name}" by user: ${userId}`);
 
@@ -373,11 +437,12 @@ app.post("/api/groups", async (req, res) => {
       name,
       normalizedName,
       description,
-      type,
       code,
       createdBy: userId,
       createdAt: serverTimestamp(),
       memberCount: 1,
+      fitnessGoal: fitnessGoal || null,
+      targetWeight: targetWeight || null,
     });
 
     // Add the creator as a member
