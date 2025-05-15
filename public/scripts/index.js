@@ -148,60 +148,82 @@ function calendearLogic() {
 }
 
 
-function weightGraphLogic() {
-  const ctx = document.getElementById("weightChart").getContext("2d");
-  
-  
-  // Replace with dynamic data
-  const labels = ["27th", "28th", "29th", "30th", "1st", "2nd", "3rd"];
-  const weightData = [70, 69.5, 69.5, 69.1, 68.8, 68.9, 68.8];
+async function weightGraphLogic(userId) {
+  try {
+    const snapshot = await db
+      .collection("users")
+      .doc(userId)
+      .collection("weight")
+      .orderBy("timestamp", "asc")
+      .get();
 
-  // Create line chart
-  new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: "Weight (kg)",
-          data: weightData,
-          borderColor: "#7030A1", // Line colour
-          borderWidth: 2,
-          tension: 0.4, // Smoothness
-          pointBackgroundColor: "#7030A1", // Point colour
-          pointRadius: 2, //  Size of points
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
+    const weightLogs = [];
+
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      const weight = parseFloat(data.weight); // handle string
+      const date = new Date(data.timestamp);
+      if (!isNaN(weight) && !isNaN(date)) {
+        weightLogs.push({ date, weight });
+      }
+    });
+
+    if (weightLogs.length === 0) return;
+
+    const labels = weightLogs.map((log) =>
+      log.date.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short"
+      })
+    );
+
+    const weights = weightLogs.map((log) => log.weight);
+
+    const ctx = document.getElementById("weightChart").getContext("2d");
+
+    if (window.weightChartInstance) {
+      window.weightChartInstance.destroy();
+    }
+
+    window.weightChartInstance = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "Weight (kg)",
+            data: weights,
+            borderColor: "#7030A1",
+            borderWidth: 2,
+            tension: 0.4,
+            pointBackgroundColor: "#7030A1",
+            pointRadius: 3
+          }
+        ]
       },
-      scales: {
-        x: {
-          title: {
-            display: true,
-            text: "Weeks",
-          },
-          grid: {
-            color: "rgba(243, 207, 238, 1)",
-          },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
         },
-        y: {
-          title: {
-            display: true,
-            text: "Weight (kg)",
+        scales: {
+          x: {
+            title: { display: true, text: "Date" },
+            grid: { color: "rgba(243, 207, 238, 1)" }
           },
-          grid: {
-            color: "rgba(243, 207, 238, 1)",
-          },
-          beginAtZero: false,
-        },
-      },
-    },
-  });
+          y: {
+            title: { display: true, text: "Weight (kg)" },
+            beginAtZero: false,
+            grid: { color: "rgba(243, 207, 238, 1)" }
+          }
+        }
+      }
+    });
+  } catch (error) {
+    console.error("Error loading weight graph:", error);
+  }
 }
+
 
 function fetchDailyCalories(userId) {
   const today = new Date();
@@ -478,6 +500,94 @@ document.addEventListener("change", function (e) {
   weightGraphLogic();
 });*/
 
+async function populateLeaderboard(sortBy = "burnt") {
+  try {
+    const usersSnapshot = await db.collection("users").get();
+    const leaderboardData = [];
+
+    for (const userDoc of usersSnapshot.docs) {
+      const userId = userDoc.id;
+      const userData = userDoc.data();
+      const name = userData.forename || userData.username || "Unknown";
+
+      // Fetch exercise data
+      const exerciseSnapshot = await db
+        .collection("users")
+        .doc(userId)
+        .collection("exercise")
+        .get();
+
+      let totalBurnt = 0;
+      exerciseSnapshot.forEach((doc) => {
+        const data = doc.data();
+        const burnt = parseFloat(data.caloriesBurned);
+        if (!isNaN(burnt)) {
+          totalBurnt += burnt;
+        }
+      });
+
+      // Calculate weight change
+      const startWeight = parseFloat(userData.current_weight);
+      const currentWeight = parseFloat(userData.weight);
+      let weightChange = null;
+
+      if (!isNaN(startWeight) && !isNaN(currentWeight)) {
+        weightChange = startWeight - currentWeight;
+      }
+
+      leaderboardData.push({
+        name,
+        caloriesBurned: totalBurnt,
+        weightChange: weightChange, // in kg
+      });
+    }
+
+    // Sort
+    if (sortBy === "weight") {
+      leaderboardData.sort((a, b) => (b.weightChange ?? -Infinity) - (a.weightChange ?? -Infinity));
+    } else {
+      leaderboardData.sort((a, b) => b.caloriesBurned - a.caloriesBurned);
+    }
+
+    // Top 10
+    const top10 = leaderboardData.slice(0, 10);
+
+    // Render
+    const tbody = document.querySelector("#leaderboardWidget tbody");
+    tbody.innerHTML = "";
+
+    top10.forEach((entry, index) => {
+      const row = document.createElement("tr");
+
+      const rankCell = document.createElement("th");
+      rankCell.scope = "row";
+      rankCell.textContent = index + 1;
+
+      const nameCell = document.createElement("td");
+      nameCell.textContent = entry.name;
+
+      const thirdCell = document.createElement("td");
+      thirdCell.textContent =
+        sortBy === "weight"
+          ? (entry.weightChange != null ? `${entry.weightChange.toFixed(1)} kg` : "N/A")
+          : `${Math.round(entry.caloriesBurned)} kcal`;
+
+      row.appendChild(rankCell);
+      row.appendChild(nameCell);
+      row.appendChild(thirdCell);
+
+      tbody.appendChild(row);
+    });
+
+    // Update headers
+    document.querySelector("#leaderboardWidget th:nth-child(3)").textContent =
+      sortBy === "weight" ? "Weight Change" : "Calories Burnt";
+
+  } catch (error) {
+    console.error("Error populating leaderboard:", error);
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const menu = document.getElementById("formMenu");
   menu.style.display = "none";
@@ -487,8 +597,18 @@ document.addEventListener("DOMContentLoaded", () => {
       loadUserData(user);  // Pass user object to loadUserData()
       goalLogic(user.uid);
       calendearLogic();
-      weightGraphLogic();
+      weightGraphLogic(user.uid);
       updateDailyWaterIntake(user.uid);
+      populateLeaderboard("burnt");
+
+    document.querySelectorAll("#dropdownContentLeaderboard a").forEach((item) => {
+    item.addEventListener("click", (e) => {
+      e.preventDefault();
+      const sortBy = item.getAttribute("data-sort"); // "burnt" or "weight"
+      populateLeaderboard(sortBy);
+      document.getElementById("dropbtnLeaderboard").textContent = `Sort by: ${item.textContent}`;
+  });
+});
       
     } else {
       window.location.href = "/sign-in.html"; // Not signed in
