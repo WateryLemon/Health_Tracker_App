@@ -13,7 +13,7 @@ let currentUser = null;
 let userWeight = null;
 let initialWeight = null;
 
-// Load user data when the page loads
+// Load user data when page loads
 document.addEventListener("DOMContentLoaded", async () => {
   // Check if user is logged in
   const auth = window.auth;
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       currentUser = user;
       await loadUserData();
 
-      // Do an additional check for target date on page load
+      // Additional check for target date on page load
       const targetDateInput = document.getElementById("target_date");
       if (targetDateInput && targetDateInput.value) {
         // Force check by removing any session storage flags
@@ -44,7 +44,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   document
     .getElementById("fitness_goal_tab")
     ?.addEventListener("change", function () {
-      // Reset the initial weight when goal type changes
       resetInitialWeightForGoal();
 
       // Update the target weight options and visibility
@@ -102,18 +101,18 @@ function setupTabNavigation() {
       // Add active class to clicked button
       button.classList.add("active");
 
-      // Show the corresponding tab
+      // Show corresponding tab
       const tabId = button.getAttribute("data-tab");
       document.getElementById(tabId).classList.add("active");
     });
   });
 }
 
-// Handle fitness goal selection change in Goals tab
+// Handle fitness goal selection change in goals tab
 function handleGoalChangeTab() {
   const fitnessGoal = document.getElementById("fitness_goal_tab").value;
   const targetWeightInput = document.getElementById("target_weight_tab");
-  // Get the parent form-group of target weight for showing/hiding
+  // Get parent form-group of target weight for showing/hiding
   const targetWeightGroup = document.getElementById("target_weight_group_tab");
   if (
     fitnessGoal === "lose_weight" ||
@@ -123,7 +122,7 @@ function handleGoalChangeTab() {
     if (targetWeightGroup) {
       targetWeightGroup.style.display = "block";
     }
-    // Set a default target weight if none is set
+    // Set default target weight if none is set
     if (
       targetWeightInput &&
       (!targetWeightInput.value || targetWeightInput.value === "0")
@@ -153,11 +152,11 @@ function handleGoalChangeTab() {
     targetWeightInput.value
   );
   updateProgressBar(progress);
-  // Make sure to update all the progress info displays
+  // Update all progress info displays
   updateProgressFromInputs();
 }
 
-// Load user data from Firestore
+// Load user data from firestore
 async function loadUserData() {
   try {
     const userDoc = await getDoc(doc(db, "users", currentUser.uid));
@@ -168,7 +167,7 @@ async function loadUserData() {
       document.getElementById("username").value = data.username || "";
       document.getElementById("forename").value = data.forename || "";
       document.getElementById("surname").value = data.surname || "";
-      // Use the correct field names from signup form (current_height and current_weight)
+      // Use correct field names from signup form
       document.getElementById("height").value =
         data.current_height || data.height || "";
       document.getElementById("sex").value = data.sex || "";
@@ -179,17 +178,17 @@ async function loadUserData() {
       userWeight = data.current_weight || data.weight || "";
       document.getElementById("currentWeight").value = userWeight;
 
-      // Store initial weight from goal data if it exists, or use current weight
+      // Store initial weight from goal data if it exists or use current weight
       initialWeight = data.goal_data?.initial_weight || userWeight;
 
-      // Calculate and populate BMI
+      // Calculate and populate bmi
       const height = parseFloat(data.current_height || data.height || "0");
       const weight = parseFloat(userWeight || "0");
       if (height > 0 && weight > 0) {
         const bmi = calculateBMI(height, weight);
         document.getElementById("bmi").value = bmi;
       } else {
-        document.getElementById("bmi").value = ""; // Clear BMI field if data is invalid
+        document.getElementById("bmi").value = ""; // Clear bmi field if data is invalid
       }
 
       // Set fitness goal
@@ -200,7 +199,7 @@ async function loadUserData() {
       const targetWeight = goalData.target_weight || "";
       document.getElementById("target_weight_tab").value = targetWeight;
 
-      // Populate Goals tab data
+      // Populate goals tab data
       if (goalData.target_date) {
         document.getElementById("target_date").value = formatDateForInput(
           goalData.target_date
@@ -232,7 +231,7 @@ document.getElementById("saveButton").addEventListener("click", async () => {
     const height = document.getElementById("height").value;
     const targetDate = document.getElementById("target_date").value;
 
-    // Calculate BMI for display
+    // Calculate bmi for display
     const bmi = calculateBMI(parseFloat(height), parseFloat(currentWeight));
     document.getElementById("bmi").value = bmi !== "NaN" ? bmi : "";
 
@@ -269,19 +268,19 @@ document.getElementById("saveButton").addEventListener("click", async () => {
       return;
     }
 
-    // Update user document in Firestore
+    // Update user document in firestore
     await updateDoc(doc(db, "users", currentUser.uid), userData);
     showMessage("Profile updated successfully"); // Check if target date has been reached
     if (targetDate) {
-      // Remove any existing popup flags to allow the popup to show if date is current or past
+      // Remove any existing popup flags to allow popup to show if date is current or past
       sessionStorage.removeItem("target_date_popup_shown");
       checkTargetDateReached(new Date(targetDate));
     }
 
-    // Check if the goal has been achieved after saving
+    // Check if goal has been achieved after saving
     const progress = calculateGoalProgress(currentWeight, targetWeight);
     if (progress === 100) {
-      // If the goal is achieved, check if we should show the popup
+      // If goal is achieved check if it should show popup
       if (
         checkGoalAchieved(
           parseFloat(currentWeight),
@@ -291,7 +290,7 @@ document.getElementById("saveButton").addEventListener("click", async () => {
       ) {
         setTimeout(() => {
           showGoalAchievementPopup();
-        }, 1000); // Show after a delay so the user sees the success message first
+        }, 1000); // Show after a delay so user sees the success message first
       }
     }
   } catch (error) {
@@ -305,7 +304,7 @@ document.getElementById("change-password")?.addEventListener("click", () => {
   window.location.href = "/Password-Reset.html";
 });
 
-// Fix radio button IDs and add name attribute
+// Fix radio button ids and add name attribute
 document.addEventListener("DOMContentLoaded", () => {
   const metricRadio = document.querySelector('input[value="Metric"]');
   const imperialRadio = document.querySelector('input[value="Imperial"]');
@@ -370,21 +369,21 @@ function showMessage(message, isError = false) {
   }, 3000);
 }
 
-// Helper function to calculate BMI
+// Helper function to calculate bmi
 function calculateBMI(height, weight) {
   // Convert height from cm to meters for metric calculations
   const heightInMeters = height / 100;
   return (weight / (heightInMeters * heightInMeters)).toFixed(2);
 }
 
-// Helper function to format date for HTML date input
+// Helper function to format date for html date input
 function formatDateForInput(dateValue) {
   // If it's a Firebase timestamp
   if (dateValue && typeof dateValue.toDate === "function") {
     dateValue = dateValue.toDate();
   }
 
-  // If it's a Date object or can be converted to one
+  // If it's a date object or can be converted to one
   if (dateValue) {
     const date = new Date(dateValue);
     if (!isNaN(date.getTime())) {
@@ -396,7 +395,7 @@ function formatDateForInput(dateValue) {
 
 // Calculate progress percentage towards goal
 function calculateGoalProgress(currentWeight, targetWeight) {
-  // If any required values are missing, return 0 progress
+  // If any required values are missing return 0 progress
   if (!currentWeight || !targetWeight || !initialWeight) {
     return 0;
   }
@@ -404,12 +403,12 @@ function calculateGoalProgress(currentWeight, targetWeight) {
   targetWeight = parseFloat(targetWeight);
   const startWeight = parseFloat(initialWeight);
 
-  // If current weight equals target weight, goal is achieved
+  // If current weight equals target weight goal is achieved
   if (currentWeight === targetWeight) {
     return 100;
   }
 
-  // If current weight equals initial weight, we're at the starting point
+  // If current weight equals initial weight we're at the starting point
   if (currentWeight === startWeight) {
     return 0;
   }
@@ -417,12 +416,12 @@ function calculateGoalProgress(currentWeight, targetWeight) {
   // Calculate the total weight change needed to reach the goal
   const totalChangeNeeded = Math.abs(targetWeight - startWeight);
 
-  // If no change is needed, return 100% (goal already achieved)
+  // If no change is needed return 100% (goal already achieved)
   if (totalChangeNeeded === 0) {
     return 100;
   }
 
-  // Calculate progress based on whether the goal is to lose or gain weight
+  // Calculate progress based on whether goal is to lose or gain weight
   let progressPercentage;
 
   if (targetWeight < startWeight) {
@@ -438,11 +437,11 @@ function calculateGoalProgress(currentWeight, targetWeight) {
   // Ensure progress is between 0 and 100
   progressPercentage = Math.min(100, Math.max(0, progressPercentage));
 
-  // Return the progress as an integer percentage
+  // Return progress as an integer percentage
   return Math.round(progressPercentage);
 }
 
-// Update the progress bar display
+// Update progress bar display
 function updateProgressBar(progress) {
   const progressBar = document.getElementById("goal-progress-bar");
   const progressText = document.getElementById("goal-progress-text");
@@ -451,7 +450,7 @@ function updateProgressBar(progress) {
     // Ensure progress is between 0 and 100
     progress = Math.min(100, Math.max(0, progress));
 
-    // Update the progress bar width and text
+    // Update progress bar width and text
     progressBar.style.width = progress + "%";
 
     if (progress === 0) {
@@ -471,7 +470,7 @@ function updateProgressBar(progress) {
       progressBar.style.backgroundColor = "#7030a1"; // Purple for near completion
     }
 
-    // Make sure the progress bar container is visible
+    // Make sure progress bar container is visible
     const progressContainer = document.querySelector(".progress-container");
     if (progressContainer) {
       progressContainer.style.display = "block";
@@ -489,7 +488,7 @@ function updateProgressFromInputs() {
   const progress = calculateGoalProgress(currentWeight, targetWeight);
   updateProgressBar(progress);
 
-  // Update the progress info text displays
+  // Update progress info text displays
   const initialWeightDisplay = document.getElementById(
     "initial-weight-display"
   );
@@ -511,16 +510,16 @@ function updateProgressFromInputs() {
   }
 }
 
-// Update BMI when height or weight changes
+// Update bmi when height or weight changes
 document.addEventListener("DOMContentLoaded", () => {
   const heightInput = document.getElementById("height");
   const weightInput = document.getElementById("currentWeight");
   const bmiInput = document.getElementById("bmi");
   const targetWeightTabInput = document.getElementById("target_weight_tab");
 
-  // Make BMI field read-only
+  // Make bmi field read only
   bmiInput.readOnly = true;
-  // Add event listeners to recalculate BMI when values change
+  // Add event listeners to recalculate bmi when values change
   heightInput?.addEventListener("input", updateBMI);
   weightInput?.addEventListener("input", updateBMI);
 
@@ -540,7 +539,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function resetInitialWeightForGoal() {
   initialWeight = document.getElementById("currentWeight").value;
 
-  // Update the initial weight display
+  // Update initial weight display
   const initialWeightDisplay = document.getElementById(
     "initial-weight-display"
   );
@@ -552,13 +551,13 @@ function resetInitialWeightForGoal() {
   updateProgressFromInputs();
 }
 
-// Function to check if a goal has been achieved
+// Function to check if goal has been achieved
 function checkGoalAchieved(currentWeight, targetWeight, fitnessGoal) {
   if (!currentWeight || !targetWeight) {
     return false;
   }
 
-  // Check if the goal has been achieved based on goal type
+  // Check if goal has been achieved based on goal type
   if (fitnessGoal === "lose_weight") {
     return currentWeight <= targetWeight;
   } else if (fitnessGoal === "gain_weight" || fitnessGoal === "build_muscle") {
@@ -568,14 +567,14 @@ function checkGoalAchieved(currentWeight, targetWeight, fitnessGoal) {
   return false;
 }
 
-// Function to show the goal achievement popup
+// Function to show goal achievement popup
 function showGoalAchievementPopup() {
-  // Get the popup elements
+  // Get popup elements
   const popup = document.getElementById("goal-popup");
   const popupButton = document.getElementById("goal-popup-button");
   const popupMessage = document.querySelector(".goal-popup-message");
 
-  // Customize the message based on goal type
+  // Customize message based on goal type
   const fitnessGoal = document.getElementById("fitness_goal_tab").value;
   const currentWeight = document.getElementById("currentWeight").value;
   const targetWeight = document.getElementById("target_weight_tab").value;
@@ -590,40 +589,40 @@ function showGoalAchievementPopup() {
     goalMessage = `Great work! You've reached your muscle building target weight of ${targetWeight}kg!`;
   }
 
-  // Set the customized message
+  // Set customised message
   if (popupMessage) {
     popupMessage.textContent = goalMessage;
   }
-  // Show the popup
+  // Show popup
   popup.style.display = "flex";
 
   // Remove any previous click listeners to prevent duplicates
   const newPopupButton = popupButton.cloneNode(true);
   popupButton.parentNode.replaceChild(newPopupButton, popupButton);
 
-  // Add event listener to the popup button
+  // Add event listener to popup button
   newPopupButton.addEventListener("click", () => {
-    // Hide the popup
+    // Hide popup
     popup.style.display = "none";
 
-    // Reset the goal values
+    // Reset goal values
     resetGoalAfterAchievement();
   });
 }
 
-// Function to reset the goal after achievement
+// Function to reset goal after achievement
 async function resetGoalAfterAchievement() {
-  // Get the current weight as the new initial weight
+  // Get current weight as new initial weight
   const currentWeight = document.getElementById("currentWeight").value;
   initialWeight = currentWeight;
 
-  // Clear the target weight
+  // Clear target weight
   document.getElementById("target_weight_tab").value = "";
 
-  // Reset the target date
+  // Reset target date
   document.getElementById("target_date").value = "";
 
-  // Update the displays
+  // Update displays
   const initialWeightDisplay = document.getElementById(
     "initial-weight-display"
   );
@@ -639,17 +638,17 @@ async function resetGoalAfterAchievement() {
   // Reset progress bar
   updateProgressBar(0);
 
-  // Clear the session storage flag to allow showing popup again for future goals
+  // Clear session storage flag to allow showing popup again for future goals
   Object.keys(sessionStorage).forEach((key) => {
     if (key.startsWith("goal_reached_")) {
       sessionStorage.removeItem(key);
     }
   });
 
-  // Update the database with reset goal data
+  // Update database with reset goal data
   try {
     if (currentUser) {
-      // Update Firestore with reset goal values
+      // Update firestore with reset goal values
       await updateDoc(doc(db, "users", currentUser.uid), {
         goal_data: {
           start_date: serverTimestamp(),
@@ -662,7 +661,7 @@ async function resetGoalAfterAchievement() {
         updated_at: new Date(),
       });
 
-      // Show a message to the user
+      // Show message to the user
       showMessage(
         "Goal reset successfully. You can now set a new goal!",
         false
@@ -680,7 +679,7 @@ function checkTargetDateReached(targetDate) {
   if (!targetDate || sessionStorage.getItem("target_date_popup_shown")) {
     return;
   }
-  // Convert target date to Date object if it's a Firebase timestamp
+  // Convert target date to date object if it's a firebase timestamp
   let targetDateObj;
   if (typeof targetDate.toDate === "function") {
     targetDateObj = targetDate.toDate();
@@ -688,7 +687,7 @@ function checkTargetDateReached(targetDate) {
     targetDateObj = new Date(targetDate);
   }
 
-  // Set hours to 0 to compare just the dates
+  // Set hours to 0 to compare just dates
   targetDateObj.setHours(0, 0, 0, 0);
 
   // Get current date with time set to 0
@@ -734,22 +733,22 @@ function checkTargetDateReached(targetDate) {
   }
 }
 
-// Function to show the target date reached popup
+// Function to show target date reached popup
 function showTargetDatePopup() {
-  // Get the popup elements
+  // Get popup elements
   const popup = document.getElementById("target-date-popup");
   const popupButton = document.getElementById("target-date-popup-button");
 
-  // Show the popup
+  // Show popup
   popup.style.display = "flex";
 
   // Remove any previous click listeners to prevent duplicates
   const newPopupButton = popupButton.cloneNode(true);
   popupButton.parentNode.replaceChild(newPopupButton, popupButton);
 
-  // Add event listener to the popup button
+  // Add event listener to popup button
   newPopupButton.addEventListener("click", () => {
-    // Hide the popup
+    // Hide popup
     popup.style.display = "none";
   });
 
