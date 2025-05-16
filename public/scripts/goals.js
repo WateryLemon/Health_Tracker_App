@@ -62,7 +62,7 @@ document
 
     // Get form values
     const fitnessGoal = document.getElementById("fitness_goal").value;
-    let targetWeight = document.getElementById("target_weight").value; // Remove reference to maintain weight option
+    let targetWeight = document.getElementById("target_weight").value;
 
     // Validate target weight if provided
     if (targetWeight && parseFloat(targetWeight) <= 0) {

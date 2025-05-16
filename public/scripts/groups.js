@@ -111,19 +111,6 @@ document.addEventListener("DOMContentLoaded", () => {
           if (targetWeightLabel) {
             targetWeightLabel.textContent = "Target Weight Gain (kg)";
           }
-        } else if (this.value === "maintain_weight") {
-          targetWeightGroup.style.display = "block";
-
-          setTimeout(() => targetWeightGroup.classList.add("visible"), 10);
-          targetWeightInput.required = true;
-          targetWeightInput.value = "";
-
-          if (targetWeightLabel) {
-            targetWeightLabel.textContent = "Weight Fluctuation Range (kg)";
-          }
-
-          document.getElementById("goal-maintain-weight-help").style.display =
-            "block";
         } else if (this.value === "build_muscle") {
           // For build muscle
           targetWeightGroup.style.display = "block";
@@ -194,13 +181,6 @@ document.addEventListener("DOMContentLoaded", () => {
             } else if (value === "gain_weight") {
               createGroupTargetWeightLabel.textContent =
                 "Target Weight Gain (kg)";
-            } else if (value === "maintain_weight") {
-              createGroupTargetWeightLabel.textContent =
-                "Weight Fluctuation Range (kg)";
-
-              document.getElementById(
-                "create-group-maintain-weight-help"
-              ).style.display = "block";
             } else if (value === "build_muscle") {
               createGroupTargetWeightLabel.textContent =
                 "Target Muscle Mass Gain (kg)";
