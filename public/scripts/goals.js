@@ -26,16 +26,11 @@ window.auth.onAuthStateChanged(async (user) => {
   }
 });
 
-// Handle fitness goal selection
+// Show/hide target weight field based on goal selection
 document.getElementById("fitness_goal").addEventListener("change", function () {
   const targetWeightGroup = document.getElementById("target_weight_group");
   const targetWeightInput = document.getElementById("target_weight");
-
-  if (this.value === "maintain_weight") {
-    targetWeightGroup.style.display = "none";
-    targetWeightInput.value = userWeight;
-    targetWeightInput.required = true;
-  } else if (this.value === "lose_weight" || this.value === "build_muscle") {
+  if (this.value === "lose_weight" || this.value === "build_muscle") {
     targetWeightGroup.style.display = "block";
     targetWeightGroup.classList.add("visible");
     targetWeightInput.required = true;
@@ -44,7 +39,7 @@ document.getElementById("fitness_goal").addEventListener("change", function () {
     targetWeightGroup.classList.remove("visible");
     targetWeightInput.required = false;
     targetWeightInput.value = "";
-
+    // Wait for transition to complete before hiding
     setTimeout(() => {
       if (!targetWeightGroup.classList.contains("visible")) {
         targetWeightGroup.style.display = "none";
@@ -53,7 +48,7 @@ document.getElementById("fitness_goal").addEventListener("change", function () {
   }
 });
 
-//Handle form submission
+// Handle form submission
 document
   .getElementById("goalsForm")
   .addEventListener("submit", async (event) => {
@@ -67,7 +62,7 @@ document
 
     // Get form values
     const fitnessGoal = document.getElementById("fitness_goal").value;
-    let targetWeight = document.getElementById("target_weight").value;
+    let targetWeight = document.getElementById("target_weight").value; // Remove reference to maintain weight option
 
     // Validate target weight if provided
     if (targetWeight && parseFloat(targetWeight) <= 0) {

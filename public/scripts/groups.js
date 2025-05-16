@@ -19,6 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
       // Redirect to sign in if not logged in
       window.location.href = "/sign-in.html";
     }
+    // Call setupCreateGroupGoalSelection to ensure the function is used and the code block is closed properly
+    setupCreateGroupGoalSelection();
   });
 
   // Setup real-time validation for group name field
@@ -87,10 +89,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (window.weightTransitionTimer) {
           clearTimeout(window.weightTransitionTimer);
         }
-
-        // Hide the helper text by default
-        document.getElementById("goal-maintain-weight-help").style.display =
-          "none";
 
         if (this.value === "lose_weight") {
           // Immediately show for lose weight
@@ -170,18 +168,12 @@ document.addEventListener("DOMContentLoaded", () => {
         // cancel any pending transitions
         if (window.createGroupWeightTransitionTimer) {
           clearTimeout(window.createGroupWeightTransitionTimer);
-        }
-
-        // Hide the helper text by default
-        document.getElementById(
-          "create-group-maintain-weight-help"
-        ).style.display = "none";
+        } // No longer need to hide maintain weight helper text
 
         const value = this.value;
         if (
           value === "lose_weight" ||
           value === "gain_weight" ||
-          value === "maintain_weight" ||
           value === "build_muscle"
         ) {
           // Show for all weight-related goals
@@ -744,40 +736,11 @@ document.addEventListener("DOMContentLoaded", () => {
                   // For users who joined the goal later, show their individual starting weight
                   goalDetails = `Target: Gain ${weightGainTarget} kg (your starting weight: ${initialWeight} kg)`;
                 }
-
                 const weightGainedSoFar = (
                   currentWeight - initialWeight
                 ).toFixed(1);
                 progressDetails = `Current Progress: ${weightGainedSoFar} kg gained, ${((weightGainedSoFar / weightGainTarget) * 100).toFixed(0)}% of goal`;
               }
-            }
-            break;
-          case "maintain_weight":
-            goalTitle = "Maintain Weight";
-            if (initialWeight) {
-              const fluctuationRange = goal.weight_change_amount || 2; // Default to 2kg if not specified
-
-              // Check if this user is the goal creator or joined later
-              const isGoalCreator = goal.createdBy === currentUser.uid;
-
-              if (isGoalCreator) {
-                goalDetails = `Target: Maintain ${initialWeight} kg within ±${fluctuationRange} kg range`;
-              } else {
-                // For users who joined the goal later, show their individual starting weight
-                goalDetails = `Target: Maintain your weight (${initialWeight} kg) within ±${fluctuationRange} kg range`;
-              }
-
-              // Show current weight status
-              const weightDifference = (currentWeight - initialWeight).toFixed(
-                1
-              );
-              const direction =
-                weightDifference > 0
-                  ? "above"
-                  : weightDifference < 0
-                    ? "below"
-                    : "at";
-              progressDetails = `Current weight: ${currentWeight} kg (${Math.abs(weightDifference)} kg ${direction} target)`;
             }
             break;
           case "build_muscle":
@@ -823,16 +786,8 @@ document.addEventListener("DOMContentLoaded", () => {
               }
             }
             break;
-
           default:
             goalTitle = goal.fitness_goal || "Custom Goal";
-        }
-
-        // Add description if available
-        if (goal.description) {
-          goalDetails += goalDetails
-            ? `<br>${goal.description}`
-            : goal.description;
         }
 
         // Convert the timestamp to a readable date
@@ -1033,31 +988,7 @@ document.addEventListener("DOMContentLoaded", () => {
       let isGoalCompleted = false;
 
       switch (goal.fitness_goal) {
-        case "maintain_weight":
-          // For maintain weight, calculate how close current weight is to initial
-          // We consider being within the fluctuation range as success
-          const maintainDifference = Math.abs(currentWeight - initialWeight);
-          const fluctuationRange = weightChangeAmount; // Use stored weight_change_amount as the acceptable range
-
-          if (maintainDifference <= fluctuationRange) {
-            progressPercentage = 100;
-            achievementValue = fluctuationRange;
-            isGoalCompleted = true;
-          } else {
-            // Calculate a score based on how close to the threshold the user is
-            // The further away, the lower the score (down to 0%)
-            const maxDifference = fluctuationRange * 2; // Double the acceptable range = 0% score
-            progressPercentage =
-              100 -
-              (Math.min(maintainDifference, maxDifference) / maxDifference) *
-                100;
-
-            // Ensure we don't return 0 for maintain weight goals
-            if (progressPercentage < 20) progressPercentage = 20;
-          }
-          break;
-
-        case "lose_weight":
+        case "lose_weight": {
           // Goal is to lose weight
           const weightLostSoFar = initialWeight - currentWeight;
           progressPercentage = (weightLostSoFar / weightChangeAmount) * 100;
@@ -1069,9 +1000,9 @@ document.addEventListener("DOMContentLoaded", () => {
             progressPercentage = 100; // Cap at 100%
           }
           break;
-
+        }
         case "gain_weight":
-        case "build_muscle":
+        case "build_muscle": {
           // Goal is to gain weight/muscle
           const weightGainedSoFar = currentWeight - initialWeight;
           progressPercentage = (weightGainedSoFar / weightChangeAmount) * 100;
@@ -1083,6 +1014,7 @@ document.addEventListener("DOMContentLoaded", () => {
             progressPercentage = 100; // Cap at 100%
           }
           break;
+        }
       } // Handle goal completion if needed
       if (isGoalCompleted) {
         // Force the progress to exactly 100%
@@ -1322,7 +1254,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const fitnessGoal = document.getElementById("goal_fitness_goal").value;
     const targetWeightChange =
       document.getElementById("goal_target_weight").value;
-    const goalDescription = document.getElementById("goal-description").value;
 
     if (!fitnessGoal) {
       showMessage("Please select a fitness goal", true);
@@ -1398,7 +1329,6 @@ document.addEventListener("DOMContentLoaded", () => {
         ),
         initial_weight: initialWeight, // Keep for backward compatibility
         participant_weights: participantWeights, // Add participant weights mapping
-        description: goalDescription,
         start_date: window.serverTimestamp(),
         createdBy: currentUser.uid,
         createdAt: window.serverTimestamp(),
@@ -1439,8 +1369,6 @@ document.addEventListener("DOMContentLoaded", () => {
       case "gain_weight":
       case "build_muscle":
         return (initialWeight + changeAmount).toFixed(2);
-      case "maintain_weight":
-        return initialWeight.toFixed(2); // For maintain weight, target is the same as initial
       default:
         return initialWeight.toFixed(2);
     }
@@ -1453,8 +1381,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return "Lose Weight";
       case "gain_weight":
         return "Gain Weight";
-      case "maintain_weight":
-        return "Maintain Weight";
       case "build_muscle":
         return "Build Muscle";
       default:
