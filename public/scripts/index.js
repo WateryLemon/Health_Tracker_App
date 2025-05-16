@@ -441,6 +441,44 @@ function loadMenuForm() {
               const formElement = formContainer.querySelector("form");
               const submitButton = formContainer.querySelector("#submitButton");
 
+              // --- Food Form Special Logic ---
+              if (formId === "foodForm") {
+                const foodForm = formContainer.querySelector("#foodForm");
+                const searchInput = foodForm.querySelector(".search-bar");
+                autocomplete(searchInput, Object.keys(FOOD_KCAL_PER_SERVING));
+                searchInput.addEventListener("change", function () {
+                  const selected = searchInput.value;
+                  if (FOOD_KCAL_PER_SERVING[selected]) {
+                    // Hide meal name input and label
+                    const mealInput = foodForm.querySelector("#meal-input");
+                    const mealLabel = foodForm.querySelector("label[for='meal-input']");
+                    if (mealInput) mealInput.style.display = "none";
+                    if (mealLabel) mealLabel.style.display = "none";
+
+                    // Change calorie input placeholder to "Calculating..."
+                    const calorieInput = foodForm.querySelector("#calorie-input");
+                    if (calorieInput) {
+                      calorieInput.placeholder = "Calculating...";
+                      calorieInput.value = "";
+                    }
+
+                    // Calculate calories when servings input changes
+                    const servingsInput = foodForm.querySelector("#serving-input");
+                    if (servingsInput && calorieInput) {
+                      servingsInput.addEventListener("input", function () {
+                        const servings = parseFloat(this.value);
+                        if (!isNaN(servings) && servings > 0) {
+                          const kcal = Math.round(FOOD_KCAL_PER_SERVING[selected] * servings);
+                          calorieInput.value = kcal;
+                        } else {
+                          calorieInput.value = "";
+                        }
+                      });
+                    }
+                  }
+                });
+              }
+
               // --- Exercise Form Special Logic ---
               if (formId === "exerciseForm") {
                 const exerciseForm = formContainer.querySelector("#exerciseForm");
@@ -684,6 +722,46 @@ const EXERCISE_KCAL_PER_KG = {
   "Ski machine": 2.471,
   "Aerobics, general": 1.751,
   "Running, general": 1.853
+};
+
+// ===========================
+// Food kcal/serving Data
+// ===========================
+const FOOD_KCAL_PER_SERVING = {
+  "Apple": 95,
+  "Banana": 105,
+  "Orange": 62,
+  "Grapes (1 cup)": 104,
+  "Strawberries (1 cup)": 53,
+  "Broccoli": 55,
+  "Carrots": 52,
+  "Spinach (raw)": 7,
+  "Sweet potato (1 medium, baked)": 103,
+  "Avocado (1/2)": 120,
+  "Chicken breast (100g, cooked)": 165,
+  "Salmon (100g, cooked)": 208,
+  "Egg (1 large)": 70,
+  "Tofu (100g)": 76,
+  "Black beans (1/2 cup, cooked)": 114,
+  "White rice (1 cup, cooked)": 205,
+  "Brown rice (1 cup, cooked)": 216,
+  "Quinoa (1 cup, cooked)": 222,
+  "Whole wheat bread (1 slice)": 69,
+  "Oatmeal (1/2 cup dry)": 150,
+  "Milk (1 cup, whole)": 149,
+  "Greek yogurt (100g, plain)": 59,
+  "Cheddar cheese (1 oz)": 113,
+  "Almond milk (1 cup, unsweetened)": 30,
+  "Dark chocolate (1 oz)": 170,
+  "Potato chips (1 oz)": 152,
+  "Peanut butter (2 tbsp)": 188,
+  "Granola bar (1 bar)": 100,
+  "Ice cream (1/2 cup)": 137,
+  "Coffee (black, 8 oz)": 2,
+  "Orange juice (1 cup)": 112,
+  "Soda (12 oz can)": 150,
+  "Beer (12 oz)": 153,
+  "Red wine (5 oz)": 125
 };
 
 // ===========================

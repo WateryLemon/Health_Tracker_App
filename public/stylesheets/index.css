@@ -695,13 +695,15 @@ form h1 {
   transition: 0.2s;
 }
 
-.search-wrapper:hover i {
+/* Hide the icon when the input is focused or has text */
+.search-bar:focus + i,
+.search-bar:not(:placeholder-shown) + i {
   display: none;
 }
 
+/* Prevent the icon from blocking pointer events */
 .search-wrapper i {
-  opacity: 1;
-  z-index: 1;
+  pointer-events: none;
 }
 
 .number-input-label {
