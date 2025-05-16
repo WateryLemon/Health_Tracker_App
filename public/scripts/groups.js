@@ -95,18 +95,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if (this.value === "lose_weight") {
           // Immediately show for lose weight
           targetWeightGroup.style.display = "block";
-          // Wait a tiny bit before adding the visible class for transition
+          // Wait before adding the visible class for transition
           setTimeout(() => targetWeightGroup.classList.add("visible"), 10);
           targetWeightInput.required = true;
           targetWeightInput.value = "";
-          // Update label for weight loss
+
           if (targetWeightLabel) {
             targetWeightLabel.textContent = "Target Weight Loss (kg)";
           }
         } else if (this.value === "gain_weight") {
-          // Immediately show for gain weight
           targetWeightGroup.style.display = "block";
-          // Wait a tiny bit before adding the visible class for transition
+
           setTimeout(() => targetWeightGroup.classList.add("visible"), 10);
           targetWeightInput.required = true;
           targetWeightInput.value = "";
@@ -115,32 +114,30 @@ document.addEventListener("DOMContentLoaded", () => {
             targetWeightLabel.textContent = "Target Weight Gain (kg)";
           }
         } else if (this.value === "maintain_weight") {
-          // For maintain weight, show the target weight field
           targetWeightGroup.style.display = "block";
-          // Wait a tiny bit before adding the visible class for transition
+
           setTimeout(() => targetWeightGroup.classList.add("visible"), 10);
           targetWeightInput.required = true;
           targetWeightInput.value = "";
-          // Update label for maintain weight
+
           if (targetWeightLabel) {
             targetWeightLabel.textContent = "Weight Fluctuation Range (kg)";
           }
-          // Show the helper text for maintain weight
+
           document.getElementById("goal-maintain-weight-help").style.display =
             "block";
         } else if (this.value === "build_muscle") {
           // For build muscle
           targetWeightGroup.style.display = "block";
-          // Wait a tiny bit before adding the visible class for transition
+
           setTimeout(() => targetWeightGroup.classList.add("visible"), 10);
           targetWeightInput.required = true;
           targetWeightInput.value = "";
-          // Update label for build muscle
+
           if (targetWeightLabel) {
             targetWeightLabel.textContent = "Target Muscle Mass Gain (kg)";
           }
         } else {
-          // For other options, hide gradually
           targetWeightGroup.classList.remove("visible");
           targetWeightInput.required = false;
           targetWeightInput.value = "";
@@ -153,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     }
-  } // Setup fitness goal selection behavior for main create group form
+  } // Setup fitness goal selection for main create group form
   function setupCreateGroupGoalSelection() {
     const createGroupFitnessGoalSelect = document.getElementById(
       "create_group_fitness_goal"
@@ -170,7 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (createGroupFitnessGoalSelect) {
       createGroupFitnessGoalSelect.addEventListener("change", function () {
-        // First, cancel any pending transitions
+        // cancel any pending transitions
         if (window.createGroupWeightTransitionTimer) {
           clearTimeout(window.createGroupWeightTransitionTimer);
         }
@@ -189,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ) {
           // Show for all weight-related goals
           createGroupTargetWeightGroup.style.display = "block";
-          // Wait a tiny bit before adding the visible class for transition
+          // Wait before adding the visible class for transition
           setTimeout(
             () => createGroupTargetWeightGroup.classList.add("visible"),
             10
@@ -208,7 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else if (value === "maintain_weight") {
               createGroupTargetWeightLabel.textContent =
                 "Weight Fluctuation Range (kg)";
-              // Show the helper text for maintain weight
+
               document.getElementById(
                 "create-group-maintain-weight-help"
               ).style.display = "block";
@@ -218,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
           }
         } else {
-          // For other options or no selection, hide gradually
+          // other options or no selection, hide slowly
           createGroupTargetWeightGroup.classList.remove("visible");
           createGroupTargetWeightInput.required = false;
           createGroupTargetWeightInput.value = "";
@@ -238,7 +235,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const tabButtons = document.querySelectorAll(".tab-button");
     tabButtons.forEach((button) => {
       button.addEventListener("click", () => {
-        // Remove active class from all tabs
         document.querySelectorAll(".tab-button").forEach((btn) => {
           btn.classList.remove("active");
         });
@@ -271,7 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const tabElement = document.getElementById(tabId);
 
         if (tabElement) {
-          tabElement.classList.add("active"); // Special handling for share tab
+          tabElement.classList.add("active"); // handling for share tab
           if (tabId === "share-tab" && currentGroup) {
             console.log("Share tab activated, ensuring code is displayed");
             const codeElement = document.getElementById("group-share-code");
@@ -618,7 +614,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       });
 
-      // Process goals one by one with proper async handling
+      // Process goals one by one withasync handling
       for (const goal of goals) {
         const goalItem = document.createElement("div");
         goalItem.className = "goal-item"; // Calculate the progress
@@ -632,7 +628,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let goalDetails = "";
         let progressDetails = "";
 
-        // Determine initial weight - use individual participant weight if available
+        // Determine initial weight use users weight if available
         let initialWeight;
         if (
           goal.participant_weights &&
@@ -673,7 +669,6 @@ document.addEventListener("DOMContentLoaded", () => {
             goalTitle = "Lose Weight";
             if (initialWeight) {
               if (goal.weight_change_amount) {
-                // New format: storing the change amount directly
                 // Check if this user is the goal creator or joined later
                 const isGoalCreator = goal.createdBy === currentUser.uid;
 
@@ -691,7 +686,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 const targetLoss = parseFloat(goal.weight_change_amount);
                 progressDetails = `Current Progress: ${weightLostSoFar} kg lost, ${((weightLostSoFar / targetLoss) * 100).toFixed(0)}% of goal`;
               } else if (goal.target_weight) {
-                // Old format: calculating from target and initial weights
                 const targetWeightKg = parseFloat(goal.target_weight);
                 const weightLossTarget = (
                   initialWeight - targetWeightKg
@@ -736,7 +730,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 const targetGain = parseFloat(goal.weight_change_amount);
                 progressDetails = `Current Progress: ${weightGainedSoFar} kg gained, ${((weightGainedSoFar / targetGain) * 100).toFixed(0)}% of goal`;
               } else if (goal.target_weight) {
-                // Old format: calculating from target and initial weights
                 const targetWeightKg = parseFloat(goal.target_weight);
                 const weightGainTarget = (
                   targetWeightKg - initialWeight
@@ -791,7 +784,6 @@ document.addEventListener("DOMContentLoaded", () => {
             goalTitle = "Build Muscle";
             if (initialWeight) {
               if (goal.weight_change_amount) {
-                // New format: storing the change amount directly
                 // Check if this user is the goal creator or joined later
                 const isGoalCreator = goal.createdBy === currentUser.uid;
 
@@ -809,7 +801,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 const targetGain = parseFloat(goal.weight_change_amount);
                 progressDetails = `Current Progress: ${weightGainedSoFar} kg gained, ${((weightGainedSoFar / targetGain) * 100).toFixed(0)}% of goal`;
               } else if (goal.target_weight) {
-                // Old format: calculating from target and initial weights
                 const targetWeightKg = parseFloat(goal.target_weight);
                 const weightGainTarget = (
                   targetWeightKg - initialWeight
