@@ -1,5 +1,5 @@
 // ===========================
-// Firebase Configuration & Initialization
+// Firebase Configuration & Initialisation
 // ===========================
 const firebaseConfig = {
   apiKey: "AIzaSyCQiV6-wvqLWa9NHatHsu9AE3zcb4FqmOI",
@@ -14,7 +14,7 @@ const firebaseConfig = {
 // Initialise Firebase
 firebase.initializeApp(firebaseConfig);
 
-// Make Firebase Auth and Firestore globally accessible
+// Make Firebase Authentication and Firestore globally accessible
 const auth = firebase.auth();
 const db = firebase.firestore();
 window.auth = auth;
@@ -62,7 +62,7 @@ function formatSignedChange(startWeight, currentWeight) {
   return `${sign}${Math.abs(weightChange)}`;
 }
 
-// Displays weight and changes in appropriate unit (kg or stones/lbs)
+// Displays weight and changes in appropriate unit (kg or stones/lbs) depending on the user selection
 function displayWeight(startWeight, currentWeight, unitPreference) {
   const weightChangeKg = Number(startWeight) - Number(currentWeight);
 

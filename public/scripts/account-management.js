@@ -3,7 +3,7 @@ import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 
 const handleResetPassword = () => {
   const auth = getAuth();
-  const email = "user@example.com"; // Get this from user input
+  const email = "user@example.com"; //Retrieves from user inputs
 
   sendPasswordResetEmail(auth, email)
     .then(() => {
