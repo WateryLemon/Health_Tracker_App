@@ -449,13 +449,12 @@ function loadMenuForm() {
                 searchInput.addEventListener("change", function () {
                   const selected = searchInput.value;
                   if (FOOD_KCAL_PER_SERVING[selected]) {
-                    // Hide meal name input and label
+                    
                     const mealInput = foodForm.querySelector("#meal-input");
                     const mealLabel = foodForm.querySelector("label[for='meal-input']");
                     if (mealInput) mealInput.style.display = "none";
                     if (mealLabel) mealLabel.style.display = "none";
 
-                    // Change calorie input placeholder to "Calculating..."
                     const calorieInput = foodForm.querySelector("#calorie-input");
                     if (calorieInput) {
                       calorieInput.placeholder = "Calculating...";
@@ -487,7 +486,6 @@ function loadMenuForm() {
                 searchInput.addEventListener("change", async function () {
                   const selected = searchInput.value;
                   if (EXERCISE_KCAL_PER_KG[selected]) {
-                    // Remove previously injected fields and default fields
                     exerciseForm.querySelectorAll('.injected-exercise-field').forEach(el => el.remove());
                     [
                       exerciseForm.querySelector("label[for='exercise-input']"),

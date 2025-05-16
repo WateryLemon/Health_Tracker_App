@@ -1,6 +1,6 @@
 /* ===========================
     Global Styles (All Pages)
-    =========================== */
+   =========================== */
 * {
   margin: 0;
   padding: 0;
@@ -27,7 +27,6 @@ footer {
   bottom: 0;
 }
 
-/* Header content styling - aligned across all pages */
 header .header-content {
   display: flex;
   justify-content: space-between;
@@ -38,7 +37,6 @@ header .header-content {
   position: relative;
 }
 
-/* Nav Icons in Header */
 .nav-buttons-right {
   display: flex;
   gap: 20px;
@@ -63,20 +61,15 @@ header .header-content {
   margin-bottom: 3px;
 }
 
-/* ===========================
-    Home Page Styles (index.html)
-    =========================== */
 h1 {
   font-size: 24px;
   font-weight: bold;
 }
 
-/* Specific styling for the greeting text to match other page titles */
 #greeting {
-  font-size: 28px; /* Increased from 24px */
+  font-size: 28px;
   font-weight: bold;
   margin: 0;
-  font-family: Arial, sans-serif;
   color: white;
   text-align: left;
 }
@@ -104,9 +97,8 @@ h1 {
   background-color: #444;
 }
 
-/* Profile icon styling - no longer needed as we're using font awesome icons */
 .profile-icon {
-  display: none; /* Hide the old profile icon styling */
+  display: none;
 }
 
 main {
@@ -135,8 +127,7 @@ main {
 
 /* ===========================
     Calendar Widget
-    =========================== */
-
+   =========================== */
 #calenderWidget {
   grid-column: span 2;
   grid-row: span 1;
@@ -184,7 +175,6 @@ li.day .weekday {
   position: absolute;
   bottom: 5px;
   font-size: 0.9rem;
-  font-weight: normal;
 }
 
 .calorie-row {
@@ -196,8 +186,7 @@ li.day .weekday {
 
 /* ===========================
     Calorie Widget
-    =========================== */
-
+   =========================== */
 #calorieWidget {
   height: 340px;
 }
@@ -260,8 +249,7 @@ li.day .weekday {
 
 /* ===========================
     Weight Graph Widget
-    =========================== */
-
+   =========================== */
 .weight-graph {
   height: 200px;
   display: flex;
@@ -359,14 +347,8 @@ h2 {
   margin: 0;
 }
 
-.start-weight {
-  background-color: #7030a1 !important;
-}
-
-.current-weight {
-  background-color: #7030a1 !important;
-}
-
+.start-weight,
+.current-weight,
 .change-weight {
   background-color: #7030a1 !important;
 }
@@ -377,8 +359,7 @@ h2 {
 
 /* ===========================
     Leaderboard Widget
-    =========================== */
-
+   =========================== */
 #leaderboardWidget {
   transform: translateY(-107px);
 }
@@ -453,8 +434,7 @@ tbody > tr:nth-of-type(even) {
 
 /* ===========================
     Water Intake Widget
-    =========================== */
-
+   =========================== */
 #waterWidget {
   height: 157px;
 }
@@ -477,9 +457,8 @@ tbody > tr:nth-of-type(even) {
 }
 
 /* ===========================
-    Add Button
-    =========================== */
-
+    Add Button & Menu
+   =========================== */
 #addMenuButton {
   position: relative;
   grid-column: span 2;
@@ -505,10 +484,6 @@ tbody > tr:nth-of-type(even) {
 #addButton:hover {
   background-color: #4a1b6e;
 }
-
-/* ===========================
-    Add Menu
-    =========================== */
 
 #formMenu {
   z-index: 10;
@@ -637,8 +612,7 @@ form h1 {
 
 /* ===========================
     Form Styles
-    =========================== */
-
+   =========================== */
 .search-wrapper {
   margin-top: 10px;
   position: relative;
@@ -660,7 +634,6 @@ form h1 {
   transition: 0.5s;
 }
 
-/* Hide placeholder unless hovered or focused */
 .search-bar::placeholder {
   color: transparent;
   transition: color 0.2s;
@@ -668,10 +641,9 @@ form h1 {
 
 .search-wrapper:hover .search-bar::placeholder,
 .search-bar:focus::placeholder {
-  color: #aaa; /* or your preferred color */
+  color: #aaa;
 }
 
-/* Keep search-bar expanded when focused or when it has text */
 .search-wrapper:hover input,
 .search-bar:focus,
 .search-bar:not(:placeholder-shown) {
@@ -693,17 +665,13 @@ form h1 {
   font-size: 26px;
   color: rgba(243, 207, 238, 1);
   transition: 0.2s;
+  pointer-events: none;
 }
 
 /* Hide the icon when the input is focused or has text */
 .search-bar:focus + i,
 .search-bar:not(:placeholder-shown) + i {
   display: none;
-}
-
-/* Prevent the icon from blocking pointer events */
-.search-wrapper i {
-  pointer-events: none;
 }
 
 .number-input-label {
@@ -713,7 +681,7 @@ form h1 {
   color: #000000;
   display: block;
   text-align: left;
-  width: 235px; /* Match the width of the input */
+  width: 235px;
 }
 
 .number-input {
@@ -796,7 +764,7 @@ form h1 {
   background: rgb(72, 59, 215);
 }
 
-/* Exercise Form */
+/* Exercise Form Switch */
 .exercise-switch {
   position: relative;
   display: inline-block;
@@ -819,7 +787,6 @@ form h1 {
   right: 0;
   bottom: 0;
   background-color: rgba(243, 207, 238, 1);
-  -webkit-transition: 0.4s;
   transition: 0.4s;
   border-radius: 34px;
 }
@@ -832,7 +799,6 @@ form h1 {
   left: 4px;
   bottom: 4px;
   background-color: white;
-  -webkit-transition: 0.4s;
   transition: 0.4s;
   border-radius: 50%;
 }
@@ -846,8 +812,6 @@ form h1 {
 }
 
 #exerciseCheckbox:checked + .toggle-slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
   transform: translateX(26px);
 }
 
@@ -876,8 +840,7 @@ form h1 {
 
 /* ===========================
     Autocomplete Styles
-    =========================== */
-
+   =========================== */
 .autocomplete-items {
   position: absolute;
   border: 1px solid #7030a1;
