@@ -655,7 +655,22 @@ form h1 {
   outline: none;
   transition: 0.5s;
 }
-.search-wrapper:hover input {
+
+/* Hide placeholder unless hovered or focused */
+.search-bar::placeholder {
+  color: transparent;
+  transition: color 0.2s;
+}
+
+.search-wrapper:hover .search-bar::placeholder,
+.search-bar:focus::placeholder {
+  color: #aaa; /* or your preferred color */
+}
+
+/* Keep search-bar expanded when focused or when it has text */
+.search-wrapper:hover input,
+.search-bar:focus,
+.search-bar:not(:placeholder-shown) {
   width: 350px;
   padding-left: 10px;
   padding-right: 10px;
@@ -832,10 +847,6 @@ form h1 {
   transform: translateX(26px);
 }
 
-#exerciseFormStrength {
-  display: none;
-}
-
 /* Mobile responsiveness - keeping this improvement */
 @media (max-width: 768px) {
   #dashboard {
@@ -854,4 +865,35 @@ form h1 {
   .search-wrapper:hover input {
     width: 200px;
   }
+}
+
+/* ===========================
+    Autocomplete Styles
+    =========================== */
+
+.autocomplete-items {
+  position: absolute;
+  border: 1px solid #7030a1;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #7030a1;
+}
+.autocomplete-items div:hover {
+  background-color: #f3cfee;
+}
+.autocomplete-active {
+  background-color: #7030a1 !important;
+  color: #fff;
 }
