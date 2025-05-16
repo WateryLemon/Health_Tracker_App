@@ -884,7 +884,10 @@ document.addEventListener("DOMContentLoaded", () => {
             `Goal ${goal.id} - reconfirming completion status with progress = ${progressPercentage}%`
           );
         } else {
-          participationHTML = `<div class="goal-joined-indicator">✓ You're participating</div>`;
+          participationHTML = `<div class="goal-joined-indicator">
+            <span>✓ You're participating</span>
+            <button class="remove-goal-btn small-btn" data-goal-id="${goal.id}">Remove</button>
+          </div>`;
         }
         // Add special class for completed goals' progress bar
         const progressBarClass = isGoalCompleted
@@ -941,15 +944,13 @@ document.addEventListener("DOMContentLoaded", () => {
             ${participationHTML}
           `;
         } // Add event listener for remove button if present
-        if (isGoalCompleted) {
-          const removeBtn = goalItem.querySelector(".remove-goal-btn");
-          if (removeBtn) {
-            removeBtn.addEventListener("click", function (e) {
-              e.stopPropagation(); // Prevent the event from bubbling up
-              removeGoal(goal.id);
-            });
-          }
-        }
+        const removeBtns = goalItem.querySelectorAll(".remove-goal-btn");
+        removeBtns.forEach((btn) => {
+          btn.addEventListener("click", function (e) {
+            e.stopPropagation(); // Prevent the event from bubbling up
+            removeGoal(goal.id);
+          });
+        });
 
         goalsList.appendChild(goalItem);
       }

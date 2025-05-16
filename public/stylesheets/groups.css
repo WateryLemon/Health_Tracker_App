@@ -696,6 +696,15 @@ h2 {
   transform: scale(0.98);
 }
 
+/* Small variant of remove button */
+.remove-goal-btn.small-btn {
+  padding: 4px 8px;
+  margin: 0 0 0 10px;
+  font-size: 12px;
+  min-width: unset;
+  display: inline-block;
+}
+
 /* Share Group */
 .group-code-display {
   display: flex;
@@ -789,8 +798,13 @@ h2 {
 .goal-joined-indicator {
   color: #34c759;
   font-weight: bold;
-  display: inline-block;
-  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: rgba(52, 199, 89, 0.1);
+  border-radius: 5px;
   font-size: 12px;
 }
 
