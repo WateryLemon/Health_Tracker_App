@@ -77,7 +77,6 @@ function setupTabNavigation() {
         btn.classList.remove("active");
       });
 
-      // Add active class to clicked button
       button.classList.add("active");
 
       // Show corresponding tab
@@ -105,7 +104,7 @@ function handleGoalChangeTab() {
     if (
       targetWeightInput &&
       (!targetWeightInput.value || targetWeightInput.value === "0")
-    ) {      // Don't set any default target weight - let user choose
+    ) {
     }
   } else {
     if (targetWeightGroup) {
@@ -130,7 +129,6 @@ async function loadUserData() {
     if (userDoc.exists()) {
       const data = userDoc.data();
 
-      // Populate form fields
       document.getElementById("username").value = data.username || "";
       document.getElementById("forename").value = data.forename || "";
       document.getElementById("surname").value = data.surname || "";
@@ -313,7 +311,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Helper function to show messages
 function showMessage(message, isError = false) {
-  // Create message element if it doesn't exist
   let messageEl = document.getElementById("message");
   if (!messageEl) {
     messageEl = document.createElement("div");
@@ -336,14 +333,14 @@ function showMessage(message, isError = false) {
   }, 3000);
 }
 
-// Helper function to calculate bmi
+//calculate bmi
 function calculateBMI(height, weight) {
   // Convert height from cm to meters for metric calculations
   const heightInMeters = height / 100;
   return (weight / (heightInMeters * heightInMeters)).toFixed(2);
 }
 
-// Helper function to format date for html date input
+// format date for html date input
 function formatDateForInput(dateValue) {
   // If it's a Firebase timestamp
   if (dateValue && typeof dateValue.toDate === "function") {
@@ -608,14 +605,13 @@ async function resetGoalAfterAchievement() {
   // Reset progress bar
   updateProgressBar(0);
 
-  // Clear session storage flag to allow showing popup again for future goals
   Object.keys(sessionStorage).forEach((key) => {
     if (key.startsWith("goal_reached_")) {
       sessionStorage.removeItem(key);
     }
   });
 
-  // Update database with reset goal data
+  // Update database with goal data
   try {
     if (currentUser) {
       // Update firestore with reset goal values

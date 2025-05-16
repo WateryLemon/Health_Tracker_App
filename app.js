@@ -44,7 +44,6 @@ const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
 
-// Initialise resend with api key
 const resend = new Resend("re_iYoehaUZ_6nktERHCK8EGketG2xAfSeJy");
 
 // Verify Resend configuration
@@ -208,7 +207,7 @@ app.post("/api/invite", async (req, res) => {
   );
 
   try {
-    // Send email using resend
+    //send email using resend
     logger(`Attempting to send invitation email to ${recipientEmail}`);
     const emailResponse = await resend.emails.send({
       from: "Health Tracker <onboarding@healthtracker103.tech>",
@@ -237,7 +236,7 @@ app.post("/api/invite", async (req, res) => {
       `Email sent successfully to ${recipientEmail}, ID: ${emailResponse.id || "unknown"}`
     );
 
-    // Store invitation in firebase
+    //Store invitation in firebase
     logger(
       `Storing invitation record in Firestore for email: ${recipientEmail}`
     );
@@ -278,7 +277,7 @@ app.post("/api/send-goal-invite", async (req, res) => {
   );
 
   try {
-    // Send email using resend
+    //send email using resend
     logger(`Attempting to send goal invitation email to ${recipientEmail}`);
 
     const subject = isForExistingGoal
@@ -345,7 +344,6 @@ app.post("/api/groups", async (req, res) => {
   }
 
   try {
-    // Create normalized name (lowercase) for case insensitive comparison
     const normalizedName = name.toLowerCase().trim();
 
     // Check if group with this name already exists
@@ -382,7 +380,7 @@ app.post("/api/groups", async (req, res) => {
       targetWeight: targetWeight || null,
     });
 
-    // Add creator as a member
+    //add creator as a member
     await setDoc(doc(db, "group_memberships", `${groupId}_${userId}`), {
       userId,
       groupId,

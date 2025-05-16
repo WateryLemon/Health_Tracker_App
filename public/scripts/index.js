@@ -29,8 +29,14 @@ async function loadUserData(user) {
   try {
     const userDoc = await db.collection("users").doc(user.uid).get();
     // Get the most recent weight from the user's weight collection
-    const weightSnapshot = await db.collection("users").doc(user.uid).collection("weight").orderBy("timestamp", "desc").limit(1).get();
-    
+    const weightSnapshot = await db
+      .collection("users")
+      .doc(user.uid)
+      .collection("weight")
+      .orderBy("timestamp", "desc")
+      .limit(1)
+      .get();
+
     let latestWeight = null;
     if (!weightSnapshot.empty) {
       const weightData = weightSnapshot.docs[0].data();
@@ -83,8 +89,10 @@ function displayWeight(startWeight, currentWeight, unitPreference) {
     const sign = getChangeSign(weightChangeKg);
     const absChange = Math.abs(weightChangeKg);
 
-    document.getElementById("currentWeight").innerText = formatStones(currentWeight);
-    document.getElementById("startingWeight").innerText = formatStones(startWeight);
+    document.getElementById("currentWeight").innerText =
+      formatStones(currentWeight);
+    document.getElementById("startingWeight").innerText =
+      formatStones(startWeight);
     document.getElementById("weightChange").innerText =
       absChange === 0 ? "0" : `${sign}${formatStones(absChange)}`;
   } else {
@@ -124,8 +132,13 @@ function calendearLogic() {
   const todayEl = document.getElementById("today");
 
   const weekdays = [
-    "Sunday", "Monday", "Tuesday", "Wednesday",
-    "Thursday", "Friday", "Saturday",
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
   ];
   const currentDate = new Date();
 
@@ -142,12 +155,15 @@ function calendearLogic() {
     end.setDate(start.getDate() + 1);
 
     // Calories Consumed
-    const foodSnapshot = await db.collection("users").doc(userId).collection("food")
+    const foodSnapshot = await db
+      .collection("users")
+      .doc(userId)
+      .collection("food")
       .where("timestamp", ">=", start.toISOString())
       .where("timestamp", "<", end.toISOString())
       .get();
     let consumed = 0;
-    foodSnapshot.forEach(doc => {
+    foodSnapshot.forEach((doc) => {
       const data = doc.data();
       const cals = parseFloat(data.caloriesConsumed);
       const servings = parseFloat(data.servings);
@@ -157,12 +173,15 @@ function calendearLogic() {
     });
 
     // Calories Burnt
-    const exerciseSnapshot = await db.collection("users").doc(userId).collection("exercise")
+    const exerciseSnapshot = await db
+      .collection("users")
+      .doc(userId)
+      .collection("exercise")
       .where("timestamp", ">=", start.toISOString())
       .where("timestamp", "<", end.toISOString())
       .get();
     let burnt = 0;
-    exerciseSnapshot.forEach(doc => {
+    exerciseSnapshot.forEach((doc) => {
       const data = doc.data();
       const cals = parseFloat(data.caloriesBurned);
       if (!isNaN(cals)) {
@@ -195,7 +214,7 @@ function calendearLogic() {
       </span>
       <span class="weekday">${weekdays[date.getDay()]}</span>
     `;
-  
+
     if (offset <= 0) {
       const user = firebase.auth().currentUser;
       if (user) {
@@ -219,8 +238,8 @@ function calendearLogic() {
         calendarWidget.insertBefore(dayElement, todayEl);
       }
       for (let i = 2; i >= 1; i--) {
-          const dayEl = await createDayElement(i, user.uid);
-          calendarWidget.insertBefore(dayEl, todayEl.nextSibling);
+        const dayEl = await createDayElement(i, user.uid);
+        calendarWidget.insertBefore(dayEl, todayEl.nextSibling);
       }
 
       todayEl.querySelector(".day-number").textContent = currentDate.getDate();
@@ -235,7 +254,7 @@ function calendearLogic() {
 
 let currentWeightScale = "days"; // default
 
-// Helper: Get last N days as Date objects (ending today)
+// Get last N days as Date objects (ending today)
 function getLastNDates(n) {
   const dates = [];
   const today = new Date();
@@ -248,7 +267,7 @@ function getLastNDates(n) {
   return dates;
 }
 
-// Helper: Get last N weeks (ending this week, Sunday-Saturday)
+// Get last N weeks (ending this week, Sunday-Saturday)
 function getLastNWeeks(n) {
   const weeks = [];
   const today = new Date();
@@ -264,7 +283,7 @@ function getLastNWeeks(n) {
   return weeks;
 }
 
-// Helper: Get last N months (ending this month)
+// Get last N months (ending this month)
 function getLastNMonths(n) {
   const months = [];
   const today = new Date();
@@ -275,11 +294,16 @@ function getLastNMonths(n) {
   return months;
 }
 
-// Main function: Draw weight graph for selected scale
+//Draw weight graph for selected scale
 async function weightGraphLogic(userId, scale = "days") {
   try {
-    // Fetch all weight logs for the user
-    const snapshot = await db.collection("users").doc(userId).collection("weight").orderBy("timestamp", "asc").get();
+    // Fetch weight logs from database
+    const snapshot = await db
+      .collection("users")
+      .doc(userId)
+      .collection("weight")
+      .orderBy("timestamp", "asc")
+      .get();
     const weightLogs = [];
     snapshot.forEach((doc) => {
       const data = doc.data();
@@ -296,27 +320,27 @@ async function weightGraphLogic(userId, scale = "days") {
     if (scale === "days") {
       // Last 7 days, today last
       const days = getLastNDates(7);
-      labels = days.map(d => d.getDate());
-      weights = days.map(day => {
+      labels = days.map((d) => d.getDate());
+      weights = days.map((day) => {
         // Find the latest log for this day
         const log = weightLogs
-          .filter(l => l.date.toDateString() === day.toDateString())
+          .filter((l) => l.date.toDateString() === day.toDateString())
           .sort((a, b) => b.date - a.date)[0];
         return log ? log.weight : null;
       });
     } else if (scale === "weeks") {
       // Last 7 weeks, today last
       const weeks = getLastNWeeks(7);
-      labels = weeks.map(weekStart => {
+      labels = weeks.map((weekStart) => {
         // Label as "dd MMM" (start of week)
         return `${weekStart.getDate()} ${weekStart.toLocaleString("en-GB", { month: "short" })}`;
       });
-      weights = weeks.map(weekStart => {
+      weights = weeks.map((weekStart) => {
         const weekEnd = new Date(weekStart);
         weekEnd.setDate(weekStart.getDate() + 6);
         // Find the latest log in this week
         const log = weightLogs
-          .filter(l => l.date >= weekStart && l.date <= weekEnd)
+          .filter((l) => l.date >= weekStart && l.date <= weekEnd)
           .sort((a, b) => b.date - a.date)[0];
         return log ? log.weight : null;
       });
@@ -325,8 +349,8 @@ async function weightGraphLogic(userId, scale = "days") {
       const months = getLastNMonths(7);
       const today = new Date();
       const targetDay = today.getDate();
-      labels = months.map(m => m.toLocaleString("en-GB", { month: "short" }));
-      weights = months.map(monthStart => {
+      labels = months.map((m) => m.toLocaleString("en-GB", { month: "short" }));
+      weights = months.map((monthStart) => {
         // Try to find a log for this month on the same day as today
         const year = monthStart.getFullYear();
         const month = monthStart.getMonth();
@@ -339,19 +363,21 @@ async function weightGraphLogic(userId, scale = "days") {
         const targetDate = new Date(year, month, day);
         // Find the latest log on or before this date in the month
         const log = weightLogs
-          .filter(l =>
-            l.date.getFullYear() === year &&
-            l.date.getMonth() === month &&
-            l.date.getDate() === day
+          .filter(
+            (l) =>
+              l.date.getFullYear() === year &&
+              l.date.getMonth() === month &&
+              l.date.getDate() === day
           )
           .sort((a, b) => b.date - a.date)[0];
         // If no log for that day, try to find the closest before that day in the month
         if (!log) {
           const beforeLog = weightLogs
-            .filter(l =>
-              l.date.getFullYear() === year &&
-              l.date.getMonth() === month &&
-              l.date.getDate() < day
+            .filter(
+              (l) =>
+                l.date.getFullYear() === year &&
+                l.date.getMonth() === month &&
+                l.date.getDate() < day
             )
             .sort((a, b) => b.date - a.date)[0];
           return beforeLog ? beforeLog.weight : null;
@@ -367,7 +393,7 @@ async function weightGraphLogic(userId, scale = "days") {
     }
 
     // If all weights are null, show empty chart with "No Data"
-    if (weights.every(w => w === null)) {
+    if (weights.every((w) => w === null)) {
       labels = ["No Data"];
       weights = [null];
     }
@@ -385,27 +411,35 @@ async function weightGraphLogic(userId, scale = "days") {
             borderWidth: 2,
             tension: 0.4,
             pointBackgroundColor: "#7030A1",
-            pointRadius: 3
-          }
-        ]
+            pointRadius: 3,
+          },
+        ],
       },
       options: {
         responsive: true,
         plugins: {
-          legend: { display: false }
+          legend: { display: false },
         },
         scales: {
           x: {
-            title: { display: true, text: scale === "months" ? "Month" : scale === "weeks" ? "Week" : "Day" },
-            grid: { color: "rgba(243, 207, 238, 1)" }
+            title: {
+              display: true,
+              text:
+                scale === "months"
+                  ? "Month"
+                  : scale === "weeks"
+                    ? "Week"
+                    : "Day",
+            },
+            grid: { color: "rgba(243, 207, 238, 1)" },
           },
           y: {
             title: { display: true, text: "Weight (kg)" },
             beginAtZero: false,
-            grid: { color: "rgba(243, 207, 238, 1)" }
-          }
-        }
-      }
+            grid: { color: "rgba(243, 207, 238, 1)" },
+          },
+        },
+      },
     });
   } catch (error) {
     console.error("Error loading weight graph:", error);
@@ -423,9 +457,15 @@ function fetchDailyCalories(userId) {
   const startOfToday = today.toISOString();
 
   // Query food logs for today and calculate the total
-  return db.collection("users").doc(userId).collection("food").where("timestamp", ">=", startOfToday).get().then(snapshot => {
+  return db
+    .collection("users")
+    .doc(userId)
+    .collection("food")
+    .where("timestamp", ">=", startOfToday)
+    .get()
+    .then((snapshot) => {
       let total = 0;
-      snapshot.forEach(doc => {
+      snapshot.forEach((doc) => {
         const data = doc.data();
         const cals = parseFloat(data.caloriesConsumed);
         const servings = parseFloat(data.servings);
@@ -444,11 +484,17 @@ function fetchDailyBurntCalories(userId) {
   const startOfToday = today.toISOString();
 
   // Query exercise logs for today and calculate total burnt
-  return db.collection("users").doc(userId).collection("exercise").where("timestamp", ">=", startOfToday).get().then(snapshot => {
+  return db
+    .collection("users")
+    .doc(userId)
+    .collection("exercise")
+    .where("timestamp", ">=", startOfToday)
+    .get()
+    .then((snapshot) => {
       let total = 0;
-      snapshot.forEach(doc => {
+      snapshot.forEach((doc) => {
         const data = doc.data();
-        const cals = parseFloat(data.caloriesBurned); 
+        const cals = parseFloat(data.caloriesBurned);
         if (!isNaN(cals)) {
           total += cals;
         }
@@ -464,7 +510,12 @@ function updateDailyWaterIntake(userId) {
   const startOfToday = today.toISOString();
 
   // Query water logs and calculate total of all values
-  db.collection("users").doc(userId).collection("water").where("timestamp", ">=", startOfToday).get().then((querySnapshot) => {
+  db.collection("users")
+    .doc(userId)
+    .collection("water")
+    .where("timestamp", ">=", startOfToday)
+    .get()
+    .then((querySnapshot) => {
       let total = 0;
       querySnapshot.forEach((doc) => {
         const data = doc.data();
@@ -486,51 +537,52 @@ function goalLogic(userId) {
   const dailyGoal = 2000;
 
   // Fetch both intake and burnt calories
-  Promise.all([
-    fetchDailyCalories(userId),
-    fetchDailyBurntCalories(userId)
-  ]).then(([currentCalories, burntCalories]) => {
-    const remainingCalories = dailyGoal - (currentCalories - burntCalories);
-    const currentTotalCalories = currentCalories - burntCalories;
+  Promise.all([fetchDailyCalories(userId), fetchDailyBurntCalories(userId)])
+    .then(([currentCalories, burntCalories]) => {
+      const remainingCalories = dailyGoal - (currentCalories - burntCalories);
+      const currentTotalCalories = currentCalories - burntCalories;
 
-    const messageElement = document.getElementById("goalMessage");
-    const circle = document.querySelector("#circularProgress");
-    const burntCircle = document.querySelector(".burnt-circle");
+      const messageElement = document.getElementById("goalMessage");
+      const circle = document.querySelector("#circularProgress");
+      const burntCircle = document.querySelector(".burnt-circle");
 
-    // Calculate visual progress percentages
-    const progressPercent = Math.min(
-      (currentCalories / dailyGoal) * 100,
-      100
-    ).toFixed(1);
-    const progressPercentBurnt = Math.min(
-      (burntCalories / dailyGoal) * 100,
-      100
-    ).toFixed(1);
+      // Calculate visual progress percentages
+      const progressPercent = Math.min(
+        (currentCalories / dailyGoal) * 100,
+        100
+      ).toFixed(1);
+      const progressPercentBurnt = Math.min(
+        (burntCalories / dailyGoal) * 100,
+        100
+      ).toFixed(1);
 
-    // Apply progress to circular indicator
-    circle.style.setProperty("--progress", progressPercent);
-    circle.style.setProperty("--progress-burnt", progressPercentBurnt);
+      // Apply progress to circular indicator
+      circle.style.setProperty("--progress", progressPercent);
+      circle.style.setProperty("--progress-burnt", progressPercentBurnt);
 
-    // Show or hide the calorie burnt circle based on data
-    if (burntCalories === 0) {
-      burntCircle.style.display = "none";
-    } else {
-      burntCircle.style.display = "block";
-    }
+      // Show or hide the calorie burnt circle based on data
+      if (burntCalories === 0) {
+        burntCircle.style.display = "none";
+      } else {
+        burntCircle.style.display = "block";
+      }
 
-    // Update the UI with calorie info
-    document.getElementById("currentCaloriesText").textContent = `${currentTotalCalories} kcal`;
-    document.getElementById("dailyGoalText").textContent = `${dailyGoal} kcal goal`;
+      // Update the UI with calorie info
+      document.getElementById("currentCaloriesText").textContent =
+        `${currentTotalCalories} kcal`;
+      document.getElementById("dailyGoalText").textContent =
+        `${dailyGoal} kcal goal`;
 
-    // Display message depending on goal progress
-    if (remainingCalories > 0) {
-      messageElement.textContent = `You have ${remainingCalories} kcal left till your daily goal.`;
-    } else {
-      messageElement.textContent = "Congrats on reaching your daily goal!";
-    }
-  }).catch(error => {
-    console.error("Error calculating daily calorie data:", error);
-  });
+      // Display message depending on goal progress
+      if (remainingCalories > 0) {
+        messageElement.textContent = `You have ${remainingCalories} kcal left till your daily goal.`;
+      } else {
+        messageElement.textContent = "Congrats on reaching your daily goal!";
+      }
+    })
+    .catch((error) => {
+      console.error("Error calculating daily calorie data:", error);
+    });
 }
 
 // ===========================
@@ -621,7 +673,7 @@ function loadMenuForm() {
 
               if (submitButton) {
                 // Attach submit event to dynamically loaded form
-                formElement.addEventListener("submit", function (event)  {
+                formElement.addEventListener("submit", function (event) {
                   console.log("Submit button event listener attached");
                   event.preventDefault(); // Prevent default form submission
 
@@ -643,7 +695,13 @@ function loadMenuForm() {
                       alert("Meal name is required.");
                       return;
                     }
-                    firebase.firestore().collection("users").doc(userId).collection("food").doc(mealName).set(data)
+                    firebase
+                      .firestore()
+                      .collection("users")
+                      .doc(userId)
+                      .collection("food")
+                      .doc(mealName)
+                      .set(data)
                       .then(() => {
                         alert(`${formType} entry saved!`);
                       })
@@ -651,15 +709,25 @@ function loadMenuForm() {
                         console.error("Error saving data:", error);
                         alert("Failed to save. Try again.");
                       });
-                  } else {                    // If weight, update both weight collection and user document
-                    if (formType === 'weight') {
+                  } else {
+                    // If weight, update both weight collection and user document
+                    if (formType === "weight") {
                       // Add to weight collection
-                      firebase.firestore().collection("users").doc(userId).collection(formType).add(data)
+                      firebase
+                        .firestore()
+                        .collection("users")
+                        .doc(userId)
+                        .collection(formType)
+                        .add(data)
                         .then(() => {
                           // Update user document current_weight
-                          return firebase.firestore().collection("users").doc(userId).update({
-                            current_weight: data.weight
-                          });
+                          return firebase
+                            .firestore()
+                            .collection("users")
+                            .doc(userId)
+                            .update({
+                              current_weight: data.weight,
+                            });
                         })
                         .then(() => {
                           alert(`${formType} entry saved!`);
@@ -670,7 +738,12 @@ function loadMenuForm() {
                         });
                     } else {
                       // For other types, just store in the appropriate collection
-                      firebase.firestore().collection("users").doc(userId).collection(formType).add(data)
+                      firebase
+                        .firestore()
+                        .collection("users")
+                        .doc(userId)
+                        .collection(formType)
+                        .add(data)
                         .then(() => {
                           alert(`${formType} entry saved!`);
                         })
@@ -682,9 +755,7 @@ function loadMenuForm() {
                   }
                 });
               }
-
             }, 10); // Waits for inner dom to render before querying it
-
           }, 300); // Matches transition delay
         }
       });
@@ -700,8 +771,12 @@ function loadMenuForm() {
 document.addEventListener("change", function (e) {
   if (e.target.id === "exerciseCheckbox") {
     const isChecked = e.target.checked;
-    document.getElementById("exerciseFormCardio").style.display = isChecked ? "none" : "flex";
-    document.getElementById("exerciseFormStrength").style.display = isChecked ? "flex" : "none";
+    document.getElementById("exerciseFormCardio").style.display = isChecked
+      ? "none"
+      : "flex";
+    document.getElementById("exerciseFormStrength").style.display = isChecked
+      ? "flex"
+      : "none";
   }
 });
 
@@ -721,7 +796,11 @@ async function populateLeaderboard(sortBy = "burnt") {
       const name = userData.username || "Unknown";
 
       // Fetch exercise data (calories burnt)
-      const exerciseSnapshot = await db.collection("users").doc(userId).collection("exercise").get();
+      const exerciseSnapshot = await db
+        .collection("users")
+        .doc(userId)
+        .collection("exercise")
+        .get();
 
       let totalBurnt = 0;
       exerciseSnapshot.forEach((doc) => {
@@ -740,7 +819,7 @@ async function populateLeaderboard(sortBy = "burnt") {
 
     // Sort users by calories burnt (default)
     leaderboardData.sort((a, b) => b.caloriesBurned - a.caloriesBurned);
-    
+
     // Top 10 users
     const top10 = leaderboardData.slice(0, 10);
 
@@ -761,7 +840,9 @@ async function populateLeaderboard(sortBy = "burnt") {
       const thirdCell = document.createElement("td");
       thirdCell.textContent =
         sortBy === "weight"
-          ? (entry.weightChange != null ? `${entry.weightChange.toFixed(1)} kg` : "N/A")
+          ? entry.weightChange != null
+            ? `${entry.weightChange.toFixed(1)} kg`
+            : "N/A"
           : `${Math.round(entry.caloriesBurned)} kcal`;
 
       row.appendChild(rankCell);
@@ -774,7 +855,6 @@ async function populateLeaderboard(sortBy = "burnt") {
     // Update leaderboard heading
     document.querySelector("#leaderboardWidget th:nth-child(3)").textContent =
       sortBy === "weight" ? "Weight Change" : "Calories Burnt";
-
   } catch (error) {
     console.error("Error populating leaderboard:", error);
   }
@@ -792,7 +872,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Make sure firebase authenticates
   auth.onAuthStateChanged((user) => {
     if (user) {
-      loadUserData(user);  
+      loadUserData(user);
       goalLogic(user.uid);
       calendearLogic();
       weightGraphLogic(user.uid);
@@ -800,14 +880,17 @@ document.addEventListener("DOMContentLoaded", () => {
       populateLeaderboard("burnt");
 
       // Allows users to sort the leaderboard (currently only by calories burnt)
-      document.querySelectorAll("#dropdownContentLeaderboard a").forEach((item) => {
-        item.addEventListener("click", (e) => {
-          e.preventDefault();
-          const sortBy = item.getAttribute("data-sort");
-          populateLeaderboard(sortBy);
-          document.getElementById("dropbtnLeaderboard").textContent = `Sort by: ${item.textContent}`;
+      document
+        .querySelectorAll("#dropdownContentLeaderboard a")
+        .forEach((item) => {
+          item.addEventListener("click", (e) => {
+            e.preventDefault();
+            const sortBy = item.getAttribute("data-sort");
+            populateLeaderboard(sortBy);
+            document.getElementById("dropbtnLeaderboard").textContent =
+              `Sort by: ${item.textContent}`;
+          });
         });
-      });
     } else {
       window.location.href = "/sign-in.html"; // Redirect to sign in page if not authenticated
     }
@@ -853,7 +936,7 @@ document.addEventListener("click", function (e) {
 // Initialize exercise autocomplete for search inputs
 function initExerciseAutocomplete() {
   // Use the correct selector for your input
-  document.querySelectorAll('.search-bar').forEach(input => {
+  document.querySelectorAll(".search-bar").forEach((input) => {
     // Prevent double initialization
     if (input.dataset.autocompleteInitialized) return;
     input.dataset.autocompleteInitialized = "true";
@@ -864,10 +947,10 @@ function initExerciseAutocomplete() {
         src: EXERCISE_OPTIONS,
       },
       resultsList: {
-        maxResults: undefined // Show all matches
+        maxResults: undefined, // Show all matches
       },
       resultItem: {
-        highlight: true
+        highlight: true,
       },
       events: {
         input: {
@@ -875,9 +958,9 @@ function initExerciseAutocomplete() {
             const selection = event.detail.selection.value;
             input.value = selection;
             // Optionally trigger any logic when an exercise is selected
-          }
-        }
-      }
+          },
+        },
+      },
     });
   });
 }
