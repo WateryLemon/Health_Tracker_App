@@ -187,6 +187,13 @@ li.day .weekday {
   font-weight: normal;
 }
 
+.calorie-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 2px 0;
+}
+
 /* ===========================
     Calorie Widget
     =========================== */
