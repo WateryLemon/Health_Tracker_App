@@ -237,7 +237,7 @@
     <h1>Log Meal</h1>
     <form id="foodForm" class="log-form">
       <div class="search-wrapper">
-        <input type="text" class="search-bar" name="search" onmouseout="this.value = ''; this.blur();">
+        <input type="text" class="search-bar" name="search" placeholder="Search food...">
         <i class="fas fa-search"></i>
       </div>
 
@@ -265,37 +265,17 @@
     <template id="exerciseForm">
         <div class="menu-form-wrapper">
             <h1>Log Exercise</h1>
-            <label class="exercise-switch">
-                <input id="exerciseCheckbox" type="checkbox">
-                <span class="toggle-slider"></span>
-            </label>
-            <form id="exerciseFormCardio" class="log-form">
+            <form id="exerciseForm" class="log-form">
                 <div class="search-wrapper">
                     <form name="search">
-                        <input type="text" class="search-bar" name="txt" onmouseout="this.value = ''; this.blur();">
+                        <input type="text" class="search-bar" name="txt" placeholder="Search exercise...">
                     </form>
                     <i class="fas fa-search"></i>
                 </div>
-                <label for="cburnt" class="number-input-label">Calories burnt cardio (kcal):</label>
-                <input type="number" class="number-input" id="burnt-input" name="caloriesBurned" placeholder="Enter calories" required>
                 <label for="exercise-input" class="number-input-label">Name of Exercise:</label>
                 <input type="text" class="number-input" id="exercise-input" name="exercise" placeholder="Enter Exercise Name"required>
-                <div class="nav-wrapper">
-                    <button class="nav-buttons" id="backButton" type="button" onclick="loadMenuForm()"><i class="fa-solid fa-backward"></i></button>
-                    <button class="nav-buttons" id="submitButton" type="submit"><i class="fa-solid fa-check"></i></button>
-                </div>
-            </form>
-            <form id="exerciseFormStrength" class="log-form">
-                <div class="search-wrapper">
-                    <form name="search">
-                        <input type="text" class="search-bar" name="txt" onmouseout="this.value = ''; this.blur();">
-                    </form>
-                    <i class="fas fa-search"></i>
-                </div>
-                <label for="cburnt" class="number-input-label">Calories burnt strength (kcal):</label>
+                <label for="calorie-input" class="number-input-label">Calories burnt (kcal):</label>
                 <input type="number" class="number-input" id="burnt-input" name="caloriesBurned" placeholder="Enter calories" required>
-                <label for="exercise-input" class="number-input-label">Name of Exercise:</label>
-                <input type="text" class="number-input" id="exercise-input" name="exercise" placeholder="Enter Exercise Name"required>
                 <div class="nav-wrapper">
                     <button class="nav-buttons" id="backButton" type="button" onclick="loadMenuForm()"><i class="fa-solid fa-backward"></i></button>
                     <button class="nav-buttons" id="submitButton" type="submit"><i class="fa-solid fa-check"></i></button>
