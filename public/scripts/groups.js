@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // First, cancel any pending transitions
         if (window.createGroupWeightTransitionTimer) {
           clearTimeout(window.createGroupWeightTransitionTimer);
-        } // No longer need to hide maintain weight helper text
+        }
 
         const value = this.value;
         if (
@@ -912,12 +912,9 @@ document.addEventListener("DOMContentLoaded", () => {
         `Goal ${goal.id} is already marked as completed, returning 100%`
       );
       return 100;
-    }
-
-    // For goals that don't involve weight tracking
+    } // For goals that don't involve weight tracking
     if (
       goal.fitness_goal !== "lose_weight" &&
-      goal.fitness_goal !== "maintain_weight" &&
       goal.fitness_goal !== "gain_weight" &&
       goal.fitness_goal !== "build_muscle"
     ) {
