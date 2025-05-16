@@ -449,10 +449,13 @@ function loadMenuForm() {
                 searchInput.addEventListener("change", function () {
                   const selected = searchInput.value;
                   if (FOOD_KCAL_PER_SERVING[selected]) {
-                    
+
                     const mealInput = foodForm.querySelector("#meal-input");
                     const mealLabel = foodForm.querySelector("label[for='meal-input']");
-                    if (mealInput) mealInput.style.display = "none";
+                    if (mealInput) {
+                      mealInput.style.display = "none";
+                      mealInput.value = selected;
+                    }
                     if (mealLabel) mealLabel.style.display = "none";
 
                     const calorieInput = foodForm.querySelector("#calorie-input");
@@ -460,7 +463,6 @@ function loadMenuForm() {
                       calorieInput.placeholder = "Calculating...";
                       calorieInput.value = "";
                     }
-
                     // Calculate calories when servings input changes
                     const servingsInput = foodForm.querySelector("#serving-input");
                     if (servingsInput && calorieInput) {
