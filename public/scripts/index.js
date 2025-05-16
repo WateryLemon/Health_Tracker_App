@@ -651,16 +651,34 @@ function loadMenuForm() {
                         console.error("Error saving data:", error);
                         alert("Failed to save. Try again.");
                       });
-                  } else {
-                    // If not food then store in the appropriate collection
-                    firebase.firestore().collection("users").doc(userId).collection(formType).add(data)
-                      .then(() => {
-                        alert(`${formType} entry saved!`);
-                      })
-                      .catch((error) => {
-                        console.error("Error saving data:", error);
-                        alert("Failed to save. Try again.");
-                      });
+                  } else {                    // If weight, update both weight collection and user document
+                    if (formType === 'weight') {
+                      // Add to weight collection
+                      firebase.firestore().collection("users").doc(userId).collection(formType).add(data)
+                        .then(() => {
+                          // Update user document current_weight
+                          return firebase.firestore().collection("users").doc(userId).update({
+                            current_weight: data.weight
+                          });
+                        })
+                        .then(() => {
+                          alert(`${formType} entry saved!`);
+                        })
+                        .catch((error) => {
+                          console.error("Error saving data:", error);
+                          alert("Failed to save. Try again.");
+                        });
+                    } else {
+                      // For other types, just store in the appropriate collection
+                      firebase.firestore().collection("users").doc(userId).collection(formType).add(data)
+                        .then(() => {
+                          alert(`${formType} entry saved!`);
+                        })
+                        .catch((error) => {
+                          console.error("Error saving data:", error);
+                          alert("Failed to save. Try again.");
+                        });
+                    }
                   }
                 });
               }
