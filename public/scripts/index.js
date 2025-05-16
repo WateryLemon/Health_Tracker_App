@@ -744,3 +744,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+document.addEventListener("click", function (e) {
+  if (
+    e.target.id === "submitButton" ||
+    (e.target.closest && e.target.closest("#submitButton"))
+  ) {
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
+  }
+});
