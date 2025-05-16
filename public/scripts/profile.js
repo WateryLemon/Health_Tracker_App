@@ -21,14 +21,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (user) {
       currentUser = user;
       await loadUserData();
-
-      // Additional check for target date on page load
-      const targetDateInput = document.getElementById("target_date");
-      if (targetDateInput && targetDateInput.value) {
-        // Force check by removing any session storage flags
-        sessionStorage.removeItem("target_date_popup_shown");
-        checkTargetDateReached(new Date(targetDateInput.value));
-      }
     } else {
       // Redirect to sign in if not logged in
       window.location.href = "/sign-in.html";
@@ -56,19 +48,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       });
     });
-
-  // Add target date change listener
-  document
-    .getElementById("target_date")
-    ?.addEventListener("change", function () {
-      if (this.value) {
-        // Remove any existing popup flags to allow the popup to show if date is current or past
-        sessionStorage.removeItem("target_date_popup_shown");
-        // Check if selected date has already passed
-        checkTargetDateReached(new Date(this.value));
-      }
-    });
-
   // Add tab switching functionality
   setupTabNavigation();
   // Add event listeners for updating progress bar
@@ -112,8 +91,8 @@ function setupTabNavigation() {
 function handleGoalChangeTab() {
   const fitnessGoal = document.getElementById("fitness_goal_tab").value;
   const targetWeightInput = document.getElementById("target_weight_tab");
-  // Get parent form-group of target weight for showing/hiding
   const targetWeightGroup = document.getElementById("target_weight_group_tab");
+
   if (
     fitnessGoal === "lose_weight" ||
     fitnessGoal === "build_muscle" ||
@@ -122,30 +101,18 @@ function handleGoalChangeTab() {
     if (targetWeightGroup) {
       targetWeightGroup.style.display = "block";
     }
-    // Set default target weight if none is set
+    // Only set default target weight if there's no existing value and no saved goal data
     if (
       targetWeightInput &&
       (!targetWeightInput.value || targetWeightInput.value === "0")
-    ) {
-      if (fitnessGoal === "lose_weight") {
-        // Default to 5kg less
-        targetWeightInput.value = Math.max(
-          45,
-          parseFloat(userWeight) - 5
-        ).toFixed(2);
-      } else if (
-        fitnessGoal === "gain_weight" ||
-        fitnessGoal === "build_muscle"
-      ) {
-        // Default to 5kg more
-        targetWeightInput.value = (parseFloat(userWeight) + 5).toFixed(2);
-      }
+    ) {      // Don't set any default target weight - let user choose
     }
   } else {
     if (targetWeightGroup) {
       targetWeightGroup.style.display = "none";
     }
   }
+
   // Update progress bar whenever goal changes
   const progress = calculateGoalProgress(
     document.getElementById("currentWeight").value,
@@ -189,15 +156,17 @@ async function loadUserData() {
         document.getElementById("bmi").value = bmi;
       } else {
         document.getElementById("bmi").value = ""; // Clear bmi field if data is invalid
-      }
-
-      // Set fitness goal
+      } // Set fitness goal
       const fitnessGoal = data.fitness_goal || "";
       document.getElementById("fitness_goal_tab").value = fitnessGoal;
-      // Handle target weight
+      // Handle target weight and goal data
       const goalData = data.goal_data || {};
       const targetWeight = goalData.target_weight || "";
       document.getElementById("target_weight_tab").value = targetWeight;
+
+      // Set initial weight from goal data if it exists
+      initialWeight =
+        goalData.initial_weight || data.current_weight || data.weight || "";
 
       // Populate goals tab data
       if (goalData.target_date) {
@@ -244,12 +213,10 @@ document.getElementById("saveButton").addEventListener("click", async () => {
       username: document.getElementById("username").value,
       forename: document.getElementById("forename").value,
       surname: document.getElementById("surname").value,
-      height: document.getElementById("height").value,
       current_height: document.getElementById("height").value,
       sex: document.getElementById("sex").value,
       date_of_birth: document.getElementById("dob").value,
       email: document.getElementById("email").value,
-      weight: currentWeight,
       current_weight: currentWeight,
       fitness_goal: fitnessGoal,
       goal_data: {
@@ -266,21 +233,21 @@ document.getElementById("saveButton").addEventListener("click", async () => {
     if (!userData.username || !userData.email) {
       showMessage("Username and email are required", true);
       return;
-    }
-
-    // Update user document in firestore
+    } // Update user document in firestore
     await updateDoc(doc(db, "users", currentUser.uid), userData);
-    showMessage("Profile updated successfully"); // Check if target date has been reached
+    showMessage("Profile updated successfully");
+
+    // Check target date after successful save
     if (targetDate) {
-      // Remove any existing popup flags to allow popup to show if date is current or past
       sessionStorage.removeItem("target_date_popup_shown");
-      checkTargetDateReached(new Date(targetDate));
+      setTimeout(() => {
+        checkTargetDateReached(new Date(targetDate));
+      }, 1000); // Show after success message
     }
 
     // Check if goal has been achieved after saving
     const progress = calculateGoalProgress(currentWeight, targetWeight);
     if (progress === 100) {
-      // If goal is achieved check if it should show popup
       if (
         checkGoalAchieved(
           parseFloat(currentWeight),
@@ -290,7 +257,7 @@ document.getElementById("saveButton").addEventListener("click", async () => {
       ) {
         setTimeout(() => {
           showGoalAchievementPopup();
-        }, 1000); // Show after a delay so user sees the success message first
+        }, 1500); // Show after target date popup if present
       }
     }
   } catch (error) {
@@ -607,6 +574,9 @@ function showGoalAchievementPopup() {
 
     // Reset goal values
     resetGoalAfterAchievement();
+
+    // Switch to goals tab using the correct data-tab value
+    document.querySelector('[data-tab="goals"]').click();
   });
 }
 
@@ -705,13 +675,11 @@ function checkTargetDateReached(targetDate) {
     const popup = document.getElementById("target-date-popup");
     const popupMessage = popup.querySelector(".goal-popup-message");
     const popupDetails = popup.querySelector(".goal-popup-details span");
-
     if (progress === 100) {
       // Goal achieved
       popupMessage.textContent =
         "Congratulations! You've reached your target date and achieved your goal!";
-      popupDetails.textContent =
-        "You've successfully completed your fitness journey";
+      popupDetails.textContent = "You have successfully achieved your goal";
     } else if (progress > 75) {
       // Almost there
       popupMessage.textContent =
@@ -724,7 +692,7 @@ function checkTargetDateReached(targetDate) {
     } else {
       // No progress
       popupMessage.textContent = "Your target date has arrived!";
-      popupDetails.textContent = "It's time to check your progress";
+      popupDetails.textContent = "You've made no progress toward your goal";
     } // Show popup
     showTargetDatePopup();
 
@@ -745,17 +713,20 @@ function showTargetDatePopup() {
   // Remove any previous click listeners to prevent duplicates
   const newPopupButton = popupButton.cloneNode(true);
   popupButton.parentNode.replaceChild(newPopupButton, popupButton);
-
   // Add event listener to popup button
   newPopupButton.addEventListener("click", () => {
     // Hide popup
     popup.style.display = "none";
+    // Clear target date field
+    document.getElementById("target_date").value = "";
   });
 
   // Add event listener to close popup when clicking outside
   popup.addEventListener("click", (event) => {
     if (event.target === popup) {
       popup.style.display = "none";
+      // Clear target date field when clicking outside as well
+      document.getElementById("target_date").value = "";
     }
   });
 }

@@ -1,5 +1,5 @@
 // ===========================
-// Firebase Configuration & Initialization
+// Firebase Configuration & Initialisation
 // ===========================
 const firebaseConfig = {
   apiKey: "AIzaSyCQiV6-wvqLWa9NHatHsu9AE3zcb4FqmOI",
@@ -14,7 +14,7 @@ const firebaseConfig = {
 // Initialise Firebase
 firebase.initializeApp(firebaseConfig);
 
-// Make Firebase Auth and Firestore globally accessible
+// Make Firebase Authentication and Firestore globally accessible
 const auth = firebase.auth();
 const db = firebase.firestore();
 window.auth = auth;
@@ -62,7 +62,7 @@ function formatSignedChange(startWeight, currentWeight) {
   return `${sign}${Math.abs(weightChange)}`;
 }
 
-// Displays weight and changes in appropriate unit (kg or stones/lbs)
+// Displays weight and changes in appropriate unit (kg or stones/lbs) depending on the user selection
 function displayWeight(startWeight, currentWeight, unitPreference) {
   const weightChangeKg = Number(startWeight) - Number(currentWeight);
 
@@ -129,34 +129,106 @@ function calendearLogic() {
   ];
   const currentDate = new Date();
 
+  // Helper to format date as yyyy-mm-dd for comparison
+  function formatDateKey(date) {
+    return date.toISOString().split("T")[0];
+  }
+
+  // Fetch calories for a specific day
+  async function fetchDayCalories(userId, date) {
+    const start = new Date(date);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(start);
+    end.setDate(start.getDate() + 1);
+
+    // Calories Consumed
+    const foodSnapshot = await db.collection("users").doc(userId).collection("food")
+      .where("timestamp", ">=", start.toISOString())
+      .where("timestamp", "<", end.toISOString())
+      .get();
+    let consumed = 0;
+    foodSnapshot.forEach(doc => {
+      const data = doc.data();
+      const cals = parseFloat(data.caloriesConsumed);
+      const servings = parseFloat(data.servings);
+      if (!isNaN(cals) && !isNaN(servings)) {
+        consumed += cals * servings;
+      }
+    });
+
+    // Calories Burnt
+    const exerciseSnapshot = await db.collection("users").doc(userId).collection("exercise")
+      .where("timestamp", ">=", start.toISOString())
+      .where("timestamp", "<", end.toISOString())
+      .get();
+    let burnt = 0;
+    exerciseSnapshot.forEach(doc => {
+      const data = doc.data();
+      const cals = parseFloat(data.caloriesBurned);
+      if (!isNaN(cals)) {
+        burnt += cals;
+      }
+    });
+
+    return { consumed, burnt };
+  }
+
   // Generate calendar UI elements for previous/next days around current day
-  function createDayElement(offset) {
+  async function createDayElement(offset) {
     const date = new Date(currentDate);
     date.setDate(currentDate.getDate() + offset);
 
     const li = document.createElement("li");
     li.classList.add("day");
 
-    li.innerHTML = `<span class="day-number">${date.getDate()}</span>
-            <i class="fas fa-hotdog"></i><span>: </span><span class="calories-eaten"></span>
-            <i class='fas fa-burn'></i><span>: </span><span class="calories-burnt"></span>
-            <span class="weekday">${weekdays[date.getDay()]}</span>`;
+    li.innerHTML = `
+      <span class="day-number">${date.getDate()}</span>
+      <span class="calorie-row">
+        <i class="fas fa-hotdog"></i>
+        <span>: </span>
+        <span class="calories-eaten"></span>
+      </span>
+      <span class="calorie-row">
+        <i class='fas fa-burn'></i>
+        <span>: </span>
+        <span class="calories-burnt"></span>
+      </span>
+      <span class="weekday">${weekdays[date.getDay()]}</span>
+    `;
+  
+    if (offset <= 0) {
+      const user = firebase.auth().currentUser;
+      if (user) {
+        const { consumed, burnt } = await fetchDayCalories(user.uid, date);
+        li.querySelector(".calories-eaten").textContent = consumed;
+        li.querySelector(".calories-burnt").textContent = burnt;
+      } else {
+        // For next 2 days, show 0
+        li.querySelector(".calories-eaten").textContent = 0;
+        li.querySelector(".calories-burnt").textContent = 0;
+      }
+    }
     return li;
   }
 
-  // Creates date elements for previous and next days
-  for (let i = -2; i < 0; i++) {
-    calendarWidget.insertBefore(createDayElement(i), todayEl);
-  }
-  for (let i = 2; i >= 1; i--) {
-    calendarWidget.insertBefore(createDayElement(i), todayEl.nextSibling);
-  }
+  const user = firebase.auth().currentUser;
+  if (user) {
+    (async () => {
+      for (let i = -2; i < 0; i++) {
+        const dayElement = await createDayElement(i);
+        calendarWidget.insertBefore(dayElement, todayEl);
+      }
+      for (let i = 2; i >= 1; i--) {
+          const dayEl = await createDayElement(i, user.uid);
+          calendarWidget.insertBefore(dayEl, todayEl.nextSibling);
+      }
 
-  todayEl.querySelector(".day-number").textContent = currentDate.getDate();
-  todayEl.querySelector(".weekday").textContent =
-    weekdays[currentDate.getDay()];
+      todayEl.querySelector(".day-number").textContent = currentDate.getDate();
+      todayEl.querySelector(".weekday").textContent =
+        weekdays[currentDate.getDay()];
+    })();
+  }
 }
-
 // ===========================
 // Weight Graph Logic with Time Scale
 // ===========================
@@ -579,16 +651,34 @@ function loadMenuForm() {
                         console.error("Error saving data:", error);
                         alert("Failed to save. Try again.");
                       });
-                  } else {
-                    // If not food then store in the appropriate collection
-                    firebase.firestore().collection("users").doc(userId).collection(formType).add(data)
-                      .then(() => {
-                        alert(`${formType} entry saved!`);
-                      })
-                      .catch((error) => {
-                        console.error("Error saving data:", error);
-                        alert("Failed to save. Try again.");
-                      });
+                  } else {                    // If weight, update both weight collection and user document
+                    if (formType === 'weight') {
+                      // Add to weight collection
+                      firebase.firestore().collection("users").doc(userId).collection(formType).add(data)
+                        .then(() => {
+                          // Update user document current_weight
+                          return firebase.firestore().collection("users").doc(userId).update({
+                            current_weight: data.weight
+                          });
+                        })
+                        .then(() => {
+                          alert(`${formType} entry saved!`);
+                        })
+                        .catch((error) => {
+                          console.error("Error saving data:", error);
+                          alert("Failed to save. Try again.");
+                        });
+                    } else {
+                      // For other types, just store in the appropriate collection
+                      firebase.firestore().collection("users").doc(userId).collection(formType).add(data)
+                        .then(() => {
+                          alert(`${formType} entry saved!`);
+                        })
+                        .catch((error) => {
+                          console.error("Error saving data:", error);
+                          alert("Failed to save. Try again.");
+                        });
+                    }
                   }
                 });
               }
@@ -743,4 +833,56 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
+});
+
+document.addEventListener("click", function (e) {
+  if (
+    e.target.id === "submitButton" ||
+    (e.target.closest && e.target.closest("#submitButton"))
+  ) {
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
+  }
+});
+
+// ===========================
+// Exercise Autocomplete Logic
+// ===========================
+
+// Initialize exercise autocomplete for search inputs
+function initExerciseAutocomplete() {
+  // Use the correct selector for your input
+  document.querySelectorAll('.search-bar').forEach(input => {
+    // Prevent double initialization
+    if (input.dataset.autocompleteInitialized) return;
+    input.dataset.autocompleteInitialized = "true";
+    new autoComplete({
+      selector: () => input,
+      threshold: 0, // Show all options by default
+      data: {
+        src: EXERCISE_OPTIONS,
+      },
+      resultsList: {
+        maxResults: undefined // Show all matches
+      },
+      resultItem: {
+        highlight: true
+      },
+      events: {
+        input: {
+          selection: (event) => {
+            const selection = event.detail.selection.value;
+            input.value = selection;
+            // Optionally trigger any logic when an exercise is selected
+          }
+        }
+      }
+    });
+  });
+}
+
+// Initialize on DOM ready
+document.addEventListener("DOMContentLoaded", () => {
+  initExerciseAutocomplete();
 });
