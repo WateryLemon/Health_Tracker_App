@@ -1072,7 +1072,7 @@ document.addEventListener("DOMContentLoaded", () => {
           ); // Show success message to current user and trigger confetti animation
           showMessage("Congratulations! You've completed this goal! 🎉");
 
-          // Show a celebration animation when goal is completed
+          // Show animation when goal is completed
           showCompletionCelebration();
         }
       } // If the goal was just completed in this calculation, force isGoalCompleted flag
@@ -1327,12 +1327,12 @@ document.addEventListener("DOMContentLoaded", () => {
           fitnessGoal,
           weightChangeAmount
         ),
-        initial_weight: initialWeight, // Keep for backward compatibility
-        participant_weights: participantWeights, // Add participant weights mapping
+        initial_weight: initialWeight,
+        participant_weights: participantWeights,
         start_date: window.serverTimestamp(),
         createdBy: currentUser.uid,
         createdAt: window.serverTimestamp(),
-        participants: [currentUser.uid], // Creator automatically participates
+        participants: [currentUser.uid],
         joinCode: goalJoinCode,
       });
 
@@ -1420,7 +1420,7 @@ document.addEventListener("DOMContentLoaded", () => {
           ? `${userData.forename} ${userData.surname}`
           : "A Health Tracker user");
 
-      // Call our server endpoint to send the email
+      // Call server endpoint to send the email
       const response = await fetch("/api/invite", {
         method: "POST",
         headers: {
@@ -1521,8 +1521,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Skip notification for the user who created the event
         if (userId === currentUser.uid) continue;
 
-        // In a real app, you'd implement proper push notifications
-        // For now, we'll just add to a notifications collection
+        //add to notifications collection
         await window.addDoc(window.collection(db, "notifications"), {
           userId,
           groupId,
