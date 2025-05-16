@@ -503,6 +503,16 @@ h2 {
   transition: width 0.5s ease-in-out;
 }
 
+.progress-details {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background-color: #efe4f7;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #4a2d64;
+  border-left: 3px solid #7030a1;
+}
+
 .progress-bar.completed {
   background-color: #34c759; /* Green color for completed goals */
   background-image: linear-gradient(
@@ -604,12 +614,6 @@ h2 {
   font-weight: 500;
 }
 
-/* Goal Completed styling */
-.completed-goal {
-  border: 2px solid #34c759 !important;
-  box-shadow: 0 0 15px rgba(52, 199, 89, 0.4) !important;
-}
-
 .goal-completed-message {
   background-color: #34c759;
   color: white;
@@ -688,15 +692,10 @@ h2 {
   box-shadow: 0 0 8px rgba(255, 59, 48, 0.6);
 }
 
-.remove-goal-btn:hover {
-  background-color: #d0271e;
-}
-
 .remove-goal-btn:active {
   transform: scale(0.98);
 }
 
-/* Small variant of remove button */
 .remove-goal-btn.small-btn {
   padding: 4px 8px;
   margin: 0 0 0 10px;
@@ -819,7 +818,7 @@ h2 {
   margin-top: 10px;
 }
 
-/* Confetti Animation for Goal Completion */
+/* Confetti Animation */
 .confetti-container {
   position: fixed;
   top: 0;
@@ -864,4 +863,97 @@ h2 {
     opacity: 0;
     transform: rotate(360deg);
   }
+}
+
+.tab-content {
+  min-height: 400px;
+}
+
+#create-group-form {
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+}
+
+#create-group-form .form-group:last-of-type {
+  margin-bottom: 30px;
+}
+
+#create-group-form .submit-btn {
+  margin-top: auto;
+}
+
+#join-group-form {
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+}
+
+#join-group-form .form-group:last-of-type {
+  margin-bottom: 30px;
+}
+
+#join-group-form .submit-btn {
+  margin-top: auto;
+}
+
+.form-help-text {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #666;
+  font-style: italic;
+}
+
+.goal-instructions {
+  margin-bottom: 20px;
+  padding: 12px 15px;
+  background-color: #f8f9fa;
+  border-left: 4px solid #7030a1;
+  border-radius: 4px;
+}
+
+.goal-instructions p {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.goal-instructions ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.goal-instructions li {
+  margin-bottom: 5px;
+}
+
+.create-goal-info {
+  margin-bottom: 15px;
+  padding: 8px 12px;
+  background-color: #f8f7fa;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #555;
+}
+
+.goal-joined-indicator {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.goal-not-joined {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: #fff3e0;
+  color: #e65100;
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.4;
 }

@@ -1,4 +1,3 @@
-/* Global Styles (matching other pages) */
 * {
   margin: 0;
   padding: 0;
@@ -7,8 +6,8 @@
 }
 
 html {
-  overflow-y: scroll; /* Always show scrollbar to prevent layout shift */
-  scrollbar-width: thin; /* For Firefox */
+  overflow-y: scroll;
+  scrollbar-width: thin;
 }
 
 body {
@@ -16,7 +15,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding-bottom: 60px; /* Space for footer */
+  padding-bottom: 60px;
 }
 
 header {
@@ -60,13 +59,11 @@ header .header-content {
   transition: background-color 0.3s ease;
 }
 
-/* Nav buttons positioned together on the right */
 .nav-buttons-right {
   display: flex;
   gap: 20px;
 }
 
-/* Nav Icons in Header */
 .nav-link {
   display: flex;
   flex-direction: column;
@@ -308,7 +305,6 @@ h2 {
   margin-top: 20px;
 }
 
-/* Add placeholder styling */
 ::placeholder {
   color: #aaa;
 }
@@ -335,7 +331,6 @@ button {
   transition: all 0.3s ease;
 }
 
-/* Checkbox styles for Goals tab */
 .checkbox-group {
   display: flex;
   flex-direction: column;
@@ -359,7 +354,6 @@ button {
   cursor: pointer;
 }
 
-/* Style for textarea */
 .form-group textarea {
   width: 100%;
   padding: 10px;
