@@ -15,7 +15,7 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 window.auth = auth;
-window.db = db;
+window.db = db; //shortcut for accessing firebase database
 
 // ===========================
 // User Data Loading & Display
@@ -23,11 +23,11 @@ window.db = db;
 
 async function loadUserData(user) {
   try {
-    const userDoc = await db.collection("users").doc(user.uid).get();
-    const weightSnapshot = await db.collection("users").doc(user.uid).collection("weight").orderBy("timestamp", "desc").limit(1).get();
+    const userDoc = await db.collection("users").doc(user.uid).get(); //fetches user data 
+    const weightSnapshot = await db.collection("users").doc(user.uid).collection("weight").orderBy("timestamp", "desc").limit(1).get(); //fetches latest logged weight
     let latestWeight = null;
     if (!weightSnapshot.empty) {
-      latestWeight = weightSnapshot.docs[0].data().weight;
+      latestWeight = weightSnapshot.docs[0].data().weight; //assign most recent weight log if exists
     }
     if (userDoc.exists) {
       const data = userDoc.data();
@@ -45,7 +45,7 @@ async function loadUserData(user) {
 
 function displayWeight(startWeight, currentWeight, unitPreference) {
   const weightChangeKg = Number(startWeight) - Number(currentWeight);
-  const getChangeSign = (change) => (change === 0 ? "" : change > 0 ? "-" : "+");
+  const getChangeSign = (change) => (change === 0 ? "" : change > 0 ? "-" : "+"); //if change greater than zero wright was lost and vice versa
   const formatStones = (kg) => {
     if (isNaN(kg)) return "N/A";
     const pounds = kg * 2.20462;
@@ -91,18 +91,18 @@ function calendearLogic() {
 
   async function fetchDayCalories(userId, date) {
     const start = new Date(date); start.setHours(0, 0, 0, 0);
-    const end = new Date(start); end.setDate(start.getDate() + 1);
+    const end = new Date(start); end.setDate(start.getDate() + 1); //next day
     // Calories Consumed
     const foodSnapshot = await db.collection("users").doc(userId).collection("food")
-      .where("timestamp", ">=", start.toISOString())
-      .where("timestamp", "<", end.toISOString())
+      .where("timestamp", ">=", start.toISOString()) //Filters entries to include only those with a timestamp on or after the start of the day 
+      .where("timestamp", "<", end.toISOString())//Further filters to include only those with a timestamp before the next day
       .get();
     let consumed = 0;
     foodSnapshot.forEach(doc => {
       const data = doc.data();
       const cals = parseFloat(data.caloriesConsumed);
       const servings = parseFloat(data.servings);
-      if (!isNaN(cals) && !isNaN(servings)) consumed += cals * servings;
+      if (!isNaN(cals) && !isNaN(servings)) consumed += cals * servings;//checks if numbers are valid, if valid calculate consumed caloeies
     });
     // Calories Burnt
     const exerciseSnapshot = await db.collection("users").doc(userId).collection("exercise")
@@ -113,12 +113,12 @@ function calendearLogic() {
     exerciseSnapshot.forEach(doc => {
       const data = doc.data();
       const cals = parseFloat(data.caloriesBurned);
-      if (!isNaN(cals)) burnt += cals;
+      if (!isNaN(cals)) burnt += cals; //calculate calories burnt, total
     });
     return { consumed, burnt };
   }
 
-  async function createDayElement(offset) {
+  async function createDayElement(offset) { //creates and returns day calander widget
     const date = new Date(currentDate);
     date.setDate(currentDate.getDate() + offset);
     const li = document.createElement("li");
@@ -146,15 +146,15 @@ function calendearLogic() {
   const user = firebase.auth().currentUser;
   if (user) {
     (async () => {
-      for (let i = -2; i < 0; i++) {
+      for (let i = -2; i < 0; i++) { //previous 2 days
         const dayElement = await createDayElement(i);
         calendarWidget.insertBefore(dayElement, todayEl);
       }
-      for (let i = 2; i >= 1; i--) {
+      for (let i = 2; i >= 1; i--) { //next 2 days
         const dayEl = await createDayElement(i, user.uid);
-        calendarWidget.insertBefore(dayEl, todayEl.nextSibling);
+        calendarWidget.insertBefore(dayEl, todayEl.nextSibling); 
       }
-      todayEl.querySelector(".day-number").textContent = currentDate.getDate();
+      todayEl.querySelector(".day-number").textContent = currentDate.getDate(); //updates today widget
       todayEl.querySelector(".weekday").textContent = weekdays[currentDate.getDay()];
     })();
   }
@@ -166,7 +166,7 @@ function calendearLogic() {
 
 let currentWeightScale = "days";
 
-function getLastNDates(n) {
+function getLastNDates(n) { //returns days
   const dates = [];
   const today = new Date();
   for (let i = n - 1; i >= 0; i--) {
@@ -178,11 +178,11 @@ function getLastNDates(n) {
   return dates;
 }
 
-function getLastNWeeks(n) {
+function getLastNWeeks(n) { //returns weeks
   const weeks = [];
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const lastSunday = new Date(today);
+  const lastSunday = new Date(today); //creates a copy of today, so the original today value doesn't get changed 
   lastSunday.setDate(today.getDate() - today.getDay());
   for (let i = n - 1; i >= 0; i--) {
     const weekStart = new Date(lastSunday);
@@ -192,7 +192,7 @@ function getLastNWeeks(n) {
   return weeks;
 }
 
-function getLastNMonths(n) {
+function getLastNMonths(n) { //returns months
   const months = [];
   const today = new Date();
   for (let i = n - 1; i >= 0; i--) {

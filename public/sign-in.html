@@ -11,10 +11,10 @@
       href="https://cdn-icons-png.flaticon.com/512/4434/4434478.png"
     />
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js"; //connects to firebase
       import {
-        getAuth,
-        signInWithEmailAndPassword,
+        getAuth, //authentication service
+        signInWithEmailAndPassword, //logs in user with email and password
       } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 
       const firebaseConfig = {
@@ -27,9 +27,10 @@
         measurementId: "G-SRHMFGLNN2",
       };
 
-      const app = initializeApp(firebaseConfig);
+      const app = initializeApp(firebaseConfig);//initialises firebase and authentication
       const auth = getAuth(app);
-      window.auth = auth; // Make auth available globally
+
+      window.auth = auth; //make auth available globally
       window.signInWithEmailAndPassword = signInWithEmailAndPassword;
     </script>
   </head>
@@ -45,11 +46,11 @@
       <div class="login-container">
         <h2>Sign In</h2>
 
-        <form id="signinForm" onsubmit="handleSignIn(event)">
+        <form id="signinForm" onsubmit="handleSignIn(event)"> <!--calls handle sign in function-->
           <div class="form-group">
             <label for="email">Email</label>
             <input type="email" id="email" name="email" required />
-          </div>
+          </div>>
 
           <div class="form-group">
             <label for="password">Password</label>
@@ -73,13 +74,13 @@
 
     <script>
       async function handleSignIn(event) {
-        event.preventDefault();
+        event.preventDefault();//prevents the page from reloading when the form is submitted.
 
         const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
+        const password = document.getElementById("password").value; //fetches from form
 
         try {
-          // First authenticate with Firebase directly
+          //first authenticate with Firebase directly
           const userCredential = await signInWithEmailAndPassword(
             window.auth,
             email,
@@ -87,7 +88,7 @@
           );
           const user = userCredential.user;
 
-          // Then call the backend to complete the sign-in process
+          //call the backend to complete the sign-in process
           const response = await fetch("/signin", {
             method: "POST",
             headers: {
@@ -99,6 +100,7 @@
           const data = await response.json();
           if (data.success) {
             window.location.href = "/index.html";
+            //if successfull take user to homepage
           } else {
             alert(data.message);
           }
