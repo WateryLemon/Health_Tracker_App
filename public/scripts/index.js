@@ -578,8 +578,9 @@ function loadMenuForm() {
                         alert("Failed to save. Try again.");
                       });
                   } else if (formType === 'weight') {
-                    firebase.firestore().collection("users").doc(userId).collection(formType).add(data)
-                      .then(() => firebase.firestore().collection("users").doc(userId).update({ current_weight: data.weight }))
+                    firebase.firestore().collection("users").doc(userId).collection("weight").add(data)
+                    //firebase.firestore().collection("users").doc(userId).collection(formType).add(data)
+                      //.then(() => firebase.firestore().collection("users").doc(userId).update({ current_weight: data.weight }))
                       .then(() => { alert(`${formType} entry saved!`); })
                       .catch((error) => {
                         console.error("Error saving data:", error);
