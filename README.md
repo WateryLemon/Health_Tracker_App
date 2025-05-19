@@ -42,22 +42,3 @@ The **Health Tracker App** is a project designed to help users monitor and impro
 1. Register or log in to your account.
 2. Start logging your daily activities.
 3. View your progress and adjust your goals as needed.
-
-## Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository.
-2. Create a new branch:
-   ```bash
-   git checkout -b feature-name
-   ```
-3. Commit your changes:
-   ```bash
-   git commit -m "Add feature-name"
-   ```
-4. Push to your branch:
-   ```bash
-   git push origin feature-name
-   ```
-5. Open a pull request.
