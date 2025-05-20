@@ -118,7 +118,7 @@ function calendearLogic() {
     return { consumed, burnt };
   }
 
-  async function createDayElement(offset) { //creates and returns day calander widget
+  async function createDayElement(offset) {
     const date = new Date(currentDate);
     date.setDate(currentDate.getDate() + offset);
     const li = document.createElement("li");
