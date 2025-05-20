@@ -102,7 +102,7 @@ function calendearLogic() {
       const data = doc.data();
       const cals = parseFloat(data.caloriesConsumed);
       const servings = parseFloat(data.servings);
-      if (!isNaN(cals) && !isNaN(servings)) consumed += cals * servings;//checks if numbers are valid, if valid calculate consumed caloeies
+      if (!isNaN(cals) && !isNaN(servings)) consumed += cals * servings;
     });
     // Calories Burnt
     const exerciseSnapshot = await db.collection("users").doc(userId).collection("exercise")
@@ -449,7 +449,6 @@ function loadMenuForm() {
                 searchInput.addEventListener("change", function () {
                   const selected = searchInput.value;
                   if (FOOD_KCAL_PER_SERVING[selected]) {
-
                     const mealInput = foodForm.querySelector("#meal-input");
                     const mealLabel = foodForm.querySelector("label[for='meal-input']");
                     if (mealInput) {
@@ -460,22 +459,10 @@ function loadMenuForm() {
 
                     const calorieInput = foodForm.querySelector("#calorie-input");
                     if (calorieInput) {
-                      calorieInput.placeholder = "Calculating...";
-                      calorieInput.value = "";
+                      calorieInput.placeholder = "Calories per serving";
+                      calorieInput.value = FOOD_KCAL_PER_SERVING[selected]; // <-- always per serving!
                     }
-                    // Calculate calories when servings input changes
-                    const servingsInput = foodForm.querySelector("#serving-input");
-                    if (servingsInput && calorieInput) {
-                      servingsInput.addEventListener("input", function () {
-                        const servings = parseFloat(this.value);
-                        if (!isNaN(servings) && servings > 0) {
-                          const kcal = Math.round(FOOD_KCAL_PER_SERVING[selected] * servings);
-                          calorieInput.value = kcal;
-                        } else {
-                          calorieInput.value = "";
-                        }
-                      });
-                    }
+
                   }
                 });
               }
