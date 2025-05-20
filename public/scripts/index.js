@@ -218,7 +218,7 @@ async function weightGraphLogic(userId, scale = "days") {
       const days = getLastNDates(7);
       labels = days.map(d => d.getDate());
       weights = days.map(day => {
-        const log = weightLogs.filter(l => l.date.toDateString() === day.toDateString()).sort((a, b) => b.date - a.date)[0];
+        const log = weightLogs.filter(l => l.date.toDateString() === day.toDateString()).sort((a, b) => b.date - a.date)[0]; //sorts dates in ascending order and filters the weightLogs array to include only the logs where the date matches the day.
         return log ? log.weight : null;
       });
     } else if (scale === "weeks") {
