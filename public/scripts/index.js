@@ -2,13 +2,7 @@
 // Firebase Configuration & Initialization
 // ===========================
 const firebaseConfig = {
-  apiKey: "AIzaSyCQiV6-wvqLWa9NHatHsu9AE3zcb4FqmOI",
-  authDomain: "health-tracker-fa572.firebaseapp.com",
-  projectId: "health-tracker-fa572",
-  storageBucket: "health-tracker-fa572.firebasestorage.app",
-  messagingSenderId: "277390438554",
-  appId: "1:277390438554:web:8ce3ec3a1ef13b20aaef23",
-  measurementId: "G-SRHMFGLNN2",
+
 };
 
 firebase.initializeApp(firebaseConfig);
