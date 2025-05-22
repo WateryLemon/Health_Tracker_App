@@ -1,4 +1,4 @@
-![Health Tracker App](https://cdn-icons-png.flaticon.com/512/4434/4434478.png)
+<img src="https://cdn-icons-png.flaticon.com/512/4434/4434478.png" width="100" />
 
 <a name="top"></a>
 
